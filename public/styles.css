@@ -115,24 +115,34 @@ button:focus-visible {
 .brand-block::before {
   right: 32px;
   bottom: 28px;
-  width: 118px;
+  width: 124px;
   aspect-ratio: 1;
   border: 6px solid #263445;
-  border-radius: 24px;
+  border-radius: 34px 34px 26px 26px;
   background:
-    radial-gradient(circle at 34% 38%, #263445 0 7%, transparent 8%),
-    radial-gradient(circle at 66% 38%, #263445 0 7%, transparent 8%),
-    linear-gradient(#c7f0ff, #67c6de);
-  box-shadow: 0 10px 0 rgba(38, 52, 69, 0.16);
+    radial-gradient(circle at 31% 40%, #263445 0 6%, transparent 7%),
+    radial-gradient(circle at 69% 40%, #263445 0 6%, transparent 7%),
+    radial-gradient(ellipse at 50% 63%, #263445 0 4%, transparent 5%),
+    radial-gradient(ellipse at 50% 63%, #fff1d9 0 24%, transparent 25%),
+    linear-gradient(90deg, #8c5a3c 0 18%, transparent 19% 81%, #8c5a3c 82%),
+    linear-gradient(#d8f6ff 0 34%, #d7b079 35%, #b9784d 100%);
+  box-shadow:
+    -20px -18px 0 -8px #8c5a3c,
+    20px -18px 0 -8px #8c5a3c,
+    0 12px 0 rgba(38, 52, 69, 0.16);
 }
 
 .brand-block::after {
-  right: 58px;
-  bottom: 16px;
-  width: 68px;
-  height: 9px;
+  right: 12px;
+  bottom: 40px;
+  width: 46px;
+  height: 94px;
+  border: 6px solid #263445;
   border-radius: 999px;
-  background: rgba(38, 52, 69, 0.16);
+  background:
+    linear-gradient(180deg, #8c5a3c 0 22%, #f0c982 23% 40%, #8c5a3c 41% 62%, #f0c982 63% 78%, #8c5a3c 79%);
+  transform: rotate(24deg);
+  transform-origin: bottom center;
 }
 
 .school-name,
@@ -470,9 +480,19 @@ button:focus-visible {
   background: #f7fbff;
 }
 
+.cell.start {
+  border-color: #2aa4b8;
+  background:
+    radial-gradient(circle at 22% 22%, rgba(255, 255, 255, 0.8) 0 18%, transparent 19%),
+    linear-gradient(135deg, #d7f8ff, #baf1e0);
+}
+
 .cell.goal {
-  border-color: #65c27a;
-  background: #d9f8dd;
+  border-color: #f0a12a;
+  background:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.7) 25%, transparent 25% 50%, rgba(255, 255, 255, 0.7) 50% 75%, transparent 75%),
+    linear-gradient(135deg, #fff0b7, #ffd4e4);
+  background-size: 16px 16px, auto;
 }
 
 .cell.wall {
@@ -492,9 +512,57 @@ button:focus-visible {
 
 .cell-mark {
   z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
   color: #263445;
   font-size: clamp(16px, 2.6vw, 28px);
   font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.start-mark,
+.goal-mark {
+  position: absolute;
+  z-index: 6;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.cell-icon {
+  display: block;
+  font-size: clamp(18px, 3vw, 32px);
+  line-height: 1;
+}
+
+.cell-label {
+  display: block;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  font-size: clamp(9px, 1.45vw, 15px);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.start-mark .cell-icon {
+  color: #0d8aa3;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.85);
+}
+
+.goal-mark .cell-icon {
+  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.75));
+}
+
+.treasure-mark {
+  color: #d38d10;
+  font-size: clamp(18px, 3.2vw, 30px);
 }
 
 .cell.robot::before,
@@ -726,6 +794,14 @@ button:focus-visible {
     right: 18px;
     bottom: 22px;
     width: 86px;
+  }
+
+  .brand-block::after {
+    right: 2px;
+    bottom: 34px;
+    width: 34px;
+    height: 66px;
+    border-width: 4px;
   }
 
   .brand-block h1 {

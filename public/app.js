@@ -9,7 +9,7 @@ const lessons = {
     goal: "かみでかいた やじるしといろぬりを、めいれいカードにします。スタートすると、いっきにうごきます。",
     missionTitle: "かみのしごとをらくにしよう",
     missions: ["やじるしをカードにする", "いろをぬる", "ゴールへいく"],
-    stageNotes: ["S から G まで", "カードのじゅんにうごく"],
+    stageNotes: ["スタートから ゴールまで", "カードのじゅんにうごく"],
     rows: 6,
     cols: 8,
     start: { row: 4, col: 1 },
@@ -250,13 +250,16 @@ function renderStage() {
       node.setAttribute("aria-label", `たて${row + 1} よこ${col + 1}`);
 
       let mark = "";
+      let markClass = "";
       if (sameCell(cell, lesson.start)) {
         node.classList.add("start");
-        mark = "S";
+        mark = "スタート";
+        markClass = "start-mark";
       }
       if (sameCell(cell, lesson.goalCell)) {
         node.classList.add("goal");
-        mark = "G";
+        mark = "ゴール";
+        markClass = "goal-mark";
       }
       if (lesson.walls.some((wall) => sameCell(cell, wall))) node.classList.add("wall");
 
@@ -264,14 +267,27 @@ function renderStage() {
       if (lesson.treasures.some((treasure) => sameCell(cell, treasure)) && !state.collected.has(treasureKey)) {
         node.classList.add("treasure");
         mark = "★";
+        markClass = "treasure-mark";
       }
 
       if (state.painted.has(treasureKey)) node.classList.add("painted");
       if (sameCell(cell, state.robot)) node.classList.add("robot");
       if (mark) {
         const markNode = document.createElement("span");
-        markNode.className = "cell-mark";
-        markNode.textContent = mark;
+        markNode.className = `cell-mark ${markClass}`;
+        if (markClass === "start-mark" || markClass === "goal-mark") {
+          const icon = document.createElement("span");
+          icon.className = "cell-icon";
+          icon.textContent = markClass === "start-mark" ? "▶" : "🏁";
+
+          const label = document.createElement("span");
+          label.className = "cell-label";
+          label.textContent = mark;
+
+          markNode.append(icon, label);
+        } else {
+          markNode.textContent = mark;
+        }
         node.append(markNode);
       }
       elements.stageGrid.append(node);

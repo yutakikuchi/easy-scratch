@@ -116,14 +116,6 @@
                 <span id="robotStatus">スタートでまっている</span>
                 <span id="scoreStatus">てん 0</span>
               </div>
-              <div class="tool-dock" aria-label="プログラムの操作">
-                <button class="dock-button card-dock" type="button" id="openCommandButton">
-                  カードをえらぶ
-                </button>
-                <button class="dock-button program-dock" type="button" id="openProgramButton">
-                  ならべたカード <span id="programBadgeCount">0</span>
-                </button>
-              </div>
               <div class="stage-actions">
                 <button class="icon-button" type="button" id="resetButton" aria-label="もういちど">
                   ↺
@@ -134,24 +126,18 @@
               </div>
             </section>
 
-            <section class="command-palette popup-panel" aria-label="めいれいカード" hidden>
+            <section class="command-palette" aria-label="めいれいカード">
               <div class="section-heading">
-                <div>
-                  <p class="section-label">めいれいカード</p>
-                  <h2>カードをえらぶ</h2>
-                </div>
-                <button class="panel-close" type="button" id="closeCommandButton" aria-label="とじる">×</button>
+                <p class="section-label">めいれいカード</p>
+                <h2>カードをえらぶ</h2>
               </div>
               <div id="commandPalette" class="command-grid"></div>
             </section>
 
-            <section class="program-panel popup-panel" aria-label="つくったプログラム" hidden>
+            <section class="program-panel" aria-label="つくったプログラム">
               <div class="section-heading">
-                <div>
-                  <p class="section-label">つくったプログラム</p>
-                  <h2>うえからじゅんばん</h2>
-                </div>
-                <button class="panel-close" type="button" id="closeProgramButton" aria-label="とじる">×</button>
+                <p class="section-label">つくったプログラム</p>
+                <h2>うえからじゅんばん</h2>
               </div>
               <div id="programList" class="program-list"></div>
               <div class="program-actions">

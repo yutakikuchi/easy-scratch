@@ -11,9 +11,7 @@
 
 .page-button,
 .next-button,
-.back-button,
-.dock-button,
-.panel-close {
+.back-button {
   border: 3px solid var(--line);
   background: #fff;
   box-shadow: 0 10px 20px rgba(58, 81, 108, 0.1);
@@ -60,11 +58,10 @@
 
 .lesson-page {
   display: grid;
-  gap: 14px;
+  gap: 18px;
 }
 
-.lesson-page[hidden],
-.popup-panel[hidden] {
+.lesson-page[hidden] {
   display: none;
 }
 
@@ -93,177 +90,115 @@
 
 .program-header h2 {
   margin: 0;
-  font-size: clamp(24px, 3.2vw, 34px);
+  font-size: clamp(28px, 4vw, 44px);
   line-height: 1.12;
 }
 
 .back-button {
-  min-width: 122px;
-  min-height: 58px;
+  min-width: 132px;
+  min-height: 62px;
   background: #fff8d9;
   font-size: 18px;
-}
-
-.lesson-console {
-  display: grid;
-  min-height: 0;
-}
-
-.lesson-console .stage-wrap {
-  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
-  min-height: 0;
-}
-
-.lesson-console .stage-grid {
-  align-self: center;
-  justify-self: center;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.tool-dock {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.dock-button {
-  min-height: 78px;
-  padding: 12px;
-  font-size: clamp(20px, 2.8vw, 30px);
-}
-
-.card-dock {
-  border-color: #77c9de;
-  background: var(--sky);
-}
-
-.program-dock {
-  border-color: #f0c66a;
-  background: var(--cream);
-}
-
-.program-dock span {
-  display: inline-grid;
-  place-items: center;
-  min-width: 34px;
-  margin-left: 6px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #fff;
-  color: #1889aa;
-}
-
-body[data-page="program"] .app-shell {
-  height: 100vh;
-  min-height: 0;
-  overflow: hidden;
-  padding: 10px;
-}
-
-body[data-page="program"] .workspace {
-  grid-template-rows: auto minmax(0, 1fr);
-  height: 100%;
-  gap: 10px;
 }
 
 body[data-page="program"] .app-header {
   display: none;
 }
 
-body[data-page="program"] .page-button {
-  min-height: 58px;
-  padding: 8px 12px;
+body[data-page="program"] .app-shell {
+  min-height: 100vh;
+  overflow: visible;
 }
 
-body[data-page="program"] .page-button span {
-  width: 38px;
-  font-size: 22px;
+body[data-page="program"] .workspace {
+  width: min(100%, 1120px);
+}
+
+body[data-page="program"] .page-button {
+  min-height: 72px;
 }
 
 body[data-page="program"] .page-button small {
   display: none;
 }
 
-body[data-page="program"] .program-page {
-  grid-template-rows: auto minmax(0, 1fr);
-  min-height: 0;
-}
-
-body[data-popup="command"]::before,
-body[data-popup="program"]::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: rgba(37, 52, 74, 0.35);
-}
-
-.popup-panel {
-  position: fixed;
-  z-index: 21;
-  left: 50%;
-  top: 50%;
+.lesson-console {
   display: grid;
-  gap: 14px;
-  width: min(94vw, 900px);
-  max-height: calc(100vh - 24px);
-  padding: 20px;
-  overflow: auto;
-  transform: translate(-50%, -50%);
+  gap: 18px;
 }
 
-.popup-panel .section-heading {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: start;
-  gap: 12px;
+.lesson-console .stage-wrap,
+.lesson-console .command-palette,
+.lesson-console .program-panel {
+  width: min(100%, 1060px);
+  justify-self: center;
 }
 
-.panel-close {
-  display: grid;
-  place-items: center;
-  width: 56px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #fff;
-  color: #25344a;
-  font-size: 30px;
-  line-height: 1;
+.lesson-console .stage-wrap {
+  gap: 16px;
+  padding: 22px;
 }
 
-.popup-panel .command-grid {
+.lesson-console .stage-grid {
+  justify-self: center;
+  width: min(100%, 900px);
+}
+
+.lesson-console .stage-actions {
+  grid-template-columns: 92px 1fr;
+}
+
+.lesson-console .stage-actions .icon-button,
+.lesson-console .stage-actions .primary-button {
+  min-height: 86px;
+}
+
+.lesson-console .stage-actions .primary-button {
+  font-size: clamp(28px, 4.2vw, 42px);
+}
+
+.lesson-console .command-palette,
+.lesson-console .program-panel {
+  padding: 22px;
+}
+
+.lesson-console .command-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.popup-panel .command-card {
+.lesson-console .command-card {
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 4px 12px;
+  gap: 6px 14px;
   justify-items: stretch;
-  min-height: 84px;
+  min-height: 108px;
 }
 
 .command-card strong {
   display: grid;
   grid-row: span 2;
   place-items: center;
-  min-width: 58px;
+  min-width: 64px;
   aspect-ratio: 1;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.82);
   color: #1a6f8a;
-  font-size: clamp(24px, 3vw, 36px);
+  font-size: clamp(26px, 3.2vw, 40px);
   line-height: 1;
 }
 
-.popup-panel .program-list {
-  max-height: 50vh;
-  overflow: auto;
+.lesson-console .command-card span {
+  font-size: clamp(20px, 2.6vw, 28px);
 }
 
-.popup-panel .program-actions {
-  gap: 10px;
+.lesson-console .program-list {
+  min-height: 220px;
+}
+
+.lesson-console .program-actions button {
+  min-height: 70px;
+  font-size: clamp(20px, 2.8vw, 28px);
 }
 
 @media (min-width: 860px) {
@@ -277,33 +212,17 @@ body[data-popup="program"]::before {
   }
 }
 
-@media (min-width: 900px) {
-  .lesson-console .stage-wrap {
-    width: min(100%, 980px);
-    justify-self: center;
-  }
-
-  .lesson-console .stage-grid {
-    width: min(100%, 760px);
+@media (min-width: 980px) {
+  .lesson-console .command-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 720px) {
   .page-switcher,
-  .tool-dock,
-  .popup-panel .command-grid,
-  .program-header {
+  .program-header,
+  .lesson-console .command-grid,
+  .program-actions {
     grid-template-columns: 1fr;
-  }
-
-  body[data-page="program"] .app-shell {
-    height: auto;
-    overflow: visible;
-  }
-
-  .popup-panel {
-    width: calc(100vw - 24px);
-    max-height: calc(100vh - 24px);
-    padding: 14px;
   }
 }

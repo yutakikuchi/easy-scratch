@@ -65,7 +65,7 @@ button:focus-visible {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
-  width: min(100%, 980px);
+  width: min(100%, 1040px);
   margin: 0 auto;
 }
 
@@ -709,7 +709,7 @@ button:focus-visible {
   display: grid;
   align-content: start;
   gap: 10px;
-  min-height: 170px;
+  min-height: 150px;
   padding: 12px;
   border: 3px dashed #9fb4ca;
   border-radius: 18px;

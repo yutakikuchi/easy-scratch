@@ -96,8 +96,15 @@ function readModeFromUrl() {
   return "lower";
 }
 
+function readPageFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const value = (params.get("page") || "paper").toLowerCase();
+  return value === "program" ? "program" : "paper";
+}
+
 const state = {
   mode: readModeFromUrl(),
+  page: readPageFromUrl(),
   program: [],
   robot: { row: 0, col: 0 },
   painted: new Set(),
@@ -112,6 +119,12 @@ const state = {
 };
 
 const elements = {
+  paperPage: document.querySelector("#paperPage"),
+  programPage: document.querySelector("#programPage"),
+  paperPageButton: document.querySelector("#paperPageButton"),
+  programPageButton: document.querySelector("#programPageButton"),
+  startProgramButton: document.querySelector("#startProgramButton"),
+  backToPaperButton: document.querySelector("#backToPaperButton"),
   gradeName: document.querySelector("#gradeName"),
   gradeHint: document.querySelector("#gradeHint"),
   missionTitle: document.querySelector("#missionTitle"),
@@ -136,6 +149,21 @@ const elements = {
   undoButton: document.querySelector("#undoButton"),
   clearButton: document.querySelector("#clearButton"),
   sampleButton: document.querySelector("#sampleButton")
+};
+
+const commandIcons = {
+  right: "→",
+  left: "←",
+  up: "↑",
+  down: "↓",
+  paint: "ぬる",
+  say: "💬",
+  repeatRight3: "→×3",
+  repeatUp2: "↑×2",
+  repeatRight2: "→×2",
+  ifTreasure: "★",
+  ifWall: "かべ",
+  ifGoal: "🏁"
 };
 
 function currentLesson() {
@@ -169,6 +197,12 @@ function addCommand(commandId) {
   state.program.push(commandId);
   renderProgram();
   renderStats();
+}
+
+function setPage(page) {
+  state.page = page;
+  renderPage();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function expandProgram(program) {
@@ -219,6 +253,18 @@ function render() {
   renderStage();
   renderProgram();
   renderStats();
+  renderPage();
+}
+
+function renderPage() {
+  const isProgram = state.page === "program";
+  document.body.dataset.page = state.page;
+  elements.paperPage.hidden = isProgram;
+  elements.programPage.hidden = !isProgram;
+  elements.paperPageButton.classList.toggle("active", !isProgram);
+  elements.programPageButton.classList.toggle("active", isProgram);
+  elements.paperPageButton.setAttribute("aria-pressed", String(!isProgram));
+  elements.programPageButton.setAttribute("aria-pressed", String(isProgram));
 }
 
 function renderPalette() {
@@ -229,7 +275,8 @@ function renderPalette() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `command-card ${command.kind}`;
-    button.innerHTML = `<span>${command.label}</span><small>${command.hint}</small>`;
+    const icon = commandIcons[command.id] ?? "＋";
+    button.innerHTML = `<strong>${icon}</strong><span>${command.label}</span><small>${command.hint}</small>`;
     button.addEventListener("click", () => addCommand(command.id));
     elements.commandPalette.append(button);
   }
@@ -455,6 +502,14 @@ function checkFinish() {
 }
 
 elements.runButton.addEventListener("click", runProgram);
+
+elements.paperPageButton.addEventListener("click", () => setPage("paper"));
+
+elements.programPageButton.addEventListener("click", () => setPage("program"));
+
+elements.startProgramButton.addEventListener("click", () => setPage("program"));
+
+elements.backToPaperButton.addEventListener("click", () => setPage("paper"));
 
 elements.resetButton.addEventListener("click", () => {
   resetStage();

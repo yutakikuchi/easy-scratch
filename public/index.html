@@ -6,11 +6,12 @@
     <title>はじめてのプログラミング</title>
     <meta name="description" content="かみでたいへんだったことを、めいれいカードでらくにするアプリです。">
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./program.css">
   </head>
   <body>
     <main class="app-shell">
       <section class="workspace" aria-label="プログラミングアプリ">
-        <aside class="side-panel" aria-label="じゅぎょうのながれ">
+        <header class="app-header">
           <div class="brand-block">
             <p class="school-name">きぬた サマースクール</p>
             <h1><span>はじめての</span><span>プログラミング</span></h1>
@@ -22,7 +23,22 @@
             <strong id="gradeName">1-3ねんせい</strong>
             <span id="gradeHint">QRでえらばれたコースです</span>
           </div>
+        </header>
 
+        <nav class="page-switcher" aria-label="ページをえらぶ">
+          <button class="page-button active" type="button" id="paperPageButton" aria-pressed="true">
+            <span>1</span>
+            <strong>かみでやる</strong>
+            <small>まずたいへんさをためす</small>
+          </button>
+          <button class="page-button" type="button" id="programPageButton" aria-pressed="false">
+            <span>2</span>
+            <strong>プログラムでやる</strong>
+            <small>カードでらくにうごかす</small>
+          </button>
+        </nav>
+
+        <section class="lesson-page paper-page" id="paperPage" aria-label="かみの説明">
           <section class="flow-panel" aria-label="きょうのながれ">
             <p class="section-label">きょうのながれ</p>
             <div class="flow-steps">
@@ -63,7 +79,7 @@
             </div>
           </section>
 
-          <section class="panel-section">
+          <section class="panel-section program-preview">
             <p class="section-label">プログラムでやる</p>
             <p id="programGoal" class="program-goal"></p>
             <div class="savings-box">
@@ -72,38 +88,44 @@
               <span>うごくかず</span>
               <strong id="expandedCount">0かい</strong>
             </div>
+            <button class="next-button" type="button" id="startProgramButton">
+              プログラムでやってみる
+            </button>
           </section>
-        </aside>
+        </section>
 
-        <section class="main-panel" aria-label="ゲームがめん">
-          <header class="toolbar">
+        <section class="lesson-page program-page" id="programPage" aria-label="プログラミング実践" hidden>
+          <header class="program-header">
             <div>
               <p class="section-label">いまやること</p>
               <h2 id="lessonTitle">かみのじゅんばんを めいれいにしよう</h2>
             </div>
+            <button class="back-button" type="button" id="backToPaperButton">
+              かみをみる
+            </button>
           </header>
 
-          <div class="stage-wrap">
-            <div class="stage-note">
-              <span id="stageNoteA">スタートから ゴールまで</span>
-              <span id="stageNoteB">カードのじゅんにうごく</span>
-            </div>
-            <div id="stageGrid" class="stage-grid" aria-label="マスのステージ"></div>
-            <div class="status-strip" aria-live="polite">
-              <span id="robotStatus">スタートでまっている</span>
-              <span id="scoreStatus">てん 0</span>
-            </div>
-            <div class="stage-actions">
-              <button class="icon-button" type="button" id="resetButton" aria-label="もういちど">
-                ↺
-              </button>
-              <button class="primary-button" type="button" id="runButton">
-                うごかす
-              </button>
-            </div>
-          </div>
+          <div class="lesson-console">
+            <section class="stage-wrap">
+              <div class="stage-note">
+                <span id="stageNoteA">スタートから ゴールまで</span>
+                <span id="stageNoteB">カードのじゅんにうごく</span>
+              </div>
+              <div id="stageGrid" class="stage-grid" aria-label="マスのステージ"></div>
+              <div class="status-strip" aria-live="polite">
+                <span id="robotStatus">スタートでまっている</span>
+                <span id="scoreStatus">てん 0</span>
+              </div>
+              <div class="stage-actions">
+                <button class="icon-button" type="button" id="resetButton" aria-label="もういちど">
+                  ↺
+                </button>
+                <button class="primary-button" type="button" id="runButton">
+                  うごかす
+                </button>
+              </div>
+            </section>
 
-          <div class="workbench">
             <section class="command-palette" aria-label="めいれいカード">
               <div class="section-heading">
                 <p class="section-label">めいれいカード</p>

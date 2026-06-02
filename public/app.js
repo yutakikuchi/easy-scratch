@@ -125,6 +125,13 @@ const elements = {
   programPageButton: document.querySelector("#programPageButton"),
   startProgramButton: document.querySelector("#startProgramButton"),
   backToPaperButton: document.querySelector("#backToPaperButton"),
+  openCommandButton: document.querySelector("#openCommandButton"),
+  openProgramButton: document.querySelector("#openProgramButton"),
+  closeCommandButton: document.querySelector("#closeCommandButton"),
+  closeProgramButton: document.querySelector("#closeProgramButton"),
+  programBadgeCount: document.querySelector("#programBadgeCount"),
+  commandPanel: document.querySelector(".command-palette"),
+  programPanel: document.querySelector(".program-panel"),
   gradeName: document.querySelector("#gradeName"),
   gradeHint: document.querySelector("#gradeHint"),
   missionTitle: document.querySelector("#missionTitle"),
@@ -201,8 +208,23 @@ function addCommand(commandId) {
 
 function setPage(page) {
   state.page = page;
+  closePopups();
   renderPage();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openPopup(type) {
+  const commandOpen = type === "command";
+  const programOpen = type === "program";
+  elements.commandPanel.hidden = !commandOpen;
+  elements.programPanel.hidden = !programOpen;
+  document.body.dataset.popup = type;
+}
+
+function closePopups() {
+  elements.commandPanel.hidden = true;
+  elements.programPanel.hidden = true;
+  document.body.dataset.popup = "none";
 }
 
 function expandProgram(program) {
@@ -366,6 +388,7 @@ function renderProgram() {
 function renderStats() {
   const expanded = expandProgram(state.program);
   elements.commandCount.textContent = `${state.program.length}まい`;
+  elements.programBadgeCount.textContent = `${state.program.length}`;
   elements.expandedCount.textContent = `${expanded.filter((command) => isMovement(command) || command === "paint").length}かい`;
   elements.scoreStatus.textContent = `てん ${state.score}`;
 }
@@ -510,6 +533,14 @@ elements.programPageButton.addEventListener("click", () => setPage("program"));
 elements.startProgramButton.addEventListener("click", () => setPage("program"));
 
 elements.backToPaperButton.addEventListener("click", () => setPage("paper"));
+
+elements.openCommandButton.addEventListener("click", () => openPopup("command"));
+
+elements.openProgramButton.addEventListener("click", () => openPopup("program"));
+
+elements.closeCommandButton.addEventListener("click", closePopups);
+
+elements.closeProgramButton.addEventListener("click", closePopups);
 
 elements.resetButton.addEventListener("click", () => {
   resetStage();

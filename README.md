@@ -21,6 +21,13 @@ Firebase project: `summer-school-kinuta`
 
 Firebase Analytics is initialized from `public/firebase-init.js`. The lesson app itself does not depend on Firebase SDK loading, so the game can still run if Analytics is blocked by a school network.
 
+## QRコード用URL
+
+```text
+1-3ねんせい: https://summer-school-kinuta.web.app/?grade=lower
+4-6年生: https://summer-school-kinuta.web.app/?grade=upper
+```
+
 ```sh
 firebase deploy --only hosting --project summer-school-kinuta
 ```

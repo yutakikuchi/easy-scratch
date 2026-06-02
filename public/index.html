@@ -17,13 +17,10 @@
             <p class="brand-copy"><span>かみはたいへん。</span><span>プログラムはらく。</span></p>
           </div>
 
-          <div class="mode-switch" role="tablist" aria-label="がくねんをえらぶ">
-            <button class="mode-button active" type="button" data-mode="lower" role="tab" aria-selected="true">
-              1-3ねんせい
-            </button>
-            <button class="mode-button" type="button" data-mode="upper" role="tab" aria-selected="false">
-              4-6ねんせい
-            </button>
+          <div class="grade-card" aria-label="えらばれたコース">
+            <p class="section-label">きょうのコース</p>
+            <strong id="gradeName">1-3ねんせい</strong>
+            <span id="gradeHint">QRでえらばれたコースです</span>
           </div>
 
           <section class="flow-panel" aria-label="きょうのながれ">
@@ -42,6 +39,12 @@
                 <span>うごかす</span>
               </div>
             </div>
+          </section>
+
+          <section class="mission-panel" aria-label="ミッション">
+            <p class="section-label">ミッション</p>
+            <h2 id="missionTitle">かみのしごとをらくにしよう</h2>
+            <div id="missionList" class="mission-list"></div>
           </section>
 
           <section class="panel-section">
@@ -78,25 +81,25 @@
               <p class="section-label">いまやること</p>
               <h2 id="lessonTitle">かみのじゅんばんを めいれいにしよう</h2>
             </div>
-            <div class="toolbar-actions">
+          </header>
+
+          <div class="stage-wrap">
+            <div class="stage-note">
+              <span id="stageNoteA">S から G まで</span>
+              <span id="stageNoteB">カードのじゅんにうごく</span>
+            </div>
+            <div id="stageGrid" class="stage-grid" aria-label="マスのステージ"></div>
+            <div class="status-strip" aria-live="polite">
+              <span id="robotStatus">スタートでまっている</span>
+              <span id="scoreStatus">てん 0</span>
+            </div>
+            <div class="stage-actions">
               <button class="icon-button" type="button" id="resetButton" aria-label="もういちど">
                 ↺
               </button>
               <button class="primary-button" type="button" id="runButton">
                 うごかす
               </button>
-            </div>
-          </header>
-
-          <div class="stage-wrap">
-            <div class="stage-note">
-              <span>S から G まで</span>
-              <span>カードのじゅんにうごく</span>
-            </div>
-            <div id="stageGrid" class="stage-grid" aria-label="マスのステージ"></div>
-            <div class="status-strip" aria-live="polite">
-              <span id="robotStatus">スタートでまっている</span>
-              <span id="scoreStatus">てん 0</span>
             </div>
           </div>
 

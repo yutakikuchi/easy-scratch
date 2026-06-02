@@ -1,20 +1,21 @@
 :root {
   color-scheme: light;
-  --ink: #263445;
-  --muted: #65758a;
-  --line: #cbd9ee;
-  --soft-line: #e7edf7;
-  --cream: #fff6d8;
-  --mint: #dcf7e8;
-  --sky: #dff4ff;
-  --peach: #ffe3d8;
-  --pink: #ffe8f1;
+  --ink: #25344a;
+  --muted: #617792;
+  --line: #bcd8f7;
+  --soft-line: #e0edfb;
+  --cream: #fff8c9;
+  --mint: #d8f8e3;
+  --sky: #d9f4ff;
+  --peach: #ffe1d4;
+  --pink: #ffe1f2;
+  --lavender: #eee7ff;
   --surface: #ffffff;
   --accent: #1889aa;
   --accent-2: #f06b56;
   --accent-3: #f4b83f;
   --accent-4: #5abd78;
-  --shadow: 0 16px 34px rgba(58, 81, 108, 0.16);
+  --shadow: 0 16px 34px rgba(76, 109, 145, 0.14);
 }
 
 * {
@@ -29,12 +30,12 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 10% 12%, rgba(255, 215, 104, 0.45) 0 72px, transparent 73px),
-    radial-gradient(circle at 88% 8%, rgba(143, 218, 255, 0.45) 0 86px, transparent 87px),
-    radial-gradient(circle at 78% 86%, rgba(255, 186, 216, 0.4) 0 92px, transparent 93px),
+    radial-gradient(circle at 10% 12%, rgba(255, 222, 90, 0.55) 0 72px, transparent 73px),
+    radial-gradient(circle at 88% 8%, rgba(111, 211, 255, 0.52) 0 86px, transparent 87px),
+    radial-gradient(circle at 78% 86%, rgba(255, 155, 207, 0.43) 0 92px, transparent 93px),
     linear-gradient(90deg, rgba(38, 52, 69, 0.05) 1px, transparent 1px),
     linear-gradient(0deg, rgba(38, 52, 69, 0.05) 1px, transparent 1px),
-    linear-gradient(135deg, #fff8df 0%, #e7f8ff 46%, #fff0f7 100%);
+    linear-gradient(135deg, #fffbe8 0%, #e0f8ff 45%, #fff0fa 100%);
   background-size: auto, auto, auto, 30px 30px, 30px 30px, auto;
   color: var(--ink);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -72,6 +73,7 @@ button:focus-visible {
 .main-panel,
 .panel-section,
 .flow-panel,
+.mission-panel,
 .command-palette,
 .program-panel {
   border: 3px solid rgba(86, 122, 158, 0.18);
@@ -178,38 +180,70 @@ button:focus-visible {
   line-height: 1.45;
 }
 
-.mode-switch {
+.grade-card {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 10px;
+  gap: 4px;
+  padding: 18px 20px;
   border: 3px solid var(--line);
   border-radius: 22px;
-  background: #fff;
+  background: linear-gradient(135deg, #fff, #e6f8ff);
   box-shadow: 0 10px 24px rgba(58, 81, 108, 0.1);
 }
 
-.mode-button {
-  min-height: 64px;
-  background: #f2f6fb;
-  color: #243040;
-  font-size: clamp(17px, 2.5vw, 22px);
+.grade-card strong {
+  color: #1286a8;
+  font-size: clamp(30px, 5vw, 44px);
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.grade-card span {
+  color: #4e6378;
+  font-size: clamp(16px, 2.4vw, 20px);
   font-weight: 900;
 }
 
-.mode-button.active {
-  background: linear-gradient(180deg, #24a7c7, #1485a2);
-  color: #fff;
-  box-shadow: inset 0 -7px 0 rgba(0, 0, 0, 0.16);
-}
-
 .flow-panel,
-.panel-section {
+.panel-section,
+.mission-panel {
   padding: 20px;
 }
 
 .flow-panel {
-  background: linear-gradient(135deg, #fff, #f0fbff);
+  background: linear-gradient(135deg, #fff, #edfbff);
+}
+
+.mission-panel {
+  display: grid;
+  gap: 12px;
+  background: linear-gradient(135deg, #fff, #fff4cf 50%, #ffe8f3);
+}
+
+.mission-panel h2 {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.2;
+}
+
+.mission-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.mission-list span {
+  display: grid;
+  place-items: center;
+  min-height: 76px;
+  padding: 12px;
+  border: 3px solid rgba(244, 184, 63, 0.4);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #344b62;
+  font-size: clamp(15px, 2.2vw, 19px);
+  font-weight: 900;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .flow-steps {
@@ -352,21 +386,9 @@ button:focus-visible {
   padding: 18px;
 }
 
-.toolbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 16px;
-}
-
 .toolbar h2 {
   font-size: clamp(26px, 4.8vw, 42px);
   line-height: 1.18;
-}
-
-.toolbar-actions {
-  display: flex;
-  gap: 10px;
 }
 
 .icon-button,
@@ -395,6 +417,10 @@ button:focus-visible {
 .stage-wrap {
   display: grid;
   gap: 12px;
+  padding: 14px;
+  border: 3px solid rgba(86, 122, 158, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff, #effaff);
 }
 
 .stage-note {
@@ -464,36 +490,52 @@ button:focus-visible {
   background: #ffd8cf;
 }
 
-.cell::after {
+.cell-mark {
+  z-index: 1;
   color: #263445;
   font-size: clamp(16px, 2.6vw, 28px);
   font-weight: 900;
 }
 
-.cell.start::after {
-  content: "S";
-}
-
-.cell.goal::after {
-  content: "G";
-}
-
-.cell.treasure::after {
-  content: "+";
+.cell.robot::before,
+.cell.robot::after {
+  content: "";
+  position: absolute;
 }
 
 .cell.robot::before {
-  content: "";
-  z-index: 2;
+  z-index: 4;
+  left: 50%;
+  top: 50%;
   width: 62%;
   aspect-ratio: 1;
+  transform: translate(-50%, -50%);
   border: 4px solid #263445;
-  border-radius: 16px;
+  border-radius: 20px 20px 16px 16px;
   background:
-    radial-gradient(circle at 34% 38%, #263445 0 6%, transparent 7%),
-    radial-gradient(circle at 66% 38%, #263445 0 6%, transparent 7%),
-    linear-gradient(#ccf1ff, #69c9df);
-  box-shadow: 0 6px 0 rgba(38, 52, 69, 0.16);
+    radial-gradient(circle at 33% 42%, #263445 0 5%, transparent 6%),
+    radial-gradient(circle at 67% 42%, #263445 0 5%, transparent 6%),
+    radial-gradient(ellipse at 50% 62%, #263445 0 4%, transparent 5%),
+    radial-gradient(ellipse at 50% 62%, #fff2d8 0 26%, transparent 27%),
+    linear-gradient(90deg, #8c5a3c 0 18%, transparent 19% 81%, #8c5a3c 82%),
+    linear-gradient(#d9b07a, #b77a4e);
+  box-shadow:
+    -16px -16px 0 -7px #8c5a3c,
+    16px -16px 0 -7px #8c5a3c,
+    0 7px 0 rgba(38, 52, 69, 0.18);
+}
+
+.cell.robot::after {
+  z-index: 3;
+  right: 7%;
+  bottom: 12%;
+  width: 26%;
+  height: 48%;
+  border: 4px solid #263445;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, #8c5a3c 0 28%, #f0c982 29% 48%, #8c5a3c 49% 72%, #f0c982 73%);
+  transform: rotate(23deg);
 }
 
 .status-strip {
@@ -507,6 +549,21 @@ button:focus-visible {
   color: #fff;
   font-size: clamp(18px, 2.8vw, 24px);
   font-weight: 900;
+}
+
+.stage-actions {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 12px;
+}
+
+.stage-actions .icon-button,
+.stage-actions .primary-button {
+  min-height: 72px;
+}
+
+.stage-actions .primary-button {
+  font-size: clamp(22px, 3.6vw, 30px);
 }
 
 .workbench {
@@ -641,8 +698,12 @@ button:focus-visible {
   }
 
   .brand-block,
-  .mode-switch,
+  .grade-card,
   .flow-panel {
+    grid-column: 1 / -1;
+  }
+
+  .mission-panel {
     grid-column: 1 / -1;
   }
 
@@ -672,19 +733,11 @@ button:focus-visible {
   }
 
   .flow-steps,
+  .mission-list,
   .paper-meta,
   .command-grid,
   .program-actions {
     grid-template-columns: 1fr;
-  }
-
-  .toolbar {
-    grid-template-columns: 1fr;
-  }
-
-  .toolbar-actions {
-    display: grid;
-    grid-template-columns: 72px 1fr;
   }
 
   .stage-grid {

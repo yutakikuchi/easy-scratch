@@ -1,10 +1,15 @@
 const lessons = {
   lower: {
+    gradeName: "1-3ねんせい",
+    gradeHint: "やじるしといろのコース",
     title: "かみのじゅんばんを めいれいにしよう",
     paperTitle: "やじるしといろをかこう",
     paperWorkCount: 18,
     paperPoint: "なんどもかくのはたいへん",
     goal: "かみでかいた やじるしといろぬりを、めいれいカードにします。スタートすると、いっきにうごきます。",
+    missionTitle: "かみのしごとをらくにしよう",
+    missions: ["やじるしをカードにする", "いろをぬる", "ゴールへいく"],
+    stageNotes: ["S から G まで", "カードのじゅんにうごく"],
     rows: 6,
     cols: 8,
     start: { row: 4, col: 1 },
@@ -32,49 +37,67 @@ const lessons = {
     sample: ["right", "right", "paint", "right", "up", "up", "paint", "right", "right", "up"]
   },
   upper: {
-    title: "くりかえしと「もし」で らくにしよう",
-    paperTitle: "てんをかぞえよう",
-    paperWorkCount: 32,
-    paperPoint: "まいかいはたいへん",
-    goal: "ながいみち、てんのけいさん、かべのチェックを、カードでらくにします。",
-    rows: 6,
+    gradeName: "4-6年生",
+    gradeHint: "ミッションゲームコース",
+    title: "くり返しと「もし」で楽にしよう",
+    paperTitle: "点を数えよう",
+    paperWorkCount: 42,
+    paperPoint: "毎回はたいへん",
+    goal: "宝、かべ、ゴールをカードでチェックします。自分で数えなくても、点がふえます。",
+    missionTitle: "宝をあつめてゴールしよう",
+    missions: ["宝を2こあつめる", "かべなら戻る", "点20でクリア"],
+    stageNotes: ["★ をあつめる", "かべはカードでチェック"],
+    rows: 7,
     cols: 10,
-    start: { row: 4, col: 1 },
+    start: { row: 5, col: 1 },
     goalCell: { row: 1, col: 8 },
     paintTargets: [],
     walls: [
+      { row: 1, col: 3 },
       { row: 3, col: 3 },
       { row: 2, col: 3 },
       { row: 2, col: 6 },
       { row: 3, col: 6 },
-      { row: 4, col: 6 }
+      { row: 4, col: 6 },
+      { row: 5, col: 6 },
+      { row: 5, col: 7 }
     ],
     treasures: [
-      { row: 4, col: 4 },
+      { row: 5, col: 4 },
+      { row: 3, col: 8 },
       { row: 1, col: 5 }
     ],
     paperSteps: [
       "めいろに、ゴールまでのやじるしを1つずつかく",
-      "たからをとったら、てんをじぶんでたす",
-      "かべにあたったらもどる、とじぶんでかく",
-      "おなじやじるしは「くりかえし」にする"
+      "宝をとったら、点を自分でたす",
+      "かべにあたったら戻る、と自分でかく",
+      "同じやじるしは「くり返し」にする"
     ],
     commands: [
-      { id: "right", label: "みぎへ1マス", kind: "move", hint: "やじるし1つ" },
-      { id: "up", label: "うえへ1マス", kind: "move", hint: "やじるし1つ" },
-      { id: "repeatRight3", label: "みぎへ3かい", kind: "logic", hint: "3つを1まいに" },
-      { id: "repeatUp2", label: "うえへ2かい", kind: "logic", hint: "2つを1まいに" },
-      { id: "ifTreasure", label: "もし たからなら+10", kind: "logic", hint: "てんをたす" },
-      { id: "ifWall", label: "もし かべならもどる", kind: "logic", hint: "じぶんでみない" },
+      { id: "right", label: "右へ1マス", kind: "move", hint: "やじるし1つ" },
+      { id: "up", label: "上へ1マス", kind: "move", hint: "やじるし1つ" },
+      { id: "repeatRight3", label: "右へ3回", kind: "logic", hint: "3つを1まいに" },
+      { id: "repeatUp2", label: "上へ2回", kind: "logic", hint: "2つを1まいに" },
+      { id: "repeatRight2", label: "右へ2回", kind: "logic", hint: "2つを1まいに" },
+      { id: "ifTreasure", label: "もし 宝なら+10", kind: "logic", hint: "点をたす" },
+      { id: "ifWall", label: "もし かべなら戻る", kind: "logic", hint: "自分で見ない" },
       { id: "ifGoal", label: "もし ゴールならクリア", kind: "logic", hint: "ついたかチェック" },
-      { id: "down", label: "したへ1マス", kind: "move", hint: "まわりみち" }
+      { id: "down", label: "下へ1マス", kind: "move", hint: "回り道" },
+      { id: "left", label: "左へ1マス", kind: "move", hint: "戻るとき" }
     ],
-    sample: ["ifWall", "ifTreasure", "ifGoal", "repeatRight3", "repeatUp2", "up", "repeatRight3", "right"]
+    sample: ["ifWall", "ifTreasure", "ifGoal", "repeatRight3", "repeatUp2", "repeatUp2", "right", "repeatRight3"]
   }
 };
 
+function readModeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const value = (params.get("grade") || params.get("mode") || params.get("g") || "lower").toLowerCase();
+  if (["upper", "high", "4-6", "456"].includes(value)) return "upper";
+  return "lower";
+}
+
 const state = {
-  mode: "lower",
+  mode: readModeFromUrl(),
   program: [],
   robot: { row: 0, col: 0 },
   painted: new Set(),
@@ -89,7 +112,12 @@ const state = {
 };
 
 const elements = {
-  modeButtons: document.querySelectorAll(".mode-button"),
+  gradeName: document.querySelector("#gradeName"),
+  gradeHint: document.querySelector("#gradeHint"),
+  missionTitle: document.querySelector("#missionTitle"),
+  missionList: document.querySelector("#missionList"),
+  stageNoteA: document.querySelector("#stageNoteA"),
+  stageNoteB: document.querySelector("#stageNoteB"),
   paperTitle: document.querySelector("#paperTitle"),
   paperSteps: document.querySelector("#paperSteps"),
   paperWorkCount: document.querySelector("#paperWorkCount"),
@@ -122,13 +150,6 @@ function sameCell(a, b) {
   return a.row === b.row && a.col === b.col;
 }
 
-function setMode(mode) {
-  state.mode = mode;
-  state.program = [];
-  resetStage();
-  render();
-}
-
 function resetStage() {
   const lesson = currentLesson();
   state.robot = { ...lesson.start };
@@ -155,6 +176,8 @@ function expandProgram(program) {
   for (const command of program) {
     if (command === "repeatRight3") {
       expanded.push("right", "right", "right");
+    } else if (command === "repeatRight2") {
+      expanded.push("right", "right");
     } else if (command === "repeatUp2") {
       expanded.push("up", "up");
     } else {
@@ -166,11 +189,24 @@ function expandProgram(program) {
 
 function render() {
   const lesson = currentLesson();
+  document.body.dataset.grade = state.mode;
+  elements.gradeName.textContent = lesson.gradeName;
+  elements.gradeHint.textContent = lesson.gradeHint;
   elements.lessonTitle.textContent = lesson.title;
   elements.paperTitle.textContent = lesson.paperTitle;
   elements.paperWorkCount.textContent = `${lesson.paperWorkCount}かい`;
   elements.paperPoint.textContent = lesson.paperPoint;
   elements.programGoal.textContent = lesson.goal;
+  elements.missionTitle.textContent = lesson.missionTitle;
+  elements.stageNoteA.textContent = lesson.stageNotes[0];
+  elements.stageNoteB.textContent = lesson.stageNotes[1];
+
+  elements.missionList.innerHTML = "";
+  for (const mission of lesson.missions) {
+    const item = document.createElement("span");
+    item.textContent = mission;
+    elements.missionList.append(item);
+  }
 
   elements.paperSteps.innerHTML = "";
   for (const step of lesson.paperSteps) {
@@ -178,12 +214,6 @@ function render() {
     item.textContent = step;
     elements.paperSteps.append(item);
   }
-
-  elements.modeButtons.forEach((button) => {
-    const active = button.dataset.mode === state.mode;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-selected", String(active));
-  });
 
   renderPalette();
   renderStage();
@@ -219,17 +249,31 @@ function renderStage() {
       node.className = "cell path";
       node.setAttribute("aria-label", `たて${row + 1} よこ${col + 1}`);
 
-      if (sameCell(cell, lesson.start)) node.classList.add("start");
-      if (sameCell(cell, lesson.goalCell)) node.classList.add("goal");
+      let mark = "";
+      if (sameCell(cell, lesson.start)) {
+        node.classList.add("start");
+        mark = "S";
+      }
+      if (sameCell(cell, lesson.goalCell)) {
+        node.classList.add("goal");
+        mark = "G";
+      }
       if (lesson.walls.some((wall) => sameCell(cell, wall))) node.classList.add("wall");
 
       const treasureKey = keyOf(cell);
       if (lesson.treasures.some((treasure) => sameCell(cell, treasure)) && !state.collected.has(treasureKey)) {
         node.classList.add("treasure");
+        mark = "★";
       }
 
       if (state.painted.has(treasureKey)) node.classList.add("painted");
       if (sameCell(cell, state.robot)) node.classList.add("robot");
+      if (mark) {
+        const markNode = document.createElement("span");
+        markNode.className = "cell-mark";
+        markNode.textContent = mark;
+        node.append(markNode);
+      }
       elements.stageGrid.append(node);
     }
   }
@@ -393,10 +437,6 @@ function checkFinish() {
     elements.robotStatus.textContent = "おわり。カードをなおしてもういちど";
   }
 }
-
-elements.modeButtons.forEach((button) => {
-  button.addEventListener("click", () => setMode(button.dataset.mode));
-});
 
 elements.runButton.addEventListener("click", runProgram);
 

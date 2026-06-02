@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>初めてのプログラミングに挑戦</title>
+    <meta
+      name="description"
+      content="紙の手作業を命令カードに置き換え、プログラミングで楽になることを体験する教材です。"
+    >
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="プログラミング教材">
+        <aside class="side-panel" aria-label="授業の流れ">
+          <div class="brand-block">
+            <p class="school-name">砧小学校サマースクール</p>
+            <h1>初めてのプログラミングに挑戦</h1>
+          </div>
+
+          <div class="mode-switch" role="tablist" aria-label="学年を選ぶ">
+            <button class="mode-button active" type="button" data-mode="lower" role="tab" aria-selected="true">
+              1-3年生
+            </button>
+            <button class="mode-button" type="button" data-mode="upper" role="tab" aria-selected="false">
+              4-6年生
+            </button>
+          </div>
+
+          <section class="panel-section">
+            <p class="section-label">紙でやること</p>
+            <h2 id="paperTitle">方眼紙に矢印を書こう</h2>
+            <ol id="paperSteps" class="paper-steps"></ol>
+            <div class="paper-meta">
+              <div>
+                <span class="meta-label">紙の作業量</span>
+                <strong id="paperWorkCount">18回</strong>
+              </div>
+              <div>
+                <span class="meta-label">感じてほしいこと</span>
+                <strong id="paperPoint">何度も書くのはたいへん</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-section">
+            <p class="section-label">プログラムでやること</p>
+            <p id="programGoal" class="program-goal"></p>
+            <div class="savings-box">
+              <span>命令カード</span>
+              <strong id="commandCount">0枚</strong>
+              <span>実行される動き</span>
+              <strong id="expandedCount">0回</strong>
+            </div>
+          </section>
+        </aside>
+
+        <section class="main-panel" aria-label="ゲーム画面">
+          <header class="toolbar">
+            <div>
+              <p class="section-label">今の課題</p>
+              <h2 id="lessonTitle">紙の道順を命令にしよう</h2>
+            </div>
+            <div class="toolbar-actions">
+              <button class="icon-button" type="button" id="resetButton" aria-label="最初から">
+                ↺
+              </button>
+              <button class="primary-button" type="button" id="runButton">
+                実行
+              </button>
+            </div>
+          </header>
+
+          <div class="stage-wrap">
+            <div id="stageGrid" class="stage-grid" aria-label="方眼ステージ"></div>
+            <div class="status-strip" aria-live="polite">
+              <span id="robotStatus">スタートで待機中</span>
+              <span id="scoreStatus">スコア 0</span>
+            </div>
+          </div>
+
+          <div class="workbench">
+            <section class="command-palette" aria-label="命令カード">
+              <div class="section-heading">
+                <p class="section-label">命令カード</p>
+                <h2>紙の手順をカードにする</h2>
+              </div>
+              <div id="commandPalette" class="command-grid"></div>
+            </section>
+
+            <section class="program-panel" aria-label="作ったプログラム">
+              <div class="section-heading">
+                <p class="section-label">作ったプログラム</p>
+                <h2>上から順番に実行</h2>
+              </div>
+              <div id="programList" class="program-list"></div>
+              <div class="program-actions">
+                <button type="button" id="undoButton">1つ戻す</button>
+                <button type="button" id="clearButton">全部消す</button>
+                <button type="button" id="sampleButton">見本を入れる</button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

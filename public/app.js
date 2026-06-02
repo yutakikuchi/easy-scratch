@@ -1,10 +1,10 @@
 const lessons = {
   lower: {
-    title: "紙の道順を命令にしよう",
-    paperTitle: "方眼紙に矢印と色をかこう",
+    title: "かみのじゅんばんを めいれいにしよう",
+    paperTitle: "やじるしといろをかこう",
     paperWorkCount: 18,
-    paperPoint: "何度も書くのはたいへん",
-    goal: "紙で書いた矢印と色ぬりを、命令カードに置き換えます。スタートを押すと同じ作業を一気に実行できます。",
+    paperPoint: "なんどもかくのはたいへん",
+    goal: "かみでかいた やじるしといろぬりを、めいれいカードにします。スタートすると、いっきにうごきます。",
     rows: 6,
     cols: 8,
     start: { row: 4, col: 1 },
@@ -16,27 +16,27 @@ const lessons = {
     walls: [],
     treasures: [],
     paperSteps: [
-      "方眼紙のスタートからゴールまで矢印を1つずつ書く",
-      "同じ道順をもう一度書いて、手でくり返す大変さを感じる",
-      "指定されたマスを1つずつ色でぬる",
-      "紙の手順を命令カードに置き換える"
+      "スタートからゴールまで、やじるしを1つずつかく",
+      "おなじじゅんばんを、もういちどかく",
+      "きめられたマスを、1つずついろでぬる",
+      "かみのしごとを、めいれいカードにする"
     ],
     commands: [
-      { id: "right", label: "右へ1マス", kind: "move", hint: "矢印を1つ書く代わり" },
-      { id: "left", label: "左へ1マス", kind: "move", hint: "戻る動き" },
-      { id: "up", label: "上へ1マス", kind: "move", hint: "矢印を1つ書く代わり" },
-      { id: "down", label: "下へ1マス", kind: "move", hint: "矢印を1つ書く代わり" },
-      { id: "paint", label: "色をぬる", kind: "action", hint: "マスをぬる作業" },
-      { id: "say", label: "話す", kind: "action", hint: "お話にする" }
+      { id: "right", label: "みぎへ1マス", kind: "move", hint: "やじるし1つ" },
+      { id: "left", label: "ひだりへ1マス", kind: "move", hint: "もどるとき" },
+      { id: "up", label: "うえへ1マス", kind: "move", hint: "やじるし1つ" },
+      { id: "down", label: "したへ1マス", kind: "move", hint: "やじるし1つ" },
+      { id: "paint", label: "いろをぬる", kind: "action", hint: "マスをぬる" },
+      { id: "say", label: "おはなし", kind: "action", hint: "ことばをだす" }
     ],
     sample: ["right", "right", "paint", "right", "up", "up", "paint", "right", "right", "up"]
   },
   upper: {
-    title: "くり返しと条件で迷路を自動化しよう",
-    paperTitle: "紙の迷路で点数を手で記録しよう",
+    title: "くりかえしと「もし」で らくにしよう",
+    paperTitle: "てんをかぞえよう",
     paperWorkCount: 32,
-    paperPoint: "判断を毎回するのはたいへん",
-    goal: "紙で行った長い道順、点数計算、壁の判断を、くり返しと条件の命令に置き換えます。",
+    paperPoint: "まいかいはたいへん",
+    goal: "ながいみち、てんのけいさん、かべのチェックを、カードでらくにします。",
     rows: 6,
     cols: 10,
     start: { row: 4, col: 1 },
@@ -54,20 +54,20 @@ const lessons = {
       { row: 1, col: 5 }
     ],
     paperSteps: [
-      "方眼紙の迷路に、ゴールまでの矢印を1つずつ書く",
-      "宝を取ったら点数を手で足す",
-      "壁に当たったら戻る、という判断を毎回書く",
-      "同じ矢印が続くところを「くり返し」に置き換える"
+      "めいろに、ゴールまでのやじるしを1つずつかく",
+      "たからをとったら、てんをじぶんでたす",
+      "かべにあたったらもどる、とじぶんでかく",
+      "おなじやじるしは「くりかえし」にする"
     ],
     commands: [
-      { id: "right", label: "右へ1マス", kind: "move", hint: "矢印1つ" },
-      { id: "up", label: "上へ1マス", kind: "move", hint: "矢印1つ" },
-      { id: "repeatRight3", label: "右へ3回", kind: "logic", hint: "右・右・右を短く" },
-      { id: "repeatUp2", label: "上へ2回", kind: "logic", hint: "上・上を短く" },
-      { id: "ifTreasure", label: "もし宝なら+10", kind: "logic", hint: "点数を自動で足す" },
-      { id: "ifWall", label: "もし壁なら戻る", kind: "logic", hint: "判断を自動にする" },
-      { id: "ifGoal", label: "もしゴールならクリア", kind: "logic", hint: "ゴール判定" },
-      { id: "down", label: "下へ1マス", kind: "move", hint: "回り道に使う" }
+      { id: "right", label: "みぎへ1マス", kind: "move", hint: "やじるし1つ" },
+      { id: "up", label: "うえへ1マス", kind: "move", hint: "やじるし1つ" },
+      { id: "repeatRight3", label: "みぎへ3かい", kind: "logic", hint: "3つを1まいに" },
+      { id: "repeatUp2", label: "うえへ2かい", kind: "logic", hint: "2つを1まいに" },
+      { id: "ifTreasure", label: "もし たからなら+10", kind: "logic", hint: "てんをたす" },
+      { id: "ifWall", label: "もし かべならもどる", kind: "logic", hint: "じぶんでみない" },
+      { id: "ifGoal", label: "もし ゴールならクリア", kind: "logic", hint: "ついたかチェック" },
+      { id: "down", label: "したへ1マス", kind: "move", hint: "まわりみち" }
     ],
     sample: ["ifWall", "ifTreasure", "ifGoal", "repeatRight3", "repeatUp2", "up", "repeatRight3", "right"]
   }
@@ -168,7 +168,7 @@ function render() {
   const lesson = currentLesson();
   elements.lessonTitle.textContent = lesson.title;
   elements.paperTitle.textContent = lesson.paperTitle;
-  elements.paperWorkCount.textContent = `${lesson.paperWorkCount}回`;
+  elements.paperWorkCount.textContent = `${lesson.paperWorkCount}かい`;
   elements.paperPoint.textContent = lesson.paperPoint;
   elements.programGoal.textContent = lesson.goal;
 
@@ -217,7 +217,7 @@ function renderStage() {
       const cell = { row, col };
       const node = document.createElement("div");
       node.className = "cell path";
-      node.setAttribute("aria-label", `行${row + 1} 列${col + 1}`);
+      node.setAttribute("aria-label", `たて${row + 1} よこ${col + 1}`);
 
       if (sameCell(cell, lesson.start)) node.classList.add("start");
       if (sameCell(cell, lesson.goalCell)) node.classList.add("goal");
@@ -243,7 +243,7 @@ function renderProgram() {
   if (state.program.length === 0) {
     const empty = document.createElement("p");
     empty.className = "empty-program";
-    empty.textContent = "紙に書いた手順を命令カードで並べよう";
+    empty.textContent = "かみのじゅんばんをカードでならべよう";
     elements.programList.append(empty);
     return;
   }
@@ -258,9 +258,9 @@ function renderProgram() {
 
 function renderStats() {
   const expanded = expandProgram(state.program);
-  elements.commandCount.textContent = `${state.program.length}枚`;
-  elements.expandedCount.textContent = `${expanded.filter((command) => isMovement(command) || command === "paint").length}回`;
-  elements.scoreStatus.textContent = `スコア ${state.score}`;
+  elements.commandCount.textContent = `${state.program.length}まい`;
+  elements.expandedCount.textContent = `${expanded.filter((command) => isMovement(command) || command === "paint").length}かい`;
+  elements.scoreStatus.textContent = `てん ${state.score}`;
 }
 
 function isMovement(command) {
@@ -297,7 +297,7 @@ async function runProgram() {
   resetStage();
   state.running = true;
   elements.runButton.disabled = true;
-  elements.robotStatus.textContent = "実行中";
+  elements.robotStatus.textContent = "うごいている";
   renderStage();
   renderStats();
 
@@ -317,30 +317,30 @@ async function runProgram() {
 async function executeCommand(command) {
   if (command === "ifWall") {
     state.rules.ifWall = true;
-    elements.robotStatus.textContent = "壁の判断を自動化";
+    elements.robotStatus.textContent = "かべをチェックできる";
     return;
   }
 
   if (command === "ifTreasure") {
     state.rules.ifTreasure = true;
-    elements.robotStatus.textContent = "点数計算を自動化";
+    elements.robotStatus.textContent = "てんをじぶんでたせる";
     return;
   }
 
   if (command === "ifGoal") {
     state.rules.ifGoal = true;
-    elements.robotStatus.textContent = "ゴール判定を自動化";
+    elements.robotStatus.textContent = "ゴールをチェックできる";
     return;
   }
 
   if (command === "paint") {
     state.painted.add(keyOf(state.robot));
-    elements.robotStatus.textContent = "色をぬった";
+    elements.robotStatus.textContent = "いろをぬった";
     return;
   }
 
   if (command === "say") {
-    elements.robotStatus.textContent = "こんにちは、と話した";
+    elements.robotStatus.textContent = "こんにちは、といった";
     return;
   }
 
@@ -348,22 +348,22 @@ async function executeCommand(command) {
 
   const next = nextPosition(command);
   if (!isInside(next)) {
-    elements.robotStatus.textContent = "外には出られない";
+    elements.robotStatus.textContent = "そとにはでられない";
     return;
   }
 
   if (isWall(next)) {
     if (state.rules.ifWall) {
       state.robot = { ...currentLesson().start };
-      elements.robotStatus.textContent = "壁なのでスタートへ戻った";
+      elements.robotStatus.textContent = "かべなのでスタートへもどった";
     } else {
-      elements.robotStatus.textContent = "壁に当たった";
+      elements.robotStatus.textContent = "かべにあたった";
     }
     return;
   }
 
   state.robot = next;
-  elements.robotStatus.textContent = "1マス進んだ";
+  elements.robotStatus.textContent = "1マスすすんだ";
   applyAutomaticRules();
 }
 
@@ -375,11 +375,11 @@ function applyAutomaticRules() {
   if (onTreasure && state.rules.ifTreasure && !state.collected.has(robotKey)) {
     state.collected.add(robotKey);
     state.score += 10;
-    elements.robotStatus.textContent = "宝を取って+10";
+    elements.robotStatus.textContent = "たからをとって+10";
   }
 
   if (sameCell(state.robot, lesson.goalCell) && state.rules.ifGoal) {
-    elements.robotStatus.textContent = "ゴール判定でクリア";
+    elements.robotStatus.textContent = "ゴールでクリア";
   }
 }
 
@@ -387,10 +387,10 @@ function checkFinish() {
   const lesson = currentLesson();
   if (sameCell(state.robot, lesson.goalCell)) {
     elements.robotStatus.textContent = state.mode === "upper" && !state.rules.ifGoal
-      ? "ゴールに着いた。次は条件カードを使おう"
-      : "クリア。紙より速くできた";
+      ? "ゴールについた。つぎは「もし」をつかおう"
+      : "クリア。かみよりはやい";
   } else {
-    elements.robotStatus.textContent = "実行完了。命令を直してもう一度試そう";
+    elements.robotStatus.textContent = "おわり。カードをなおしてもういちど";
   }
 }
 
@@ -404,7 +404,7 @@ elements.resetButton.addEventListener("click", () => {
   resetStage();
   renderStage();
   renderStats();
-  elements.robotStatus.textContent = "スタートで待機中";
+  elements.robotStatus.textContent = "スタートでまっている";
 });
 
 elements.undoButton.addEventListener("click", () => {

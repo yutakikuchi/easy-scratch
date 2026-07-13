@@ -533,6 +533,10 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 2px;
+  padding: 2px 3px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.84);
+  font-size: clamp(8px, 1vw, 12px);
 }
 
 .cell-icon {
@@ -565,45 +569,16 @@ button:focus-visible {
   font-size: clamp(18px, 3.2vw, 30px);
 }
 
-.cell.robot::before,
-.cell.robot::after {
-  content: "";
+.stage-character {
   position: absolute;
-}
-
-.cell.robot::before {
-  z-index: 4;
+  z-index: 5;
   left: 50%;
   top: 50%;
-  width: 62%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  border: 4px solid #263445;
-  border-radius: 20px 20px 16px 16px;
-  background:
-    radial-gradient(circle at 33% 42%, #263445 0 5%, transparent 6%),
-    radial-gradient(circle at 67% 42%, #263445 0 5%, transparent 6%),
-    radial-gradient(ellipse at 50% 62%, #263445 0 4%, transparent 5%),
-    radial-gradient(ellipse at 50% 62%, #fff2d8 0 26%, transparent 27%),
-    linear-gradient(90deg, #8c5a3c 0 18%, transparent 19% 81%, #8c5a3c 82%),
-    linear-gradient(#d9b07a, #b77a4e);
-  box-shadow:
-    -16px -16px 0 -7px #8c5a3c,
-    16px -16px 0 -7px #8c5a3c,
-    0 7px 0 rgba(38, 52, 69, 0.18);
-}
-
-.cell.robot::after {
-  z-index: 3;
-  right: 7%;
-  bottom: 12%;
-  width: 26%;
-  height: 48%;
-  border: 4px solid #263445;
-  border-radius: 999px;
-  background:
-    linear-gradient(180deg, #8c5a3c 0 28%, #f0c982 29% 48%, #8c5a3c 49% 72%, #f0c982 73%);
-  transform: rotate(23deg);
+  width: 76%;
+  height: 84%;
+  object-fit: contain;
+  transform: translate(-50%, -46%);
+  filter: drop-shadow(0 4px 2px rgba(25, 51, 73, 0.2));
 }
 
 .status-strip {
@@ -746,6 +721,12 @@ button:focus-visible {
   background: #eef4fb;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+
+.program-item.active {
+  border-color: #f0b400;
+  background: #fff8cc;
+  box-shadow: 0 0 0 4px rgba(255, 197, 0, 0.25);
 }
 
 .program-actions {

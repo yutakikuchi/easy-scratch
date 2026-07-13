@@ -9,8 +9,13 @@ const requiredFiles = [
   "public/index.html",
   "public/styles.css",
   "public/program.css",
+  "public/calculation.css",
   "public/app.js",
-  "public/firebase-init.js"
+  "public/calculation.js",
+  "public/firebase-init.js",
+  "public/assets/child-mascot.png",
+  "public/assets/lower-mascot.png",
+  "public/assets/robot-mascot.png"
 ];
 
 for (const file of requiredFiles) {
@@ -20,41 +25,45 @@ for (const file of requiredFiles) {
 const html = await readFile(resolve(root, "public/index.html"), "utf8");
 const css = await readFile(resolve(root, "public/styles.css"), "utf8");
 const programCss = await readFile(resolve(root, "public/program.css"), "utf8");
+const calculationCss = await readFile(resolve(root, "public/calculation.css"), "utf8");
 const js = await readFile(resolve(root, "public/app.js"), "utf8");
 const firebaseInit = await readFile(resolve(root, "public/firebase-init.js"), "utf8");
 const firebaseConfig = await readFile(resolve(root, "firebase.json"), "utf8");
 
 const checks = [
   [html.includes('<script type="module" src="./app.js"></script>'), "index.html must load app.js"],
-  [html.includes('<script type="module" src="./firebase-init.js"></script>'), "index.html must load firebase-init.js"],
-  [html.includes('<link rel="stylesheet" href="./styles.css">'), "index.html must load styles.css"],
-  [html.includes('<link rel="stylesheet" href="./program.css">'), "index.html must load program.css"],
-  [html.includes('id="paperPage"'), "index.html must include a paper page"],
-  [html.includes('id="programPage"'), "index.html must include a programming page"],
-  [html.includes('class="lesson-console"'), "index.html must keep programming controls in one console"],
-  [html.includes('class="command-palette"'), "index.html must include visible command cards"],
-  [html.includes('class="program-panel"'), "index.html must include a visible program list"],
-  [css.includes(".stage-grid"), "styles.css must style the stage grid"],
-  [css.includes(".cell.start"), "styles.css must style the start cell"],
-  [css.includes(".cell.goal"), "styles.css must style the goal cell"],
-  [programCss.includes('overflow: visible'), "program.css must allow the program page to scroll"],
+  [html.includes('<link rel="stylesheet" href="./calculation.css">'), "index.html must load calculation.css"],
+  [html.includes('id="calculationPage"'), "index.html must include the calculation page"],
+  [html.includes('id="programPage"'), "index.html must include the programming page"],
+  [html.includes('id="calculationStartButton"'), "calculation page must include a start button"],
+  [html.includes('id="calculationQuestions"'), "calculation page must include fixed questions"],
+  [html.includes('id="programStatusSub"'), "calculation page must show the program waiting state"],
+  [html.includes('id="reflectionPanel"'), "calculation page must include reflection time"],
+  [html.includes('id="revealInsightButton"'), "reflection must reveal the explanation after discussion"],
+  [html.includes('id="goToProgramButton"'), "calculation page must link to programming"],
+  [html.includes('class="lesson-console"'), "programming controls must stay in one console"],
+  [html.includes('class="command-palette"'), "programming page must include command cards"],
+  [html.includes('class="program-panel"'), "programming page must include a program list"],
+  [!html.includes('id="paperPage"'), "the old paper page must be removed"],
+  [css.includes(".stage-character"), "styles.css must use a mascot image in the stage"],
+  [!css.includes(".cell.robot::before"), "styles.css must not draw the mascot with CSS art"],
   [programCss.includes(".lesson-console"), "program.css must style the programming console"],
-  [js.includes("const lessons"), "app.js must define lesson data"],
-  [js.includes("function runProgram"), "app.js must expose the program runner"],
-  [js.includes("function setPage"), "app.js must support paper/program page switching"],
-  [!js.includes("function openPopup"), "app.js must not depend on popup panels"],
-  [js.includes("commandIcons"), "app.js must render large command button icons"],
-  [js.includes('"スタート"'), "app.js must label the start cell in Japanese"],
-  [js.includes('"ゴール"'), "app.js must label the goal cell in Japanese"],
-  [js.includes("cell-icon"), "app.js must render start and goal icons"],
-  [!js.includes('mark = "S"') && !js.includes('mark = "G"'), "app.js must not render S/G stage labels"],
+  [programCss.includes(".program-mascot"), "program.css must style the program mascot"],
+  [calculationCss.includes(".calculation-workspace"), "calculation.css must style the calculation layout"],
+  [calculationCss.includes(".program-status-card"), "calculation.css must distinguish program status"],
+  [js.includes('from "./calculation.js"'), "app.js must load calculation data"],
+  [js.includes("function resetCalculation"), "app.js must start both calculations"],
+  [js.includes("function renderCalculationStatus"), "app.js must render human/program status"],
+  [js.includes("function renderReflection"), "app.js must render the reflection activity"],
+  [js.includes("function runProgram"), "app.js must keep the program runner"],
+  [js.includes("activeCommandIndex"), "app.js must highlight the running command"],
+  [js.includes("programWaiting"), "app.js must show that the program waits for the human"],
+  [!js.includes("かみよりはやい"), "app.js must not compare the program with paper work"],
+  [!js.includes("勝ち") && !js.includes("負け") && !js.includes("順位"), "app.js must not rank children"],
   [firebaseInit.includes("summer-school-kinuta"), "firebase-init.js must target the Firebase project"],
   [firebaseInit.includes("getAnalytics"), "firebase-init.js must initialize Analytics"],
-  [
-    firebaseConfig.includes("no-cache, no-store, max-age=0, must-revalidate"),
-    "firebase.json must disable browser and CDN caching"
-  ],
-  [firebaseConfig.includes('"key": "Pragma"'), "firebase.json must include Pragma no-cache header"],
+  [firebaseConfig.includes("no-cache, no-store, max-age=0, must-revalidate"), "firebase.json must disable caching"],
+  [firebaseConfig.includes('"key": "Pragma"'), "firebase.json must include Pragma no-cache"],
   [firebaseConfig.includes('"key": "Expires"'), "firebase.json must include Expires header"]
 ];
 

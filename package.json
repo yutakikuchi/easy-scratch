@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node scripts/validate-static.mjs",
+    "test": "node scripts/validate-static.mjs && node scripts/calculation.test.mjs",
     "build": "node scripts/build.mjs"
   }
 }

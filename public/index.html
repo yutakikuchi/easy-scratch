@@ -3,146 +3,152 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>はじめてのプログラミング</title>
-    <meta name="description" content="かみでたいへんだったことを、めいれいカードでらくにするアプリです。">
+    <title>きぬた サマースクール</title>
+    <meta name="description" content="けいさんとプログラミングを、たのしくたいけんするアプリです。">
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./program.css">
+    <link rel="stylesheet" href="./calculation.css">
   </head>
   <body>
     <main class="app-shell">
-      <section class="workspace" aria-label="プログラミングアプリ">
-        <header class="app-header">
-          <div class="brand-block">
-            <p class="school-name">きぬた サマースクール</p>
-            <h1><span>はじめての</span><span>プログラミング</span></h1>
-            <p class="brand-copy"><span>かみはたいへん。</span><span>プログラムはらく。</span></p>
-          </div>
-
-          <div class="grade-card" aria-label="えらばれたコース">
-            <p class="section-label">きょうのコース</p>
-            <strong id="gradeName">1-3ねんせい</strong>
-            <span id="gradeHint">QRでえらばれたコースです</span>
-          </div>
-        </header>
-
+      <section class="workspace" aria-label="サマースクール アプリ">
         <nav class="page-switcher" aria-label="ページをえらぶ">
-          <button class="page-button active" type="button" id="paperPageButton" aria-pressed="true">
+          <button class="page-button active" type="button" id="calculationPageButton" aria-pressed="true">
             <span>1</span>
-            <strong>かみでやる</strong>
-            <small>まずたいへんさをためす</small>
+            <strong id="calculationTabTitle">けいさん</strong>
+            <small id="calculationTabHint">おなじ しきを やってみよう</small>
           </button>
           <button class="page-button" type="button" id="programPageButton" aria-pressed="false">
             <span>2</span>
-            <strong>プログラムでやる</strong>
-            <small>カードでらくにうごかす</small>
+            <strong id="programTabTitle">プログラミング</strong>
+            <small id="programTabHint">カードで えを うごかそう</small>
           </button>
         </nav>
 
-        <section class="lesson-page paper-page" id="paperPage" aria-label="かみの説明">
-          <section class="flow-panel" aria-label="きょうのながれ">
-            <p class="section-label">きょうのながれ</p>
-            <div class="flow-steps">
-              <div class="flow-step">
-                <strong>1</strong>
-                <span>かみにかく</span>
-              </div>
-              <div class="flow-step">
-                <strong>2</strong>
-                <span>カードにする</span>
-              </div>
-              <div class="flow-step">
-                <strong>3</strong>
-                <span>うごかす</span>
-              </div>
+        <section class="lesson-page calculation-page" id="calculationPage" aria-label="けいさん">
+          <header class="calculation-hero">
+            <div class="grade-badge" id="gradeName">1-3ねんせい</div>
+            <img class="hero-mascot hero-child" src="./assets/child-mascot.png" alt="げんきな こども">
+            <div class="hero-copy">
+              <p class="eyebrow" id="calculationEyebrow">おなじ けいさんを やってみよう</p>
+              <h1 id="calculationTitle">プログラムは どうやって けいさんするの？</h1>
+              <p id="calculationLead">スタートを おすと、いっしょに はじまるよ</p>
             </div>
-          </section>
+            <img class="hero-mascot hero-robot" src="./assets/robot-mascot.png" alt="プログラムの ロボット">
+          </header>
 
-          <section class="mission-panel" aria-label="ミッション">
-            <p class="section-label">ミッション</p>
-            <h2 id="missionTitle">かみのしごとをらくにしよう</h2>
-            <div id="missionList" class="mission-list"></div>
-          </section>
+          <button class="calculation-start" type="button" id="calculationStartButton">
+            <span class="play-symbol" aria-hidden="true">▶</span>
+            <strong id="calculationStartLabel">スタート</strong>
+            <small id="calculationStartHint">おすと いっしょに はじまる</small>
+          </button>
 
-          <section class="panel-section">
-            <p class="section-label">かみでやる</p>
-            <h2 id="paperTitle">ますのかみに やじるしをかこう</h2>
-            <ol id="paperSteps" class="paper-steps"></ol>
-            <div class="paper-meta">
-              <div>
-                <span class="meta-label">かみのしごと</span>
-                <strong id="paperWorkCount">18かい</strong>
+          <div class="calculation-workspace">
+            <section class="question-panel" aria-label="けいさんもんだい">
+              <div class="question-header">
+                <h2 id="questionHeading">こたえを えらぼう</h2>
+                <span id="questionProgress">0 / 3もん</span>
               </div>
-              <div>
-                <span class="meta-label">きづいてほしいこと</span>
-                <strong id="paperPoint">なんどもかくのはたいへん</strong>
-              </div>
-            </div>
-          </section>
+              <div class="calculation-questions" id="calculationQuestions"></div>
+            </section>
 
-          <section class="panel-section program-preview">
-            <p class="section-label">プログラムでやる</p>
-            <p id="programGoal" class="program-goal"></p>
-            <div class="savings-box">
-              <span>めいれいカード</span>
-              <strong id="commandCount">0まい</strong>
-              <span>うごくかず</span>
-              <strong id="expandedCount">0かい</strong>
-            </div>
-            <button class="next-button" type="button" id="startProgramButton">
-              プログラムでやってみる
+            <section class="number-pad" id="numberPad" aria-label="すうじを にゅうりょく" hidden>
+              <div class="number-pad-grid" id="numberPadGrid"></div>
+              <button class="number-delete" type="button" id="numberDeleteButton">1字消す</button>
+              <button class="number-confirm" type="button" id="numberConfirmButton">決定</button>
+            </section>
+
+            <aside class="calculation-statuses" aria-label="けいさんの ようす">
+              <article class="status-card human-status-card">
+                <div class="status-title" id="humanStatusTitle">にんげん</div>
+                <div class="status-body">
+                  <img src="./assets/child-mascot.png" alt="こども">
+                  <div>
+                    <strong id="humanStatusMain">スタートを まっているよ</strong>
+                    <span id="humanStatusProgress">0 / 3もん</span>
+                    <small id="humanStatusSub">スタートで はじめよう</small>
+                  </div>
+                </div>
+              </article>
+
+              <article class="status-card program-status-card">
+                <div class="status-title" id="programStatusTitle">プログラム</div>
+                <div class="status-body">
+                  <div>
+                    <strong id="programStatusMain">スタートを まっているよ</strong>
+                    <span id="programStatusProgress">0.0びょう</span>
+                    <small id="programStatusSub">おなじ しきを けいさんするよ</small>
+                  </div>
+                  <img src="./assets/robot-mascot.png" alt="ロボット">
+                </div>
+              </article>
+            </aside>
+          </div>
+
+          <section class="reflection-panel" id="reflectionPanel" aria-labelledby="reflectionTitle" hidden>
+            <h2 id="reflectionTitle">どうして すぐに せいかくに できたのかな？</h2>
+            <p id="reflectionLead">となりの ひとと はなして、あてはまる ことばを おそう</p>
+            <div class="reflection-choices" id="reflectionChoices"></div>
+            <button class="reflection-reveal" type="button" id="revealInsightButton" disabled>
+              わかったことを みる
             </button>
           </section>
+
+          <section class="learning-insight" id="learningInsight" aria-live="polite" hidden>
+            <strong id="insightTitle">プログラムは、すぐに せいかくに けいさんできる</strong>
+            <p id="insightBody">きめた やりかたを、まちがえずに なんどでも できるから</p>
+          </section>
+
+          <button class="next-button calculation-next" type="button" id="goToProgramButton" disabled>
+            <span aria-hidden="true">▶</span>
+            <strong id="goToProgramLabel">つぎは えを うごかそう</strong>
+          </button>
         </section>
 
-        <section class="lesson-page program-page" id="programPage" aria-label="プログラミング実践" hidden>
+        <section class="lesson-page program-page" id="programPage" aria-label="プログラミング" hidden>
           <header class="program-header">
             <div>
-              <p class="section-label">いまやること</p>
-              <h2 id="lessonTitle">かみのじゅんばんを めいれいにしよう</h2>
+              <p class="section-label" id="programSectionLabel">カードを おして じゅんばんに ならべよう</p>
+              <h1 id="lessonTitle">えを うごかそう！</h1>
             </div>
-            <button class="back-button" type="button" id="backToPaperButton">
-              かみをみる
-            </button>
+            <img class="program-mascot" id="programMascot" src="./assets/lower-mascot.png" alt="キャラクター">
+            <button class="back-button" type="button" id="backToCalculationButton">けいさんへ</button>
           </header>
 
           <div class="lesson-console">
             <section class="stage-wrap">
               <div class="stage-note">
                 <span id="stageNoteA">スタートから ゴールまで</span>
-                <span id="stageNoteB">カードのじゅんにうごく</span>
+                <span id="stageNoteB">カードの じゅんに うごく</span>
               </div>
-              <div id="stageGrid" class="stage-grid" aria-label="マスのステージ"></div>
+              <div id="stageGrid" class="stage-grid" aria-label="マスの ステージ"></div>
               <div class="status-strip" aria-live="polite">
-                <span id="robotStatus">スタートでまっている</span>
-                <span id="scoreStatus">てん 0</span>
+                <span id="robotStatus">スタートで まっている</span>
+                <span id="scoreStatus">いろ 0 / 2</span>
               </div>
               <div class="stage-actions">
-                <button class="icon-button" type="button" id="resetButton" aria-label="もういちど">
-                  ↺
-                </button>
-                <button class="primary-button" type="button" id="runButton">
-                  うごかす
-                </button>
+                <button class="icon-button" type="button" id="resetButton" aria-label="もういちど">↺</button>
+                <button class="primary-button" type="button" id="runButton">うごかす</button>
               </div>
             </section>
 
             <section class="command-palette" aria-label="めいれいカード">
               <div class="section-heading">
-                <p class="section-label">めいれいカード</p>
-                <h2>カードをえらぶ</h2>
+                <p class="section-label" id="paletteLabel">めいれいカード</p>
+                <h2 id="paletteHeading">カードを えらぶ</h2>
               </div>
               <div id="commandPalette" class="command-grid"></div>
             </section>
 
-            <section class="program-panel" aria-label="つくったプログラム">
+            <section class="program-panel" aria-label="つくった プログラム">
               <div class="section-heading">
-                <p class="section-label">つくったプログラム</p>
-                <h2>うえからじゅんばん</h2>
+                <p class="section-label" id="programListLabel">つくった プログラム</p>
+                <h2 id="programListHeading">うえから じゅんばん</h2>
               </div>
               <div id="programList" class="program-list"></div>
               <div class="program-actions">
-                <button type="button" id="undoButton">1つもどす</button>
-                <button type="button" id="clearButton">ぜんぶけす</button>
+                <button type="button" id="undoButton">1つ もどす</button>
+                <button type="button" id="clearButton">ぜんぶ けす</button>
                 <button type="button" id="sampleButton">みほん</button>
               </div>
             </section>

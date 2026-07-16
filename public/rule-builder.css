@@ -1,0 +1,273 @@
+.rule-builder-help {
+  margin: -2px 0 0;
+  color: #6d5313;
+  font-size: clamp(14px, 1.3vw, 17px);
+  font-weight: 900;
+  text-align: center;
+}
+
+.rule-token-tray {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 7px;
+  border: 2px dashed #e8b22b;
+  border-radius: 16px;
+  background: #fff8cf;
+}
+
+.lower-machine:not(.upper-machine) .rule-token-tray {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rule-token {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 52px;
+  padding: 4px 7px;
+  border: 2px solid currentColor;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 5px 0 rgba(61, 75, 103, 0.12);
+  font-family: ui-rounded, "Arial Rounded MT Bold", sans-serif;
+  font-weight: 900;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rule-token span {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.rule-token small {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.token-circle {
+  color: #157bd7;
+}
+
+.token-triangle {
+  color: #159a43;
+}
+
+.token-add {
+  color: #10295a;
+}
+
+.token-subtract {
+  color: #a64273;
+}
+
+.rule-token:active,
+.rule-token.drag-source {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(61, 75, 103, 0.12);
+}
+
+.machine-rule-builder {
+  gap: 7px;
+  min-height: 92px;
+  padding: 8px;
+}
+
+.rule-drop-slot {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  min-width: 0;
+  min-height: 66px;
+  padding: 2px;
+  border: 3px dashed #d4ae50;
+  border-radius: 15px;
+  background: #fffdf1;
+  color: #8d773f;
+  font-family: ui-rounded, "Arial Rounded MT Bold", sans-serif;
+  font-size: 46px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.operator-slot {
+  width: 54px;
+  min-height: 58px;
+  font-size: 39px;
+}
+
+.rule-slot-placeholder {
+  font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", ui-rounded, sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.rule-drop-slot.filled {
+  border-style: solid;
+  border-color: currentColor;
+  background: #fff;
+  box-shadow: 0 4px 0 rgba(51, 69, 102, 0.1);
+}
+
+.rule-drop-slot[data-token="circle"] {
+  color: #157bd7;
+}
+
+.rule-drop-slot[data-token="triangle"] {
+  color: #159a43;
+}
+
+.rule-drop-slot[data-token="add"] {
+  color: #10295a;
+}
+
+.rule-drop-slot[data-token="subtract"] {
+  color: #a64273;
+}
+
+.rule-drop-slot.drop-ready {
+  outline: 5px solid rgba(22, 132, 226, 0.22);
+  outline-offset: 2px;
+  transform: scale(1.05);
+}
+
+.rule-drop-slot.drop-blocked {
+  outline: 4px solid rgba(238, 64, 87, 0.24);
+}
+
+.rule-drag-ghost {
+  position: fixed;
+  z-index: 9999;
+  width: 82px;
+  min-height: 58px;
+  pointer-events: none;
+  opacity: 0.92;
+  transform: translate(-50%, -50%) rotate(2deg) scale(1.06);
+  box-shadow: 0 13px 24px rgba(30, 57, 94, 0.22);
+}
+
+body.rule-dragging {
+  cursor: grabbing;
+}
+
+.machine-build-button:disabled {
+  cursor: not-allowed;
+  background: #a9b4c4;
+  box-shadow: none;
+}
+
+.machine-rule-card.rule-built .rule-token-tray {
+  border-color: #70c894;
+  background: #ecfff2;
+}
+
+@media (min-width: 821px) and (max-width: 1500px) {
+  .machine-rule-card {
+    gap: 3px;
+  }
+
+  .machine-rule-card .machine-rule-copy {
+    gap: 1px;
+    padding-right: 38px;
+  }
+
+  .machine-rule-card .machine-rule-copy p {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .machine-rule-card .machine-rule-copy p:nth-child(2) {
+    display: none;
+  }
+
+  .rule-builder-help {
+    font-size: 12px;
+  }
+
+  .rule-token-tray {
+    gap: 5px;
+    padding: 4px;
+    border-radius: 12px;
+  }
+
+  .rule-token {
+    grid-template-columns: 1fr;
+    gap: 0;
+    min-height: 43px;
+    padding: 2px 4px;
+    border-radius: 11px;
+  }
+
+  .rule-token span {
+    font-size: 27px;
+  }
+
+  .rule-token small {
+    font-size: 10px;
+  }
+
+  .machine-rule-builder {
+    min-height: 66px;
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .rule-drop-slot {
+    width: 43px;
+    min-height: 50px;
+    border-width: 2px;
+    border-radius: 11px;
+    font-size: 35px;
+  }
+
+  .operator-slot {
+    width: 38px;
+    min-height: 44px;
+    font-size: 29px;
+  }
+
+  .rule-slot-placeholder {
+    font-size: 9px;
+  }
+}
+
+@media (pointer: coarse) {
+  .rule-token,
+  .rule-drop-slot {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 820px) {
+  .rule-token {
+    min-height: 62px;
+  }
+
+  .machine-rule-builder {
+    min-height: 112px;
+  }
+
+  .rule-drop-slot {
+    width: 72px;
+    min-height: 78px;
+    font-size: 54px;
+  }
+
+  .operator-slot {
+    width: 62px;
+    min-height: 68px;
+    font-size: 45px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rule-drop-slot,
+  .rule-token {
+    transition: none;
+  }
+}

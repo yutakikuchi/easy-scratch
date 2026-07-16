@@ -4,6 +4,9 @@ import {
   calculationLessons,
   isCalculationComplete
 } from "./calculation.js";
+import { initLowerCalculationMachine } from "./lower-machine.js";
+import { initPictureLessons } from "./picture-lessons.js";
+import { initUpperCalculationMachine } from "./upper-machine.js";
 
 const lessons = {
   lower: {
@@ -38,8 +41,8 @@ const lessons = {
   },
   upper: {
     gradeName: "4-6年生",
-    programTitle: "迷路ゲームを作ろう",
-    programSectionLabel: "命令を組み合わせて、宝を取りながらゴールしよう",
+    programTitle: "絵を動かそう",
+    programSectionLabel: "命令を組み合わせて、ロボットの絵をゴールまで動かそう",
     paletteLabel: "命令ブロック",
     paletteHeading: "動き・くり返し・もし",
     listLabel: "作ったプログラム",
@@ -87,8 +90,10 @@ function readModeFromUrl() {
 }
 
 function readPageFromUrl() {
-  const value = (new URLSearchParams(window.location.search).get("page") || "calculation").toLowerCase();
-  return value === "program" ? "program" : "calculation";
+  const value = (new URLSearchParams(window.location.search).get("page") || "home").toLowerCase();
+  if (value === "program") return "program";
+  if (value === "calculation") return "calculation";
+  return "home";
 }
 
 const mode = readModeFromUrl();
@@ -118,7 +123,8 @@ const state = {
 };
 
 const elements = Object.fromEntries([
-  "calculationPage", "programPage", "calculationPageButton", "programPageButton",
+  "homePage", "pageSwitcher", "calculationPage", "programPage", "calculationPageButton", "programPageButton",
+  "lowerMachinePage", "upperMachinePage", "legacyCalculationPage", "legacyProgramPage", "pictureExperience",
   "calculationTabTitle", "calculationTabHint", "programTabTitle", "programTabHint",
   "gradeName", "calculationEyebrow", "calculationTitle", "calculationLead",
   "calculationStartButton", "calculationStartLabel", "calculationStartHint",
@@ -240,6 +246,13 @@ function confirmNumber() {
 }
 
 function renderCalculation() {
+  const isLowerMachine = state.mode === "lower";
+  const isUpperMachine = state.mode === "upper";
+  elements.lowerMachinePage.hidden = !isLowerMachine;
+  elements.upperMachinePage.hidden = !isUpperMachine;
+  elements.legacyCalculationPage.hidden = true;
+  if (isLowerMachine || isUpperMachine) return;
+
   const lesson = currentCalculationLesson();
   const copy = lesson.copy;
   elements.gradeName.textContent = currentLesson().gradeName;
@@ -417,7 +430,11 @@ function resetStage() {
 function setPage(page) {
   state.page = page;
   const url = new URL(window.location.href);
-  url.searchParams.set("page", page);
+  if (page === "home") {
+    url.search = "";
+  } else {
+    url.searchParams.set("page", page);
+  }
   window.history.replaceState({}, "", url);
   renderPage();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -435,10 +452,13 @@ function expandProgram(program) {
 }
 
 function renderPage() {
+  const isHome = state.page === "home";
   const isProgram = state.page === "program";
   document.body.dataset.page = state.page;
-  elements.calculationPage.hidden = isProgram;
-  elements.programPage.hidden = !isProgram;
+  elements.homePage.hidden = !isHome;
+  elements.pageSwitcher.hidden = true;
+  elements.calculationPage.hidden = isHome || isProgram;
+  elements.programPage.hidden = isHome || !isProgram;
   elements.calculationPageButton.classList.toggle("active", !isProgram);
   elements.programPageButton.classList.toggle("active", isProgram);
   elements.calculationPageButton.setAttribute("aria-pressed", String(!isProgram));
@@ -446,6 +466,11 @@ function renderPage() {
 }
 
 function renderProgramPage() {
+  elements.legacyProgramPage.hidden = true;
+  elements.pictureExperience.hidden = false;
+  pictureExperience.render(state.mode);
+  return;
+
   const lesson = currentLesson();
   elements.lessonTitle.textContent = lesson.programTitle;
   elements.programSectionLabel.textContent = lesson.programSectionLabel;
@@ -457,7 +482,7 @@ function renderProgramPage() {
   elements.stageNoteB.textContent = lesson.stageNotes[1];
   elements.programMascot.src = state.mode === "lower" ? "./assets/lower-mascot.png" : "./assets/robot-mascot.png";
   elements.programMascot.alt = state.mode === "lower" ? "キャラクター" : "ロボット";
-  elements.backToCalculationButton.textContent = state.mode === "lower" ? "けいさんへ" : "計算へ戻る";
+  elements.backToCalculationButton.textContent = state.mode === "lower" ? "TOPへ もどる" : "TOPへ戻る";
   elements.runButton.textContent = state.mode === "lower" ? "うごかす" : "実行";
   elements.undoButton.textContent = state.mode === "lower" ? "もどす" : "戻す";
   elements.clearButton.textContent = state.mode === "lower" ? "けす" : "消す";
@@ -694,7 +719,7 @@ function render() {
   elements.calculationTabTitle.textContent = isLower ? "けいさん" : "計算";
   elements.calculationTabHint.textContent = isLower ? "おなじ しきを やってみよう" : "速さと正確さを確かめる";
   elements.programTabTitle.textContent = "プログラミング";
-  elements.programTabHint.textContent = isLower ? "カードで えを うごかそう" : "命令で迷路を動かす";
+  elements.programTabHint.textContent = isLower ? "カードで えを うごかそう" : "命令で絵を動かす";
   renderCalculation();
   renderProgramPage();
   renderPage();
@@ -711,7 +736,7 @@ elements.numberConfirmButton.addEventListener("click", confirmNumber);
 elements.calculationPageButton.addEventListener("click", () => setPage("calculation"));
 elements.programPageButton.addEventListener("click", () => setPage("program"));
 elements.goToProgramButton.addEventListener("click", () => setPage("program"));
-elements.backToCalculationButton.addEventListener("click", () => setPage("calculation"));
+elements.backToCalculationButton.addEventListener("click", () => setPage("home"));
 elements.runButton.addEventListener("click", runProgram);
 elements.resetButton.addEventListener("click", () => {
   resetStage();
@@ -739,6 +764,16 @@ elements.sampleButton.addEventListener("click", () => {
   renderStats();
 });
 
+initLowerCalculationMachine({
+  onBack: () => setPage("home")
+});
+initUpperCalculationMachine({
+  onBack: () => setPage("home")
+});
+const pictureExperience = initPictureLessons({
+  root: elements.pictureExperience,
+  onBackHome: () => setPage("home")
+});
 renderNumberPad();
 resetStage();
 render();

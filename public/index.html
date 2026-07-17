@@ -3,17 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>サマースクール</title>
+    <title>はじめてのプログラミングにちょうせん</title>
     <meta name="description" content="けいさんとプログラミングを、たのしくたいけんするアプリです。">
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./program.css?v=20260716a">
     <link rel="stylesheet" href="./calculation.css">
-    <link rel="stylesheet" href="./home.css?v=20260716b">
+    <link rel="stylesheet" href="./home.css?v=20260717c">
     <link rel="stylesheet" href="./lower-machine.css">
     <link rel="stylesheet" href="./rule-builder.css">
     <link rel="stylesheet" href="./upper-machine.css">
-    <link rel="stylesheet" href="./picture-lessons.css?v=20260717a">
-    <link rel="stylesheet" href="./picture-lessons-effects.css?v=20260717a">
+    <link rel="stylesheet" href="./picture-lessons.css?v=20260717f">
+    <link rel="stylesheet" href="./picture-lessons-effects.css?v=20260717m">
+    <link rel="stylesheet" href="./picture-loop-success.css?v=20260717o">
+    <link rel="stylesheet" href="./upper-picture-lessons.css?v=20260717o">
+    <link rel="stylesheet" href="./upper-picture-soccer.css?v=20260717n">
+    <link rel="stylesheet" href="./upper-free-kick-program.css?v=20260717o">
+    <link rel="stylesheet" href="./lower-grid-paint.css?v=20260717n">
+    <link rel="stylesheet" href="./site-footer.css?v=20260717n">
   </head>
   <body>
     <main class="app-shell">
@@ -22,25 +28,43 @@
           <header class="home-hero">
             <img src="./assets/home-sun.png" alt="" aria-hidden="true">
             <div>
-              <h1 id="homeTitle">サマースクール</h1>
+              <h1 id="homeTitle">はじめてのプログラミングにちょうせん</h1>
               <p>がくねんを えらんでね</p>
             </div>
           </header>
 
           <section class="home-intro" aria-labelledby="homeIntroTitle">
-            <h2 id="homeIntroTitle">まず はじめに</h2>
+            <div class="home-intro-heading">
+              <h2 id="homeIntroTitle">まず はじめに</h2>
+              <div>
+                <strong>プログラミングで おぼえてほしい 3つのこと</strong>
+                <p>ルールを つくって、なんども つかって、べんりな しくみに してみよう。</p>
+              </div>
+            </div>
             <ol>
               <li>
                 <span>1</span>
-                <div><strong>ルールを つくろう</strong><small>けいさんの ルール・えを うごかす ルール</small></div>
+                <div>
+                  <strong>じぶんで ルールを つくろう</strong>
+                  <p>「けいさんの ルール」や「えを うごかす ルール」を、じぶんで つくります。</p>
+                  <small>たとえば: ○ ＋ △ ＝ □、みぎへ すすむ、ジャンプする</small>
+                </div>
               </li>
               <li>
                 <span>2</span>
-                <div><strong>なんども つかおう</strong><small>つくった ルールは くりかえし つかえるよ</small></div>
+                <div>
+                  <strong>つくった ルールを なんども つかおう</strong>
+                  <p>いちど つくった ルールは、すうじや えを かえて、なんどでも くりかえし つかえます。</p>
+                  <small>おなじ しごとは、ルールに まかせよう</small>
+                </div>
               </li>
               <li>
                 <span>3</span>
-                <div><strong>しくみに しよう</strong><small>いろいろな ことが かんたんに できるよ</small></div>
+                <div>
+                  <strong>しくみに すると、かんたん！</strong>
+                  <p>ルールを くみあわせると、いろいろな ことを すくない そうさで できるように なります。</p>
+                  <small>でんたくや ゲームも、ルールから つくれるよ</small>
+                </div>
               </li>
             </ol>
           </section>
@@ -439,7 +463,12 @@
       </section>
     </main>
 
-    <script type="module" src="./app.js?v=20260717b"></script>
+    <footer class="site-footer">
+      <p><strong>© 2026 yutakikuchi</strong><span>この教材は授業で再利用できます。ページは都度そのままご利用ください。再配布・改変利用の前に、GitHubで一度ご連絡ください。</span></p>
+      <nav aria-label="教材について"><a href="./teacher.html">講師の方へ</a><a href="https://github.com/yutakikuchi" target="_blank" rel="noreferrer">GitHubで連絡</a></nav>
+    </footer>
+
+    <script type="module" src="./app.js?v=20260717o"></script>
     <script type="module" src="./firebase-init.js"></script>
   </body>
 </html>

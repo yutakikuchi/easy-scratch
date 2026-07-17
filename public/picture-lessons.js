@@ -1,4 +1,6 @@
-import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js";
+import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260717n";
+import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260717o";
+import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260717n";
 
 const sleep = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
@@ -28,10 +30,24 @@ export function getMovementRoute(stageType, program, width, height) {
     rotation = nextRotation;
     route.push({ x, y, rotation, ...details });
   };
+  const addGentleCurve = (deltaX, nextY, tilt, steps = 7) => {
+    const startX = x;
+    const startY = y;
+    for (let step = 1; step <= steps; step += 1) {
+      const progress = step / steps;
+      const smoothProgress = progress * progress * (3 - 2 * progress);
+      x = startX + deltaX * progress;
+      y = startY + (nextY - startY) * smoothProgress;
+      rotation = tilt * Math.sin(Math.PI * progress);
+      route.push({ x, y, rotation });
+    }
+    rotation = 0;
+    route.at(-1).rotation = 0;
+  };
 
   program.forEach((actionId) => {
     if (stageType === "jump") {
-      if (actionId === "right") addPoint(width * 0.2, 0);
+      if (actionId === "right") addPoint(width * 0.16, 0);
       else if (actionId === "jump") {
         addPoint(width * 0.16, height * -0.48, -5);
         addPoint(width * 0.16, 0, 0);
@@ -40,17 +56,23 @@ export function getMovementRoute(stageType, program, width, height) {
         addPoint(width * 0.02, height * -0.19, 0, { hit: 0 });
         addPoint(width * 0.06, height * -0.38, 4);
         addPoint(width * 0.03, height * -0.19, 0, { hit: 1 });
-      } else if (actionId === "repeat") addPoint(width * 0.11, 0, 0);
+        addPoint(width * 0.03, 0, 0);
+      }
     } else if (stageType === "fish") {
-      if (actionId === "swim-right") addPoint(width * 0.22, height * 0.08, 6);
-      else if (actionId === "swim-up") addPoint(width * 0.2, height * -0.24, -10);
-      else if (actionId === "bubble") addPoint(width * 0.16, height * 0.12, 7);
-      else if (actionId === "repeat") addPoint(width * 0.18, 0, 0);
+      if (actionId === "swim-up-right") addGentleCurve(width * 0.24, height * -0.28, -14);
+      else if (actionId === "bubble") addPoint(0, y, rotation, { bubble: true, opensShell: y <= height * -0.2 });
+      else if (actionId === "swim-down-right") addGentleCurve(width * 0.26, 0, 14);
+      else if (actionId === "swim-right") addGentleCurve(width * 0.22, y, 0, 5);
     } else if (stageType === "motion") {
-      if (actionId === "right-100") addPoint(width * 0.22, 0, 0);
-      else if (actionId === "up-50") addPoint(width * 0.18, height * -0.18, 0);
-      else if (actionId === "turn-30") addPoint(width * 0.18, height * -0.28, 30);
-      else if (actionId === "repeat") addPoint(width * 0.18, height * -0.34, 30);
+      if (actionId === "forward-120" || actionId === "forward-80") {
+        const distance = width * (actionId === "forward-120" ? 0.22 : 0.16);
+        const radians = rotation * Math.PI / 180;
+        addPoint(Math.cos(radians) * distance, y + Math.sin(radians) * distance, rotation);
+      } else if (actionId === "turn-left-45") {
+        addPoint(0, y, rotation - 45);
+      } else if (actionId === "turn-right-90") {
+        addPoint(0, y, rotation + 90);
+      }
     }
   });
 
@@ -61,7 +83,41 @@ export function getMovementRoute(stageType, program, width, height) {
 }
 
 export function getJumpRoute(width, height) {
-  return getMovementRoute("jump", ["right", "jump", "stomp", "repeat"], width, height);
+  return getMovementRoute("jump", ["right", "jump", "stomp", "right"], width, height);
+}
+
+export function getPaintRoute(program, width, height) {
+  const lineColor = "#2289df";
+  const step = Math.min(width * 0.3, height * 0.5);
+  let x = 0;
+  let y = 0;
+  let rotation = 0;
+  const route = [{ x, y, rotation, color: lineColor, draws: false }];
+
+  program.forEach((actionId) => {
+    let draws = false;
+    if (actionId === "forward") {
+      const radians = rotation * Math.PI / 180;
+      x += Math.round(Math.cos(radians) * step * 100) / 100;
+      y += Math.round(Math.sin(radians) * step * 100) / 100;
+      draws = true;
+    } else if (actionId === "backward") {
+      const radians = rotation * Math.PI / 180;
+      x -= Math.round(Math.cos(radians) * step * 100) / 100;
+      y -= Math.round(Math.sin(radians) * step * 100) / 100;
+      draws = true;
+    } else if (actionId === "turn") {
+      rotation = (rotation + 90) % 360;
+    } else if (actionId === "turn-left") {
+      rotation = (rotation + 270) % 360;
+    }
+    route.push({ x, y, rotation, color: lineColor, draws });
+  });
+
+  return route.map((point, index) => ({
+    ...point,
+    offset: route.length === 1 ? 0 : index / (route.length - 1)
+  }));
 }
 
 function gradeCopy(grade) {
@@ -73,6 +129,8 @@ function gradeCopy(grade) {
         rule: "ルールを つくる",
         reuse: "なんども つかう",
         run: "うごかす",
+        repeatRun: "くりかえし うごかす",
+        stop: "とめる",
         back: "TOPへ もどる",
         hubBack: "えらびなおす"
       }
@@ -83,18 +141,23 @@ function gradeCopy(grade) {
         rule: "動きのルールを作る",
         reuse: "同じルールを何度も使う",
         run: "実行する",
+        repeatRun: "繰り返し実行する",
+        stop: "止める",
         back: "TOPへ戻る",
         hubBack: "レッスンを選ぶ"
       };
 }
 
 export function initPictureLessons({ root, onBackHome }) {
+  let successOverlayTimer = 0;
+  let upperLessons = null;
   const state = {
     grade: "lower",
     lesson: null,
     program: [],
     runs: 0,
     running: false,
+    looping: false,
     drag: null,
     suppressActionClickUntil: 0
   };
@@ -110,6 +173,39 @@ export function initPictureLessons({ root, onBackHome }) {
     state.program = [];
     state.runs = 0;
     state.running = false;
+    state.looping = false;
+    const overlay = document.querySelector("[data-picture-success-overlay]");
+    overlay?.classList.remove("is-visible");
+    overlay?.setAttribute("aria-hidden", "true");
+    root.querySelector("[data-picture-loop-success]")?.remove();
+  }
+
+  function ensureSuccessOverlay() {
+    let overlay = document.querySelector("[data-picture-success-overlay]");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.className = "picture-success-overlay";
+      overlay.dataset.pictureSuccessOverlay = "";
+      overlay.setAttribute("role", "alert");
+      overlay.setAttribute("aria-live", "assertive");
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.innerHTML = `
+        <div class="picture-success-burst" aria-hidden="true">
+          <span>★</span><span>●</span><span>★</span><span>●</span><span>★</span><span>●</span>
+        </div>
+        <div class="picture-success-message">
+          <span aria-hidden="true">🎉</span>
+          <strong data-picture-success-title></strong>
+          <small data-picture-success-detail></small>
+        </div>
+      `;
+      document.body.append(overlay);
+    }
+    const title = overlay.querySelector("[data-picture-success-title]");
+    const detail = overlay.querySelector("[data-picture-success-detail]");
+    if (title) title.textContent = state.grade === "lower" ? "せいかい！" : "正解！";
+    if (detail) detail.textContent = state.grade === "lower" ? "ルールどおりに うごいたよ" : "ルールどおりに動きました";
+    return overlay;
   }
 
   function openLesson(lessonId) {
@@ -194,13 +290,26 @@ export function initPictureLessons({ root, onBackHome }) {
         ? `<span class="picture-jump-hit picture-jump-hit-1" data-jump-hit="0">イタイ！</span>
            <span class="picture-jump-hit picture-jump-hit-2" data-jump-hit="1">イタイ！</span>`
         : "";
-    const pathLegend = ["jump", "fish", "motion"].includes(lesson.stageType)
+    const fishMission =
+      lesson.stageType === "fish"
+        ? `<div class="picture-fish-shell" data-fish-shell aria-label="あわで ひらく かい">
+             <span aria-hidden="true">🐚</span><strong data-fish-shell-text>いちばん うえで<br>あわを だそう</strong>
+           </div>
+           <div class="picture-fish-bubbles" data-fish-bubbles aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+           <div class="picture-fish-goal" aria-label="おさかなのゴール"><span aria-hidden="true">🏁</span><strong>ゴール</strong></div>`
+        : "";
+    const motionMission =
+      lesson.stageType === "motion"
+        ? `<div class="picture-motion-obstacle" aria-label="よける池"><span aria-hidden="true">💧</span><strong>この池を<br>よけよう</strong></div>
+           <div class="picture-motion-goal" aria-label="ロボットのゴール"><span aria-hidden="true">🏁</span><strong>ゴール</strong></div>`
+        : "";
+    const pathLegend = ["jump", "fish", "paint", "motion", "grid-paint"].includes(lesson.stageType)
       ? `<div class="picture-path-legend" aria-label="線の見方">
            <span class="picture-path-goal"><i aria-hidden="true"></i>もくひょう</span>
            <span class="picture-path-current"><i aria-hidden="true"></i>いまの ルール</span>
          </div>`
       : "";
-    const canvasLabel = lesson.stageType === "coordinate" ? "座標と動きの線" : "動きの道";
+    const canvasLabel = lesson.stageType === "grid-paint" ? "方眼紙の移動と色ぬり" : lesson.stageType === "coordinate" ? "座標と動きの線" : "動きの道";
     return `
       <div class="picture-stage-scene picture-stage-${lesson.stageType}">
         ${background}
@@ -208,6 +317,8 @@ export function initPictureLessons({ root, onBackHome }) {
         ${pathLegend}
         <img class="picture-stage-sprite" data-picture-sprite src="${lesson.sprite}" alt="動かす絵">
         ${jumpHitMessages}
+        ${fishMission}
+        ${motionMission}
         <output class="picture-stage-result" data-picture-stage-result aria-live="polite">ルールを つくろう</output>
       </div>
     `;
@@ -220,7 +331,7 @@ export function initPictureLessons({ root, onBackHome }) {
           <button class="picture-action-card picture-action-${action.id}" type="button" data-picture-card="${action.id}" aria-label="${escapeText(action.label)}を追加">
             <img src="${lesson.sprite}" alt="" aria-hidden="true">
             <span><strong>${escapeText(action.label)}</strong><small>${escapeText(action.hint)}</small></span>
-            <em aria-hidden="true">もつ</em>
+            <em aria-hidden="true">えらぶ</em>
           </button>
         `
       )
@@ -229,6 +340,10 @@ export function initPictureLessons({ root, onBackHome }) {
 
   function renderLesson() {
     const lesson = state.lesson;
+    if (state.grade === "upper" && upperLessons) {
+      upperLessons.render(lesson);
+      return;
+    }
     const copy = gradeCopy(state.grade);
     root.className = `picture-experience picture-lesson picture-${state.grade} picture-kind-${lesson.stageType}`;
     root.innerHTML = `
@@ -267,7 +382,12 @@ export function initPictureLessons({ root, onBackHome }) {
           </div>
           <div class="picture-program-row">
             <div class="picture-program-dropzone" data-picture-dropzone aria-label="カードを入れる場所"></div>
-            <button class="picture-run-button" type="button" data-picture-action="run" disabled>${copy.run}</button>
+            <div class="picture-run-controls">
+              <button class="picture-run-button" type="button" data-picture-action="run" disabled>${copy.run}</button>
+              <button class="picture-repeat-button" type="button" data-picture-action="repeat-run" disabled>
+                <strong>${copy.repeatRun}</strong><small>${state.grade === "lower" ? "とめるまで" : "止めるまで"}</small>
+              </button>
+            </div>
           </div>
           <div class="picture-run-feedback" data-picture-feedback aria-live="polite">
             <strong>まだ ルールは できていないよ</strong>
@@ -276,6 +396,7 @@ export function initPictureLessons({ root, onBackHome }) {
         </section>
       </div>
     `;
+    ensureSuccessOverlay();
     renderProgram();
     window.requestAnimationFrame(drawStagePreview);
   }
@@ -285,14 +406,22 @@ export function initPictureLessons({ root, onBackHome }) {
     const dropzone = root.querySelector("[data-picture-dropzone]");
     const feedback = root.querySelector("[data-picture-feedback]");
     const runButton = root.querySelector('[data-picture-action="run"]');
-    if (!dropzone || !feedback || !runButton) return;
+    const repeatButton = root.querySelector('[data-picture-action="repeat-run"]');
+    if (!dropzone || !feedback || !runButton || !repeatButton) return;
     feedback.classList.remove("is-question", "is-success");
+
+    const copy = gradeCopy(state.grade);
+    repeatButton.classList.toggle("is-stopping", state.looping);
+    repeatButton.innerHTML = state.looping
+      ? `<strong>${copy.stop}</strong><small>${state.grade === "lower" ? "ここで おわる" : "繰り返しを終了"}</small>`
+      : `<strong>${copy.repeatRun}</strong><small>${state.grade === "lower" ? "とめるまで" : "止めるまで"}</small>`;
 
     const programStatus = getPictureProgramStatus(state.program, state.lesson.sample);
     if (!programStatus.canRun) {
       dropzone.innerHTML = `<p>ここに カードを はこぼう</p>`;
       feedback.innerHTML = `<strong>カードを 1まい いれてみよう</strong><span>1まい入れたら、すぐにうごかしてためせます。</span>`;
       runButton.disabled = true;
+      repeatButton.disabled = true;
       window.requestAnimationFrame(drawStagePreview);
       return;
     }
@@ -308,6 +437,7 @@ export function initPictureLessons({ root, onBackHome }) {
       )
       .join("");
     runButton.disabled = state.running;
+    repeatButton.disabled = state.running && !state.looping;
     feedback.innerHTML = programStatus.isCorrect
       ? `<strong>ルールが できた！</strong><span>「${escapeText(state.lesson.repeatLabel)}」を実行できます。</span>`
       : `<strong>1まいでも うごかせるよ</strong><span>できあがる前でも、まずはうごかしてためそう。</span>`;
@@ -316,9 +446,9 @@ export function initPictureLessons({ root, onBackHome }) {
 
   function addAction(actionId) {
     if (state.running || !state.lesson?.actions.some((action) => action.id === actionId)) return;
-    if (state.program.length >= 6) {
+    if (state.program.length >= 10) {
       const feedback = root.querySelector("[data-picture-feedback]");
-      if (feedback) feedback.innerHTML = `<strong>カードは 6まいまで</strong><span>いらないカードをおして外そう。</span>`;
+      if (feedback) feedback.innerHTML = `<strong>カードは 10まいまで</strong><span>いらないカードをおして外そう。</span>`;
       return;
     }
     state.program.push(actionId);
@@ -342,6 +472,11 @@ export function initPictureLessons({ root, onBackHome }) {
   function resetStageVisual() {
     root.querySelectorAll(".picture-story-frame").forEach((frame) => frame.classList.remove("active", "done"));
     root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
+    root.querySelector("[data-fish-bubbles]")?.classList.remove("is-visible");
+    const fishShell = root.querySelector("[data-fish-shell]");
+    fishShell?.classList.remove("is-open");
+    const fishShellText = root.querySelector("[data-fish-shell-text]");
+    if (fishShellText) fishShellText.innerHTML = "いちばん うえで<br>あわを だそう";
     const sprite = root.querySelector("[data-picture-sprite]");
     if (sprite) {
       sprite.getAnimations().forEach((animation) => animation.cancel());
@@ -352,14 +487,48 @@ export function initPictureLessons({ root, onBackHome }) {
     drawStagePreview();
   }
 
-  async function runRule() {
+  function showSuccessOverlay({ compact = false } = {}) {
+    if (compact) {
+      const stage = root.querySelector(".upper-stage, .picture-stage-scene");
+      if (!stage) return;
+      let badge = stage.querySelector("[data-picture-loop-success]");
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.className = "picture-loop-success";
+        badge.dataset.pictureLoopSuccess = "";
+        badge.setAttribute("role", "status");
+        stage.append(badge);
+      }
+      badge.textContent = state.grade === "lower" ? "せいかい！" : "正解！";
+      window.clearTimeout(successOverlayTimer);
+      badge.classList.remove("is-visible");
+      void badge.offsetWidth;
+      badge.classList.add("is-visible");
+      successOverlayTimer = window.setTimeout(() => badge.classList.remove("is-visible"), 3200);
+      return;
+    }
+    const overlay = ensureSuccessOverlay();
+    window.clearTimeout(successOverlayTimer);
+    overlay.classList.remove("is-visible");
+    void overlay.offsetWidth;
+    overlay.setAttribute("aria-hidden", "false");
+    overlay.classList.add("is-visible");
+    successOverlayTimer = window.setTimeout(() => {
+      overlay.classList.remove("is-visible");
+      overlay.setAttribute("aria-hidden", "true");
+    }, 2300);
+  }
+
+  async function runRule({ repeating = false } = {}) {
     const programStatus = getPictureProgramStatus(state.program, state.lesson.sample);
     if (state.running || !programStatus.canRun) return;
     const feedback = root.querySelector("[data-picture-feedback]");
 
     state.running = true;
     renderProgram();
-    feedback.innerHTML = `<strong>うごかしているよ</strong><span>同じルールをくり返しています。</span>`;
+    feedback.innerHTML = repeating
+      ? `<strong>くりかえしているよ</strong><span>「とめる」を おすまで、同じルールを なんども つかいます。</span>`
+      : `<strong>1かい うごかしているよ</strong><span>つくったルールを、はじめから おわりまで ためします。</span>`;
     const startedAt = performance.now();
     await animateLesson(programStatus.isCorrect);
     const elapsed = Math.max(0.1, (performance.now() - startedAt) / 1000);
@@ -370,12 +539,41 @@ export function initPictureLessons({ root, onBackHome }) {
     if (programStatus.isCorrect) {
       feedback.classList.add("is-success");
       feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${state.runs}回 つかった！</span>`;
+      showSuccessOverlay({ compact: repeating });
     } else {
       feedback.classList.add("is-question");
       feedback.innerHTML = `<strong>${reviewQuestion}</strong><span>うごきを見て、カードのじゅんばんを考えよう。直して何度でもためせるよ。</span>`;
     }
     const result = root.querySelector("[data-picture-stage-result]");
     if (result) result.textContent = programStatus.isCorrect ? state.lesson.success : reviewQuestion;
+  }
+
+  async function runRepeatedly() {
+    if (state.looping) return stopRepeating();
+    if (state.running || state.program.length === 0) return;
+
+    state.looping = true;
+    renderProgram();
+    while (state.looping) {
+      await runRule({ repeating: true });
+      if (!state.looping) break;
+      await sleep(260);
+      if (!state.looping) break;
+      resetStageVisual();
+    }
+    state.running = false;
+    state.looping = false;
+    renderProgram();
+    const feedback = root.querySelector("[data-picture-feedback]");
+    if (feedback) feedback.innerHTML = `<strong>くりかえしを とめたよ</strong><span>カードを なおして、また ためせます。</span>`;
+  }
+
+  function stopRepeating() {
+    if (!state.looping) return;
+    state.looping = false;
+    state.running = false;
+    root.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+    renderProgram();
   }
 
   async function animateLesson(isCorrect) {
@@ -386,6 +584,8 @@ export function initPictureLessons({ root, onBackHome }) {
     sprite.getAnimations().forEach((animation) => animation.cancel());
 
     if (["jump", "fish", "motion"].includes(type)) return animateMovementPath(sprite, type, isCorrect);
+    if (type === "paint") return animatePaintPath(sprite);
+    if (type === "grid-paint") return animateGridPaintPath(sprite);
 
     if (!isCorrect) {
       root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
@@ -400,13 +600,6 @@ export function initPictureLessons({ root, onBackHome }) {
     }
 
     const keyframes = {
-      paint: [
-        { transform: "translate(0, 0) rotate(0deg)" },
-        { transform: "translate(430%, 0) rotate(90deg)" },
-        { transform: "translate(430%, 220%) rotate(180deg)" },
-        { transform: "translate(0, 220%) rotate(270deg)" },
-        { transform: "translate(0, 0) rotate(360deg)" }
-      ],
       coordinate: [
         { transform: "translate(0, 0) rotate(0deg)" },
         { transform: "translate(170%, -90%) rotate(60deg)" },
@@ -416,13 +609,44 @@ export function initPictureLessons({ root, onBackHome }) {
         { transform: "translate(0, 0) rotate(360deg)" }
       ]
     };
-    const durations = { paint: 2600, coordinate: 2600 };
+    const durations = { coordinate: 2600 };
     const animation = sprite.animate(keyframes[type], {
       duration: durations[type],
       easing: "ease-in-out",
       fill: "forwards"
     });
-    if (type === "paint" || type === "coordinate") animateDrawing(type, durations[type]);
+    if (type === "coordinate") animateDrawing(type, durations[type]);
+    await animation.finished.catch(() => {});
+  }
+
+  async function animatePaintPath(sprite) {
+    const scene = root.querySelector(".picture-stage-paint");
+    if (!scene) return;
+    const route = getPaintRoute(state.program, scene.clientWidth, scene.clientHeight);
+    const duration = Math.max(900, (route.length - 1) * 300);
+    const animation = sprite.animate(
+      route.map(({ x, y, rotation, offset }) => ({
+        transform: `translate(${x}px, ${y}px) rotate(${rotation}deg)`,
+        offset,
+        easing: "ease-in-out"
+      })),
+      { duration, fill: "forwards" }
+    );
+    animateDrawing("paint", duration);
+    await animation.finished.catch(() => {});
+  }
+
+  async function animateGridPaintPath(sprite) {
+    const scene = root.querySelector(".picture-stage-grid-paint");
+    if (!scene) return;
+    const route = createGridPaintRoute(state.program, scene.clientWidth, scene.clientHeight);
+    const duration = Math.max(900, (route.length - 1) * 360);
+    const animation = sprite.animate(route.map(({ x, y, offset }) => ({ transform: `translate(${x}px, ${y}px)`, offset })), {
+      duration,
+      easing: "ease-in-out",
+      fill: "forwards"
+    });
+    animateDrawing("grid-paint", duration);
     await animation.finished.catch(() => {});
   }
 
@@ -430,8 +654,12 @@ export function initPictureLessons({ root, onBackHome }) {
     const scene = root.querySelector(`.picture-stage-${type}`);
     if (!scene) return;
     const route = getMovementRoute(type, state.program, scene.clientWidth, scene.clientHeight);
-    const duration = Math.max(900, (route.length - 1) * 420);
+    const duration = type === "fish"
+      ? Math.max(1200, state.program.length * 760)
+      : Math.max(900, (route.length - 1) * 420);
     root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
+    root.querySelector("[data-fish-bubbles]")?.classList.remove("is-visible");
+    root.querySelector("[data-fish-shell]")?.classList.remove("is-open");
     const animation = sprite.animate(
       route.map(({ x, y, rotation, offset }) => ({
         transform: `translate(${x}px, ${y}px) rotate(${rotation}deg)`,
@@ -447,7 +675,27 @@ export function initPictureLessons({ root, onBackHome }) {
         if (state.running) root.querySelector(`[data-jump-hit="${hit}"]`)?.classList.add("is-visible");
       })
       : [];
-    await Promise.all([animation.finished.catch(() => {}), ...hitAnimations]);
+    const bubbleAnimations = type === "fish"
+      ? route.filter(({ bubble }) => bubble)
+      .map(async ({ x, y, offset, opensShell }) => {
+        await sleep(duration * offset);
+        if (!state.running) return;
+        const bubbles = root.querySelector("[data-fish-bubbles]");
+        if (bubbles) {
+          bubbles.style.left = `${sprite.offsetLeft + sprite.offsetWidth * 0.72 + x}px`;
+          bubbles.style.top = `${sprite.offsetTop + sprite.offsetHeight * 0.2 + y}px`;
+          bubbles.classList.remove("is-visible");
+          void bubbles.offsetWidth;
+          bubbles.classList.add("is-visible");
+        }
+        if (opensShell) {
+          root.querySelector("[data-fish-shell]")?.classList.add("is-open");
+          const shellText = root.querySelector("[data-fish-shell-text]");
+          if (shellText) shellText.textContent = "ひらいた！";
+        }
+      })
+      : [];
+    await Promise.all([animation.finished.catch(() => {}), ...hitAnimations, ...bubbleAnimations]);
   }
 
   function buildTrialKeyframes() {
@@ -455,20 +703,16 @@ export function initPictureLessons({ root, onBackHome }) {
     let y = 0;
     let rotation = 0;
     const keyframes = [{ transform: "translate(0, 0) rotate(0deg)" }];
-    const rightActions = new Set(["right", "swim-right", "forward", "right-100", "right-80", "x-100"]);
-    const upActions = new Set(["jump", "swim-up", "up-50", "up-60", "y-50"]);
+    const rightActions = new Set(["right", "swim-right", "swim-up-right", "swim-down-right", "forward", "right-100", "right-80", "x-100"]);
+    const upActions = new Set(["jump", "swim-up-right", "up-50", "up-60", "y-50"]);
 
     state.program.forEach((actionId) => {
       if (rightActions.has(actionId)) x += 105;
       if (upActions.has(actionId)) y -= 62;
-      if (actionId === "down-60" || actionId === "stomp") y += 55;
+      if (actionId === "down-60" || actionId === "stomp" || actionId === "swim-down-right") y += 55;
       if (actionId === "turn" || actionId === "turn-30") rotation += 30;
       if (actionId === "turn-60") rotation += 60;
-      if (actionId === "bubble" || actionId === "color") rotation += 12;
-      if (actionId === "repeat") {
-        x += 45;
-        rotation += 15;
-      }
+      if (actionId === "bubble") rotation += 0;
       keyframes.push({ transform: `translate(${x}%, ${y}%) rotate(${rotation}deg)` });
     });
 
@@ -480,6 +724,7 @@ export function initPictureLessons({ root, onBackHome }) {
     frames.forEach((frame) => frame.classList.remove("active", "done"));
     const framesToRun = isCorrect ? frames : frames.slice(0, Math.min(2, Math.max(1, state.program.length)));
     for (const frame of framesToRun) {
+      if (!state.running) break;
       frame.classList.add("active");
       const robot = frame.querySelector(".picture-story-robot");
       const animation = robot.animate(
@@ -491,6 +736,7 @@ export function initPictureLessons({ root, onBackHome }) {
         { duration: 620, easing: "ease-out" }
       );
       await animation.finished.catch(() => {});
+      if (!state.running) break;
       frame.classList.remove("active");
       frame.classList.add("done");
       await sleep(130);
@@ -524,16 +770,17 @@ export function initPictureLessons({ root, onBackHome }) {
       const startX = (sprite?.offsetLeft ?? w * 0.06) + (sprite?.offsetWidth ?? 0) / 2;
       const startY = (sprite?.offsetTop ?? h * 0.6) + (sprite?.offsetHeight ?? 0) / 2;
       const goalRoute = getMovementRoute(state.lesson.stageType, state.lesson.sample, w, h);
-      drawRouteLine(ctx, goalRoute, startX, startY, "rgba(13, 42, 99, .44)", [10, 12], Math.max(8, w * 0.012));
-      drawRouteLine(ctx, goalRoute, startX, startY, "#fff", [10, 12], Math.max(4, w * 0.006));
       if (state.program.length > 0) {
         const currentRoute = getMovementRoute(state.lesson.stageType, state.program, w, h);
         drawRouteLine(ctx, currentRoute, startX, startY, "rgba(255,255,255,.92)", [], Math.max(10, w * 0.014));
         drawRouteLine(ctx, currentRoute, startX, startY, "#ee4057", [], Math.max(6, w * 0.008));
       }
+      drawRouteLine(ctx, goalRoute, startX, startY, "rgba(13, 42, 99, .44)", [10, 12], Math.max(8, w * 0.012));
+      drawRouteLine(ctx, goalRoute, startX, startY, "#fff", [10, 12], Math.max(4, w * 0.006));
     }
 
     if (state.lesson.stageType === "paint") drawPaintCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
+    if (state.lesson.stageType === "grid-paint") drawGridPaintCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
     if (state.lesson.stageType === "coordinate") drawCoordinateCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
   }
 
@@ -557,6 +804,7 @@ export function initPictureLessons({ root, onBackHome }) {
       if (!setup) return;
       const progress = Math.min(1, (now - started) / duration);
       if (type === "paint") drawPaintCanvas(setup.context, setup.width, setup.height, progress);
+      else if (type === "grid-paint") drawGridPaintCanvas(setup.context, setup.width, setup.height, progress);
       else drawCoordinateCanvas(setup.context, setup.width, setup.height, progress);
       if (progress < 1) window.requestAnimationFrame(frame);
     };
@@ -565,28 +813,41 @@ export function initPictureLessons({ root, onBackHome }) {
 
   function drawPaintCanvas(ctx, w, h, progress) {
     ctx.clearRect(0, 0, w, h);
-    const left = w * 0.19;
-    const top = h * 0.17;
-    const right = w * 0.76;
-    const bottom = h * 0.76;
-    const segments = [
-      [left, top, right, top, "#2289df"],
-      [right, top, right, bottom, "#62b64b"],
-      [right, bottom, left, bottom, "#ff952d"],
-      [left, bottom, left, top, "#8b59d4"]
-    ];
-    const amount = progress * segments.length;
+    const sprite = root.querySelector(".picture-stage-paint [data-picture-sprite]");
+    const startX = (sprite?.offsetLeft ?? w * 0.18) + (sprite?.offsetWidth ?? 0) / 2;
+    const startY = (sprite?.offsetTop ?? h * 0.17) + (sprite?.offsetHeight ?? 0) / 2;
+    const goalRoute = getPaintRoute(state.lesson.sample, w, h);
+    drawRouteLine(ctx, goalRoute, startX, startY, "rgba(13, 42, 99, .44)", [10, 12], Math.max(8, w * 0.012));
+    drawRouteLine(ctx, goalRoute, startX, startY, "#fff", [10, 12], Math.max(4, w * 0.006));
+    if (state.program.length > 0) {
+      const currentRoute = getPaintRoute(state.program, w, h);
+      drawRouteLine(ctx, currentRoute, startX, startY, "rgba(255,255,255,.92)", [], Math.max(10, w * 0.014));
+      drawRouteLine(ctx, currentRoute, startX, startY, "#ee4057", [], Math.max(6, w * 0.008));
+    }
+    const route = getPaintRoute(state.program, w, h);
+    const amount = progress * Math.max(0, route.length - 1);
     ctx.lineWidth = Math.max(8, w * 0.012);
-    segments.forEach((segment, index) => {
+    route.slice(1).forEach((point, index) => {
       const local = Math.max(0, Math.min(1, amount - index));
-      if (!local) return;
-      const [x1, y1, x2, y2, color] = segment;
-      ctx.strokeStyle = color;
+      if (!point.draws || !local) return;
+      const previous = route[index];
+      ctx.strokeStyle = point.color;
       ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x1 + (x2 - x1) * local, y1 + (y2 - y1) * local);
+      ctx.moveTo(startX + previous.x, startY + previous.y);
+      ctx.lineTo(
+        startX + previous.x + (point.x - previous.x) * local,
+        startY + previous.y + (point.y - previous.y) * local
+      );
       ctx.stroke();
     });
+  }
+
+  function drawGridPaintCanvas(ctx, w, h, progress) {
+    const { start } = drawGridPaintBoard(ctx, w, h, state.program, state.lesson.sample, progress);
+    const sprite = root.querySelector(".picture-stage-grid-paint [data-picture-sprite]");
+    if (!sprite) return;
+    sprite.style.left = `${start.x - sprite.offsetWidth / 2}px`;
+    sprite.style.top = `${start.y - sprite.offsetHeight / 2}px`;
   }
 
   function drawCoordinateCanvas(ctx, w, h, progress) {
@@ -707,6 +968,7 @@ export function initPictureLessons({ root, onBackHome }) {
     if (action === "sample") showSample();
     if (action === "clear") clearProgram();
     if (action === "run") runRule();
+    if (action === "repeat-run") runRepeatedly();
   }
 
   function render(grade) {
@@ -718,6 +980,10 @@ export function initPictureLessons({ root, onBackHome }) {
     else renderHub();
   }
 
+  upperLessons = initUpperPictureLessons({
+    root,
+    onSuccess: ({ repeating = false } = {}) => showSuccessOverlay({ compact: repeating })
+  });
   root.addEventListener("click", handleClick);
   root.addEventListener("pointerdown", handlePointerDown);
   root.addEventListener("pointermove", handlePointerMove);

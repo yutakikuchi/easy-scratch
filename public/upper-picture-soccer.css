@@ -1,0 +1,114 @@
+.upper-soccer-stage {
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 18% 13%, rgba(255, 255, 255, .9) 0 5%, transparent 5.5%),
+    radial-gradient(circle at 33% 10%, rgba(255, 255, 255, .7) 0 7%, transparent 7.5%),
+    linear-gradient(180deg, #8bddff 0 30%, #dff5ff 30% 34%, #35587b 34% 40%, #1f713e 40% 100%);
+  box-shadow: inset 0 18px 38px rgba(13, 73, 38, .18);
+}
+
+.upper-soccer-stage::before {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 33%;
+  height: 9%;
+  z-index: 0;
+  background:
+    radial-gradient(circle, #fff 0 2px, transparent 3px) 0 0 / 16px 12px,
+    linear-gradient(180deg, #244769, #173552);
+  box-shadow: 0 5px 0 rgba(255, 255, 255, .78);
+  content: "";
+}
+
+.upper-soccer-field-lines {
+  position: absolute;
+  left: -9%;
+  right: -9%;
+  top: 39%;
+  bottom: -8%;
+  z-index: 0;
+  overflow: hidden;
+  background: repeating-linear-gradient(100deg, #2b9647 0 12%, #38a955 12% 24%);
+  clip-path: polygon(19% 0, 81% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+}
+
+.upper-free-kick-wall {
+  position: absolute;
+  left: 48%;
+  top: 72%;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+.upper-free-kick-wall strong {
+  position: absolute;
+  left: 50%;
+  top: -34px;
+  padding: 4px 10px;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  background: #0d2a63;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.upper-free-kick-wall span {
+  position: relative;
+  display: block;
+  width: clamp(19px, 2.1vw, 28px);
+  height: clamp(43px, 5vw, 63px);
+  border: 3px solid #fff;
+  border-radius: 11px 11px 6px 6px;
+  background:
+    linear-gradient(90deg, transparent 0 17%, #fff 17% 31%, #1769ba 31% 69%, #fff 69% 83%, transparent 83%) bottom / 100% 38% no-repeat,
+    linear-gradient(180deg, #2589db 0 58%, #0d2a63 58% 72%, transparent 72%);
+  filter: drop-shadow(0 4px 3px rgba(13, 42, 99, .28));
+}
+
+.upper-free-kick-wall span::before {
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  width: clamp(16px, 1.8vw, 23px);
+  aspect-ratio: 1;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #f2ae75;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.upper-free-kick-wall span:nth-of-type(2),
+.upper-free-kick-wall span:nth-of-type(4) {
+  transform: translateY(-3px);
+}
+
+.upper-keyframe-screen .upper-soccer-kicker {
+  top: 72%;
+}
+
+.upper-keyframe-screen .upper-soccer-goal {
+  top: 72%;
+  width: clamp(110px, 14vw, 165px);
+  height: clamp(76px, 10vw, 116px);
+  transform: translate(-50%, -78%) skewY(-2deg);
+}
+
+@media (max-width: 560px) {
+  .upper-free-kick-wall {
+    left: 48%;
+  }
+
+  .upper-free-kick-wall strong {
+    top: -30px;
+    font-size: 11px;
+  }
+}

@@ -325,7 +325,7 @@ body[data-page="program"] .picture-experience {
 
 .picture-action-list {
   display: grid;
-  grid-template-rows: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   gap: 7px;
   min-height: 0;
 }
@@ -917,8 +917,8 @@ body[data-page="program"] .picture-experience {
   }
 
   .picture-action-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(2, 100px);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: 100px;
   }
 
   .picture-program-panel {
@@ -968,7 +968,7 @@ body[data-page="program"] .picture-experience {
 
   .picture-action-list {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, 88px);
+    grid-template-rows: repeat(3, 88px);
   }
 
   .picture-program-dropzone {

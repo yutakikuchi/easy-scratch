@@ -288,7 +288,7 @@ export function initPictureLessons({ root, onBackHome }) {
     const jumpHitMessages =
       lesson.stageType === "jump"
         ? `<span class="picture-jump-hit picture-jump-hit-1" data-jump-hit="0">イタイ！</span>
-           <span class="picture-jump-hit picture-jump-hit-2" data-jump-hit="1">イタイ！</span>`
+           <span class="picture-jump-hit picture-jump-hit-2" data-jump-hit="1">イタイ！</span><div class="picture-jump-goal" aria-label="ジャンプぼうけんのゴール"><span aria-hidden="true">🏁</span><strong>ゴール</strong></div>`
         : "";
     const fishMission =
       lesson.stageType === "fish"

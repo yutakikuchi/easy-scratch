@@ -97,7 +97,7 @@ const firebaseInit = await readFile(resolve(root, "public/firebase-init.js"), "u
 const firebaseConfig = await readFile(resolve(root, "firebase.json"), "utf8");
 
 const checks = [
-  [html.includes('<script type="module" src="./app.js?v=20260717o"></script>'), "index.html must load the versioned app.js"],
+  [html.includes('<script type="module" src="./app.js?v=20260717p"></script>'), "index.html must load the versioned app.js"],
   [html.includes('<link rel="stylesheet" href="./program.css?v=20260716a">'), "index.html must load the versioned program.css"],
   [html.includes('<link rel="stylesheet" href="./calculation.css">'), "index.html must load calculation.css"],
   [html.includes('<link rel="stylesheet" href="./home.css?v=20260717c">'), "index.html must load the versioned home.css"],
@@ -105,7 +105,7 @@ const checks = [
   [html.includes('<link rel="stylesheet" href="./rule-builder.css">'), "index.html must load rule-builder.css"],
   [html.includes('<link rel="stylesheet" href="./upper-machine.css">'), "index.html must load upper-machine.css"],
   [html.includes('<link rel="stylesheet" href="./picture-lessons.css?v=20260717f">'), "index.html must load the versioned picture-lessons.css"],
-  [html.includes('<link rel="stylesheet" href="./picture-lessons-effects.css?v=20260717m">'), "index.html must load picture lesson effects"],
+  [html.includes('<link rel="stylesheet" href="./picture-lessons-effects.css?v=20260717p">'), "index.html must load picture lesson effects"],
   [html.includes('<link rel="stylesheet" href="./picture-loop-success.css?v=20260717o">'), "index.html must load compact repeated-success styles"],
   [html.includes('<link rel="stylesheet" href="./upper-picture-lessons.css?v=20260717o">'), "index.html must load upper picture lesson styles"],
   [html.includes('<link rel="stylesheet" href="./upper-picture-soccer.css?v=20260717n">'), "index.html must load the free-kick field styles"],
@@ -169,7 +169,7 @@ const checks = [
   [js.includes('from "./calculation.js"'), "app.js must load calculation data"],
   [js.includes('from "./lower-machine.js"'), "app.js must initialize the lower-grade calculation machine"],
   [js.includes('from "./upper-machine.js"'), "app.js must initialize the upper-grade calculation machine"],
-  [js.includes('from "./picture-lessons.js?v=20260717o"'), "app.js must initialize the versioned picture lessons"],
+  [js.includes('from "./picture-lessons.js?v=20260717p"'), "app.js must initialize the versioned picture lessons"],
   [js.includes("function resetCalculation"), "app.js must start both calculations"],
   [js.includes("function renderCalculationStatus"), "app.js must render human/program status"],
   [js.includes("function renderReflection"), "app.js must render the reflection activity"],
@@ -203,6 +203,7 @@ const checks = [
   [pictureLessonsEffectsCss.includes("white-space: nowrap"), "the full-screen success message must stay on one line"],
   [pictureLessonsJs.includes('"#ee4057"'), "current movement route must be drawn in red"],
   [pictureLessonsJs.includes("イタイ！"), "jump enemies must react whenever a stomp action runs"],
+  [pictureLessonsJs.includes('aria-label="ジャンプぼうけんのゴール"') && pictureLessonsEffectsCss.includes(".picture-jump-goal"), "jump lesson must show a visible goal at the end of its target route"],
   [pictureLessonsJs.includes("ゴールの完成イメージ"), "picture lessons must show a visual goal preview"],
   [pictureLessonsData.includes('title: "ジャンプぼうけん"'), "lower grade must include the jump adventure"],
   [pictureLessonsData.includes('title: "おさかなダンス"'), "lower grade must include the fish movement lesson"],

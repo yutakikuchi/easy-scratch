@@ -15,6 +15,7 @@ const requiredFiles = [
   "public/rule-builder.css",
   "public/upper-machine.css",
   "public/picture-lessons.css",
+  "public/picture-lessons-effects.css",
   "public/app.js",
   "public/calculation.js",
   "public/lower-machine.js",
@@ -55,6 +56,7 @@ const lowerMachineCss = await readFile(resolve(root, "public/lower-machine.css")
 const ruleBuilderCss = await readFile(resolve(root, "public/rule-builder.css"), "utf8");
 const upperMachineCss = await readFile(resolve(root, "public/upper-machine.css"), "utf8");
 const pictureLessonsCss = await readFile(resolve(root, "public/picture-lessons.css"), "utf8");
+const pictureLessonsEffectsCss = await readFile(resolve(root, "public/picture-lessons-effects.css"), "utf8");
 const js = await readFile(resolve(root, "public/app.js"), "utf8");
 const lowerMachineJs = await readFile(resolve(root, "public/lower-machine.js"), "utf8");
 const upperMachineJs = await readFile(resolve(root, "public/upper-machine.js"), "utf8");
@@ -64,14 +66,15 @@ const firebaseInit = await readFile(resolve(root, "public/firebase-init.js"), "u
 const firebaseConfig = await readFile(resolve(root, "firebase.json"), "utf8");
 
 const checks = [
-  [html.includes('<script type="module" src="./app.js"></script>'), "index.html must load app.js"],
+  [html.includes('<script type="module" src="./app.js?v=20260717b"></script>'), "index.html must load the versioned app.js"],
   [html.includes('<link rel="stylesheet" href="./program.css?v=20260716a">'), "index.html must load the versioned program.css"],
   [html.includes('<link rel="stylesheet" href="./calculation.css">'), "index.html must load calculation.css"],
   [html.includes('<link rel="stylesheet" href="./home.css?v=20260716b">'), "index.html must load the versioned home.css"],
   [html.includes('<link rel="stylesheet" href="./lower-machine.css">'), "index.html must load lower-machine.css"],
   [html.includes('<link rel="stylesheet" href="./rule-builder.css">'), "index.html must load rule-builder.css"],
   [html.includes('<link rel="stylesheet" href="./upper-machine.css">'), "index.html must load upper-machine.css"],
-  [html.includes('<link rel="stylesheet" href="./picture-lessons.css?v=20260716a">'), "index.html must load picture-lessons.css"],
+  [html.includes('<link rel="stylesheet" href="./picture-lessons.css?v=20260717a">'), "index.html must load the versioned picture-lessons.css"],
+  [html.includes('<link rel="stylesheet" href="./picture-lessons-effects.css?v=20260717a">'), "index.html must load picture lesson effects"],
   [html.includes('id="homePage"'), "index.html must include the grade and course TOP page"],
   [html.includes('id="homeIntroTitle"'), "TOP page must explain the programming learning goals first"],
   [html.includes('?grade=lower&amp;page=calculation'), "TOP page must link to lower-grade calculation"],
@@ -115,10 +118,13 @@ const checks = [
   [upperMachineCss.includes(".upper-rule-builder"), "upper-machine.css must style the composite rule builder"],
   [pictureLessonsCss.includes(".picture-lesson-grid"), "picture-lessons.css must style the three lesson choices"],
   [!pictureLessonsCss.includes("linear-gradient"), "picture lessons must use source assets instead of gradient-drawn artwork"],
+  [pictureLessonsEffectsCss.includes(".picture-jump-hit"), "jump lesson must style stomp reaction messages"],
+  [pictureLessonsEffectsCss.includes(".picture-goal-summary"), "picture lessons must display a prominent goal card"],
+  [pictureLessonsEffectsCss.includes(".picture-path-legend"), "movement stages must explain goal and current route colors"],
   [js.includes('from "./calculation.js"'), "app.js must load calculation data"],
   [js.includes('from "./lower-machine.js"'), "app.js must initialize the lower-grade calculation machine"],
   [js.includes('from "./upper-machine.js"'), "app.js must initialize the upper-grade calculation machine"],
-  [js.includes('from "./picture-lessons.js"'), "app.js must initialize the picture lessons"],
+  [js.includes('from "./picture-lessons.js?v=20260717b"'), "app.js must initialize the versioned picture lessons"],
   [js.includes("function resetCalculation"), "app.js must start both calculations"],
   [js.includes("function renderCalculationStatus"), "app.js must render human/program status"],
   [js.includes("function renderReflection"), "app.js must render the reflection activity"],
@@ -137,7 +143,13 @@ const checks = [
   [upperMachineJs.includes("formula.textContent"), "upper-grade result list must show a normal numeric expression"],
   [upperMachineJs.includes("MAX_RESULT_COUNT = 100"), "upper-grade machine must cap the selected run count at 100"],
   [pictureLessonsJs.includes("pointerdown"), "picture lesson cards must support iPad pointer dragging"],
-  [pictureLessonsJs.includes("sameProgram"), "picture lessons must validate the rule before running it"],
+  [pictureLessonsJs.includes("getPictureProgramStatus"), "picture lessons must classify runnable and correct rules"],
+  [pictureLessonsJs.includes("これで ただしいかな？"), "incorrect picture rules must show a prominent review question after running"],
+  [pictureLessonsJs.includes("getJumpRoute"), "jump guide and animation must share one route"],
+  [pictureLessonsJs.includes("getMovementRoute"), "movement guide and animation must use the same program route"],
+  [pictureLessonsJs.includes('"#ee4057"'), "current movement route must be drawn in red"],
+  [pictureLessonsJs.includes("イタイ！"), "jump enemies must react whenever a stomp action runs"],
+  [pictureLessonsJs.includes("ゴールの完成イメージ"), "picture lessons must show a visual goal preview"],
   [pictureLessonsData.includes('title: "ジャンプぼうけん"'), "lower grade must include the jump adventure"],
   [pictureLessonsData.includes('title: "おさかなダンス"'), "lower grade must include the fish movement lesson"],
   [pictureLessonsData.includes('title: "おえかきカー"'), "lower grade must include the drawing car lesson"],

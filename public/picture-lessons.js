@@ -10,8 +10,58 @@ function escapeText(value) {
     .replaceAll('"', "&quot;");
 }
 
-function sameProgram(program, sample) {
-  return program.length === sample.length && program.every((item, index) => item === sample[index]);
+export function getPictureProgramStatus(program, sample) {
+  return {
+    canRun: program.length > 0,
+    isCorrect: program.length === sample.length && program.every((item, index) => item === sample[index])
+  };
+}
+
+export function getMovementRoute(stageType, program, width, height) {
+  let x = 0;
+  let y = 0;
+  let rotation = 0;
+  const route = [{ x, y, rotation }];
+  const addPoint = (deltaX, nextY, nextRotation = rotation, details = {}) => {
+    x += deltaX;
+    y = nextY;
+    rotation = nextRotation;
+    route.push({ x, y, rotation, ...details });
+  };
+
+  program.forEach((actionId) => {
+    if (stageType === "jump") {
+      if (actionId === "right") addPoint(width * 0.2, 0);
+      else if (actionId === "jump") {
+        addPoint(width * 0.16, height * -0.48, -5);
+        addPoint(width * 0.16, 0, 0);
+      } else if (actionId === "stomp") {
+        addPoint(width * 0.04, height * -0.38, 4);
+        addPoint(width * 0.02, height * -0.19, 0, { hit: 0 });
+        addPoint(width * 0.06, height * -0.38, 4);
+        addPoint(width * 0.03, height * -0.19, 0, { hit: 1 });
+      } else if (actionId === "repeat") addPoint(width * 0.11, 0, 0);
+    } else if (stageType === "fish") {
+      if (actionId === "swim-right") addPoint(width * 0.22, height * 0.08, 6);
+      else if (actionId === "swim-up") addPoint(width * 0.2, height * -0.24, -10);
+      else if (actionId === "bubble") addPoint(width * 0.16, height * 0.12, 7);
+      else if (actionId === "repeat") addPoint(width * 0.18, 0, 0);
+    } else if (stageType === "motion") {
+      if (actionId === "right-100") addPoint(width * 0.22, 0, 0);
+      else if (actionId === "up-50") addPoint(width * 0.18, height * -0.18, 0);
+      else if (actionId === "turn-30") addPoint(width * 0.18, height * -0.28, 30);
+      else if (actionId === "repeat") addPoint(width * 0.18, height * -0.34, 30);
+    }
+  });
+
+  return route.map((point, index) => ({
+    ...point,
+    offset: route.length === 1 ? 0 : index / (route.length - 1)
+  }));
+}
+
+export function getJumpRoute(width, height) {
+  return getMovementRoute("jump", ["right", "jump", "stomp", "repeat"], width, height);
 }
 
 function gradeCopy(grade) {
@@ -139,12 +189,25 @@ export function initPictureLessons({ root, onBackHome }) {
     const background = lesson.stageBackground
       ? `<img class="picture-stage-background" src="${lesson.stageBackground}" alt="">`
       : "";
+    const jumpHitMessages =
+      lesson.stageType === "jump"
+        ? `<span class="picture-jump-hit picture-jump-hit-1" data-jump-hit="0">イタイ！</span>
+           <span class="picture-jump-hit picture-jump-hit-2" data-jump-hit="1">イタイ！</span>`
+        : "";
+    const pathLegend = ["jump", "fish", "motion"].includes(lesson.stageType)
+      ? `<div class="picture-path-legend" aria-label="線の見方">
+           <span class="picture-path-goal"><i aria-hidden="true"></i>もくひょう</span>
+           <span class="picture-path-current"><i aria-hidden="true"></i>いまの ルール</span>
+         </div>`
+      : "";
     const canvasLabel = lesson.stageType === "coordinate" ? "座標と動きの線" : "動きの道";
     return `
       <div class="picture-stage-scene picture-stage-${lesson.stageType}">
         ${background}
         <canvas class="picture-stage-canvas" data-picture-canvas aria-label="${canvasLabel}"></canvas>
+        ${pathLegend}
         <img class="picture-stage-sprite" data-picture-sprite src="${lesson.sprite}" alt="動かす絵">
+        ${jumpHitMessages}
         <output class="picture-stage-result" data-picture-stage-result aria-live="polite">ルールを つくろう</output>
       </div>
     `;
@@ -171,12 +234,15 @@ export function initPictureLessons({ root, onBackHome }) {
     root.innerHTML = `
       <header class="picture-lesson-header">
         <button class="picture-back-button" type="button" data-picture-action="hub">${copy.hubBack}</button>
-        <div>
+        <div class="picture-lesson-heading">
           <span>${copy.badge}</span>
           <h1>${escapeText(lesson.title)}</h1>
-          <p>${escapeText(lesson.description)}</p>
+          <div class="picture-goal-summary" aria-label="きょうのゴール">
+            <span class="picture-goal-icon" aria-hidden="true">🏁</span>
+            <div><small>きょうの ゴール</small><strong>${escapeText(lesson.description)}</strong></div>
+          </div>
         </div>
-        <img src="${lesson.sprite}" alt="" aria-hidden="true">
+        <img class="picture-goal-preview" src="${lesson.thumbnail}" alt="ゴールの完成イメージ">
       </header>
       <div class="picture-builder-grid">
         <section class="picture-palette" aria-labelledby="pictureRuleTitle">
@@ -220,11 +286,14 @@ export function initPictureLessons({ root, onBackHome }) {
     const feedback = root.querySelector("[data-picture-feedback]");
     const runButton = root.querySelector('[data-picture-action="run"]');
     if (!dropzone || !feedback || !runButton) return;
+    feedback.classList.remove("is-question", "is-success");
 
-    if (state.program.length === 0) {
+    const programStatus = getPictureProgramStatus(state.program, state.lesson.sample);
+    if (!programStatus.canRun) {
       dropzone.innerHTML = `<p>ここに カードを はこぼう</p>`;
-      feedback.innerHTML = `<strong>まだ ルールは できていないよ</strong><span>カードをタップしても追加できます。</span>`;
+      feedback.innerHTML = `<strong>カードを 1まい いれてみよう</strong><span>1まい入れたら、すぐにうごかしてためせます。</span>`;
       runButton.disabled = true;
+      window.requestAnimationFrame(drawStagePreview);
       return;
     }
 
@@ -239,10 +308,10 @@ export function initPictureLessons({ root, onBackHome }) {
       )
       .join("");
     runButton.disabled = state.running;
-    const ready = sameProgram(state.program, state.lesson.sample);
-    feedback.innerHTML = ready
+    feedback.innerHTML = programStatus.isCorrect
       ? `<strong>ルールが できた！</strong><span>「${escapeText(state.lesson.repeatLabel)}」を実行できます。</span>`
-      : `<strong>ルールを つくっているよ</strong><span>じゅんばんを考えて、4まいのカードをそろえよう。</span>`;
+      : `<strong>1まいでも うごかせるよ</strong><span>できあがる前でも、まずはうごかしてためそう。</span>`;
+    window.requestAnimationFrame(drawStagePreview);
   }
 
   function addAction(actionId) {
@@ -272,6 +341,7 @@ export function initPictureLessons({ root, onBackHome }) {
 
   function resetStageVisual() {
     root.querySelectorAll(".picture-story-frame").forEach((frame) => frame.classList.remove("active", "done"));
+    root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
     const sprite = root.querySelector("[data-picture-sprite]");
     if (sprite) {
       sprite.getAnimations().forEach((animation) => animation.cancel());
@@ -283,62 +353,59 @@ export function initPictureLessons({ root, onBackHome }) {
   }
 
   async function runRule() {
-    if (state.running || state.program.length === 0) return;
+    const programStatus = getPictureProgramStatus(state.program, state.lesson.sample);
+    if (state.running || !programStatus.canRun) return;
     const feedback = root.querySelector("[data-picture-feedback]");
-    if (!sameProgram(state.program, state.lesson.sample)) {
-      feedback.innerHTML = `<strong>もうすこし！</strong><span>「みほん」を見て、カードのじゅんばんを直そう。</span>`;
-      return;
-    }
 
     state.running = true;
     renderProgram();
     feedback.innerHTML = `<strong>うごかしているよ</strong><span>同じルールをくり返しています。</span>`;
     const startedAt = performance.now();
-    await animateLesson();
+    await animateLesson(programStatus.isCorrect);
     const elapsed = Math.max(0.1, (performance.now() - startedAt) / 1000);
     state.running = false;
     state.runs += 1;
     renderProgram();
-    feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${state.runs}回 つかった！</span>`;
+    const reviewQuestion = state.grade === "lower" ? "これで ただしいかな？" : "この動きで正しいかな？";
+    if (programStatus.isCorrect) {
+      feedback.classList.add("is-success");
+      feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${state.runs}回 つかった！</span>`;
+    } else {
+      feedback.classList.add("is-question");
+      feedback.innerHTML = `<strong>${reviewQuestion}</strong><span>うごきを見て、カードのじゅんばんを考えよう。直して何度でもためせるよ。</span>`;
+    }
     const result = root.querySelector("[data-picture-stage-result]");
-    if (result) result.textContent = state.lesson.success;
+    if (result) result.textContent = programStatus.isCorrect ? state.lesson.success : reviewQuestion;
   }
 
-  async function animateLesson() {
+  async function animateLesson(isCorrect) {
     const type = state.lesson.stageType;
-    if (type === "story") return animateStory();
+    if (type === "story") return animateStory(isCorrect);
     const sprite = root.querySelector("[data-picture-sprite]");
     if (!sprite) return;
     sprite.getAnimations().forEach((animation) => animation.cancel());
 
+    if (["jump", "fish", "motion"].includes(type)) return animateMovementPath(sprite, type, isCorrect);
+
+    if (!isCorrect) {
+      root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
+      const trialKeyframes = buildTrialKeyframes();
+      const trialAnimation = sprite.animate(trialKeyframes, {
+        duration: Math.max(700, trialKeyframes.length * 280),
+        easing: "ease-in-out",
+        fill: "forwards"
+      });
+      await trialAnimation.finished.catch(() => {});
+      return;
+    }
+
     const keyframes = {
-      jump: [
-        { transform: "translate(0, 0)" },
-        { transform: "translate(165%, 0)" },
-        { transform: "translate(310%, -125%)" },
-        { transform: "translate(450%, 0)" },
-        { transform: "translate(580%, -35%)" },
-        { transform: "translate(700%, 0)" }
-      ],
-      fish: [
-        { transform: "translate(0, 0) rotate(0deg)" },
-        { transform: "translate(150%, -55%) rotate(-8deg)" },
-        { transform: "translate(300%, 25%) rotate(7deg)" },
-        { transform: "translate(470%, -55%) rotate(-8deg)" },
-        { transform: "translate(650%, 5%) rotate(0deg)" }
-      ],
       paint: [
         { transform: "translate(0, 0) rotate(0deg)" },
         { transform: "translate(430%, 0) rotate(90deg)" },
         { transform: "translate(430%, 220%) rotate(180deg)" },
         { transform: "translate(0, 220%) rotate(270deg)" },
         { transform: "translate(0, 0) rotate(360deg)" }
-      ],
-      motion: [
-        { transform: "translate(0, 0) rotate(0deg)" },
-        { transform: "translate(210%, -50%) rotate(8deg)" },
-        { transform: "translate(420%, -115%) rotate(18deg)" },
-        { transform: "translate(620%, -150%) rotate(30deg)" }
       ],
       coordinate: [
         { transform: "translate(0, 0) rotate(0deg)" },
@@ -349,7 +416,7 @@ export function initPictureLessons({ root, onBackHome }) {
         { transform: "translate(0, 0) rotate(360deg)" }
       ]
     };
-    const durations = { jump: 2200, fish: 2400, paint: 2600, motion: 2200, coordinate: 2600 };
+    const durations = { paint: 2600, coordinate: 2600 };
     const animation = sprite.animate(keyframes[type], {
       duration: durations[type],
       easing: "ease-in-out",
@@ -359,10 +426,60 @@ export function initPictureLessons({ root, onBackHome }) {
     await animation.finished.catch(() => {});
   }
 
-  async function animateStory() {
+  async function animateMovementPath(sprite, type, isCorrect) {
+    const scene = root.querySelector(`.picture-stage-${type}`);
+    if (!scene) return;
+    const route = getMovementRoute(type, state.program, scene.clientWidth, scene.clientHeight);
+    const duration = Math.max(900, (route.length - 1) * 420);
+    root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
+    const animation = sprite.animate(
+      route.map(({ x, y, rotation, offset }) => ({
+        transform: `translate(${x}px, ${y}px) rotate(${rotation}deg)`,
+        offset,
+        easing: "ease-in-out"
+      })),
+      { duration, fill: "forwards" }
+    );
+    const hitAnimations = type === "jump"
+      ? route.filter(({ hit }) => Number.isInteger(hit))
+      .map(async ({ hit, offset }) => {
+        await sleep(duration * offset);
+        if (state.running) root.querySelector(`[data-jump-hit="${hit}"]`)?.classList.add("is-visible");
+      })
+      : [];
+    await Promise.all([animation.finished.catch(() => {}), ...hitAnimations]);
+  }
+
+  function buildTrialKeyframes() {
+    let x = 0;
+    let y = 0;
+    let rotation = 0;
+    const keyframes = [{ transform: "translate(0, 0) rotate(0deg)" }];
+    const rightActions = new Set(["right", "swim-right", "forward", "right-100", "right-80", "x-100"]);
+    const upActions = new Set(["jump", "swim-up", "up-50", "up-60", "y-50"]);
+
+    state.program.forEach((actionId) => {
+      if (rightActions.has(actionId)) x += 105;
+      if (upActions.has(actionId)) y -= 62;
+      if (actionId === "down-60" || actionId === "stomp") y += 55;
+      if (actionId === "turn" || actionId === "turn-30") rotation += 30;
+      if (actionId === "turn-60") rotation += 60;
+      if (actionId === "bubble" || actionId === "color") rotation += 12;
+      if (actionId === "repeat") {
+        x += 45;
+        rotation += 15;
+      }
+      keyframes.push({ transform: `translate(${x}%, ${y}%) rotate(${rotation}deg)` });
+    });
+
+    return keyframes;
+  }
+
+  async function animateStory(isCorrect) {
     const frames = [...root.querySelectorAll(".picture-story-frame")];
     frames.forEach((frame) => frame.classList.remove("active", "done"));
-    for (const frame of frames) {
+    const framesToRun = isCorrect ? frames : frames.slice(0, Math.min(2, Math.max(1, state.program.length)));
+    for (const frame of framesToRun) {
       frame.classList.add("active");
       const robot = frame.querySelector(".picture-story-robot");
       const animation = robot.animate(
@@ -403,29 +520,33 @@ export function initPictureLessons({ root, onBackHome }) {
     ctx.lineJoin = "round";
 
     if (["jump", "fish", "motion"].includes(state.lesson.stageType)) {
-      ctx.save();
-      ctx.setLineDash([10, 12]);
-      ctx.lineWidth = Math.max(4, w * 0.006);
-      ctx.strokeStyle = state.lesson.stageType === "fish" ? "rgba(255,255,255,.9)" : "rgba(40,137,218,.8)";
-      ctx.beginPath();
-      if (state.lesson.stageType === "fish") {
-        ctx.moveTo(w * 0.12, h * 0.53);
-        ctx.bezierCurveTo(w * 0.3, h * 0.18, w * 0.38, h * 0.82, w * 0.54, h * 0.48);
-        ctx.bezierCurveTo(w * 0.7, h * 0.18, w * 0.77, h * 0.75, w * 0.9, h * 0.48);
-      } else if (state.lesson.stageType === "motion") {
-        ctx.moveTo(w * 0.13, h * 0.74);
-        ctx.bezierCurveTo(w * 0.35, h * 0.72, w * 0.55, h * 0.46, w * 0.84, h * 0.35);
-      } else {
-        ctx.moveTo(w * 0.1, h * 0.7);
-        ctx.bezierCurveTo(w * 0.3, h * 0.7, w * 0.37, h * 0.2, w * 0.52, h * 0.7);
-        ctx.lineTo(w * 0.88, h * 0.7);
+      const sprite = root.querySelector("[data-picture-sprite]");
+      const startX = (sprite?.offsetLeft ?? w * 0.06) + (sprite?.offsetWidth ?? 0) / 2;
+      const startY = (sprite?.offsetTop ?? h * 0.6) + (sprite?.offsetHeight ?? 0) / 2;
+      const goalRoute = getMovementRoute(state.lesson.stageType, state.lesson.sample, w, h);
+      drawRouteLine(ctx, goalRoute, startX, startY, "rgba(13, 42, 99, .44)", [10, 12], Math.max(8, w * 0.012));
+      drawRouteLine(ctx, goalRoute, startX, startY, "#fff", [10, 12], Math.max(4, w * 0.006));
+      if (state.program.length > 0) {
+        const currentRoute = getMovementRoute(state.lesson.stageType, state.program, w, h);
+        drawRouteLine(ctx, currentRoute, startX, startY, "rgba(255,255,255,.92)", [], Math.max(10, w * 0.014));
+        drawRouteLine(ctx, currentRoute, startX, startY, "#ee4057", [], Math.max(6, w * 0.008));
       }
-      ctx.stroke();
-      ctx.restore();
     }
 
     if (state.lesson.stageType === "paint") drawPaintCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
     if (state.lesson.stageType === "coordinate") drawCoordinateCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
+  }
+
+  function drawRouteLine(ctx, route, startX, startY, color, dash, width) {
+    ctx.save();
+    ctx.setLineDash(dash);
+    ctx.lineWidth = width;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    route.slice(1).forEach(({ x, y }) => ctx.lineTo(startX + x, startY + y));
+    ctx.stroke();
+    ctx.restore();
   }
 
   function animateDrawing(type, duration) {

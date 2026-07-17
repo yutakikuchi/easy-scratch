@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "node scripts/serve-no-cache.mjs 43127",
     "test": "node scripts/validate-static.mjs && node scripts/calculation.test.mjs && node scripts/picture-lessons.test.mjs",
     "build": "node scripts/build.mjs"
   }

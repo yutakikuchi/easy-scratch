@@ -702,6 +702,30 @@ body[data-page="program"] .picture-experience {
   white-space: nowrap;
 }
 
+.picture-run-feedback.is-question {
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 2px 10px;
+  border: 2px solid #f0aa16;
+  border-radius: 11px;
+  background: #fff3b8;
+  color: #69470b;
+  line-height: 1.08;
+  box-shadow: 0 3px 0 rgba(173, 108, 0, 0.16);
+}
+.picture-run-feedback.is-question strong {
+  color: #a34700;
+  font-size: clamp(19px, 2.1vw, 24px);
+}
+.picture-run-feedback.is-question span {
+  font-size: clamp(11px, 1.2vw, 14px);
+}
+
+.picture-run-feedback.is-success strong {
+  color: #16814a;
+}
+
 .picture-drag-ghost {
   position: fixed;
   z-index: 10000;
@@ -715,6 +739,15 @@ body[data-page="program"] .picture-experience {
 }
 
 @media (min-width: 821px) and (max-height: 900px) {
+  .picture-program-panel {
+    gap: 1px;
+  }
+  .picture-run-button {
+    min-height: 54px;
+    padding: 4px 12px;
+    line-height: 1;
+  }
+
   .picture-hub {
     gap: 8px;
   }

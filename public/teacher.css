@@ -1,0 +1,149 @@
+.teacher-body {
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+.teacher-page {
+  display: grid;
+  gap: 18px;
+  width: min(100%, 1040px);
+  margin: 0 auto;
+}
+
+.teacher-page > header,
+.teacher-license,
+.teacher-contact {
+  border: 3px solid #82c3ea;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 12px 28px rgba(39, 82, 128, .13);
+}
+
+.teacher-page > header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+}
+
+.teacher-page > header > a,
+.teacher-contact > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 10px 18px;
+  border: 3px solid #2589db;
+  border-radius: 16px;
+  background: #eef8ff;
+  color: #0d2a63;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.teacher-page small {
+  color: #2589db;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.teacher-page h1,
+.teacher-page h2,
+.teacher-page p {
+  margin: 0;
+}
+
+.teacher-page h1 {
+  margin-block: 4px;
+  color: #0d2a63;
+  font-size: clamp(34px, 5vw, 58px);
+}
+
+.teacher-license {
+  padding: 24px;
+  border-color: #ff6a7e;
+}
+
+.teacher-section-title {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.teacher-section-title > span {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ff566f;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.teacher-license ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.teacher-license li {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 2px solid #b9daf0;
+  border-radius: 18px;
+  background: #f8fcff;
+}
+
+.teacher-license li strong {
+  color: #0d2a63;
+  font-size: 20px;
+}
+
+.teacher-license li span {
+  color: #47657f;
+  line-height: 1.65;
+}
+
+.teacher-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px;
+}
+
+.teacher-contact h2 {
+  margin-block: 4px;
+  color: #0d2a63;
+  font-size: clamp(26px, 3.5vw, 40px);
+}
+
+.teacher-copyright {
+  width: min(100%, 1040px);
+  margin: 18px auto 0;
+  color: #47657f;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .teacher-page > header,
+  .teacher-contact {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .teacher-license ol {
+    grid-template-columns: 1fr;
+  }
+}

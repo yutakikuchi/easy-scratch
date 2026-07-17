@@ -43,6 +43,48 @@
   animation: picture-jump-pop 260ms ease-out both;
 }
 
+.picture-jump-goal {
+  position: absolute;
+  top: 5%;
+  right: 1.5%;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  min-width: clamp(58px, 7vw, 92px);
+  padding: 5px 7px;
+  border: 3px solid #fff;
+  border-radius: 14px;
+  background: rgba(255, 207, 51, 0.96);
+  color: #0d2a63;
+  box-shadow: 0 5px 0 rgba(13, 42, 99, 0.18);
+  pointer-events: none;
+}
+
+.picture-jump-goal::after {
+  position: absolute;
+  bottom: -14px;
+  border-top: 14px solid #ffcf33;
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
+  content: "";
+}
+
+.picture-jump-goal span {
+  font-size: clamp(32px, 5vw, 58px);
+  line-height: 1;
+}
+
+.picture-jump-goal strong {
+  font-size: clamp(12px, 1.4vw, 17px);
+  font-weight: 1000;
+}
+
+.picture-stage-jump .picture-stage-result {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .picture-fish-shell {
   position: absolute;
   top: 5%;

@@ -5,7 +5,7 @@ export const pictureLessons = {
       title: "ほうがんし いろぬり",
       shortTitle: "しょうがいぶつを よけて ぬる",
       description: "1マスずつ うごき、しょうがいぶつを よけて 3つのマスを ぬろう",
-      thumbnail: "./assets/picture-lessons/mock-lower-grid-paint.png",
+      thumbnail: "./assets/picture-lessons/mock-lower-grid-paint-v2.svg",
       stageType: "grid-paint",
       stageTitle: "ほうがんしを うごかそう",
       sprite: "./assets/lower-mascot.png",

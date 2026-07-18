@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <pattern id="pitch" width="220" height="40" patternUnits="userSpaceOnUse"><rect width="110" height="40" fill="#299a49"/><rect x="110" width="110" height="40" fill="#35aa53"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#193b5c" flood-opacity=".18"/></filter>
+  </defs>
+  <rect width="1600" height="900" rx="42" fill="#f7fcff"/>
+  <rect x="24" y="22" width="1552" height="96" rx="28" fill="#fff" stroke="#73bce6" stroke-width="5"/>
+  <text x="60" y="67" font-family="sans-serif" font-size="37" font-weight="900" fill="#0d2a63">ロボット・フリーキック</text>
+  <text x="60" y="98" font-family="sans-serif" font-size="20" font-weight="800" fill="#51708d">結果を見て、x・yの力を直し、壁をこえる軌道を再現しよう</text>
+  <rect x="1010" y="40" width="530" height="62" rx="20" fill="#fff3b6" stroke="#f0ad20" stroke-width="4"/>
+  <text x="1040" y="65" font-family="sans-serif" font-size="17" font-weight="900" fill="#a76100">きょうのゴール</text>
+  <text x="1040" y="91" font-family="sans-serif" font-size="22" font-weight="900" fill="#0d2a63">白いお手本どおりに ゴールへ落とす</text>
+
+  <g transform="translate(24 138)">
+    <rect width="430" height="564" rx="28" fill="#fff" stroke="#ff657f" stroke-width="5"/>
+    <circle cx="50" cy="51" r="31" fill="#ff5873"/><text x="50" y="63" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="900" fill="#fff">1</text>
+    <text x="96" y="58" font-family="sans-serif" font-size="31" font-weight="900" fill="#0d2a63">結果を見て、自分で直す</text>
+    <text x="34" y="96" font-family="sans-serif" font-size="19" font-weight="800" fill="#58728e">最初は1回シュートすることだけ</text>
+    <g transform="translate(28 120)" font-family="sans-serif" filter="url(#shadow)">
+      <rect width="176" height="170" rx="22" fill="#f1f9ff" stroke="#7dc1e8" stroke-width="4"/>
+      <text x="88" y="39" text-anchor="middle" font-size="22" font-weight="800" fill="#56718c">よこの力</text><text x="88" y="103" text-anchor="middle" font-size="32" font-weight="900" fill="#0d2a63">x = <tspan fill="#ef4058">90</tspan></text><text x="88" y="143" text-anchor="middle" font-size="18" font-weight="800" fill="#56718c">飛ぶきょり</text>
+      <rect x="196" width="176" height="170" rx="22" fill="#f1f9ff" stroke="#7dc1e8" stroke-width="4"/>
+      <text x="284" y="39" text-anchor="middle" font-size="22" font-weight="800" fill="#56718c">うえの力</text><text x="284" y="103" text-anchor="middle" font-size="32" font-weight="900" fill="#0d2a63">y = <tspan fill="#ef4058">100</tspan></text><text x="284" y="143" text-anchor="middle" font-size="18" font-weight="800" fill="#56718c">ボールの高さ</text>
+    </g>
+    <g transform="translate(28 316)" font-family="sans-serif">
+      <rect width="372" height="204" rx="22" fill="#fff5c9" stroke="#eda91e" stroke-width="4"/>
+      <text x="22" y="42" font-size="25" font-weight="900" fill="#0d2a63">結果から 直し方をえらぶ</text>
+      <text x="22" y="72" font-size="17" font-weight="800" fill="#58728e">試すと、修正カードが使えるようになる</text>
+      <g transform="translate(18 95)" font-weight="900" font-size="19" text-anchor="middle" fill="#0d2a63">
+        <rect width="160" height="82" rx="17" fill="#fff" stroke="#2d8ed8" stroke-width="4"/><text x="80" y="34">xを10</text><text x="80" y="62">増やす</text>
+        <rect x="176" width="160" height="82" rx="17" fill="#fff" stroke="#2d8ed8" stroke-width="4"/><text x="256" y="34">yを10</text><text x="256" y="62">増やす</text>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(474 138)">
+    <rect width="1102" height="564" rx="28" fill="#fff" stroke="#ff657f" stroke-width="5"/>
+    <circle cx="50" cy="51" r="31" fill="#ff5873"/><text x="50" y="63" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="900" fill="#fff">2</text>
+    <text x="96" y="58" font-family="sans-serif" font-size="31" font-weight="900" fill="#0d2a63">フリーキックの軌道を再現する</text>
+    <text x="96" y="90" font-family="sans-serif" font-size="19" font-weight="800" fill="#58728e">白い目標線と、赤い今の動きを見くらべよう</text>
+    <g transform="translate(28 112)">
+      <rect width="1046" height="420" rx="22" fill="url(#pitch)" stroke="#63b9e3" stroke-width="5"/>
+      <rect y="0" width="1046" height="72" rx="20" fill="#7dd2ed"/><rect y="61" width="1046" height="11" fill="#dff7ff"/>
+      <g transform="translate(22 17)" font-family="sans-serif" font-size="17" font-weight="900"><rect width="300" height="45" rx="17" fill="#173f78" opacity=".94"/><path d="M19 23H70" stroke="#fff" stroke-width="7" stroke-dasharray="14 10"/><text x="80" y="30" fill="#fff">目標</text><path d="M148 23H198" stroke="#ef4058" stroke-width="8"/><text x="210" y="30" fill="#fff">今の動き</text></g>
+      <path d="M138 346Q470 62 912 315" fill="none" stroke="#173f78" stroke-width="18" opacity=".55" stroke-linecap="round" stroke-dasharray="24 21"/>
+      <path d="M138 346Q470 62 912 315" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="24 21"/>
+      <path d="M138 346Q438 100 900 327" fill="none" stroke="#fff" stroke-width="17" opacity=".9" stroke-linecap="round"/>
+      <path d="M138 346Q438 100 900 327" fill="none" stroke="#ef4058" stroke-width="10" stroke-linecap="round"/>
+      <image href="../robot-mascot.png" x="48" y="277" width="110" height="126" preserveAspectRatio="xMidYMid meet"/>
+      <text x="135" y="357" text-anchor="middle" font-size="38">⚽</text>
+      <g transform="translate(525 287)"><rect x="0" y="16" width="48" height="83" rx="16" fill="#2589db" stroke="#fff" stroke-width="5"/><circle cx="24" cy="0" r="23" fill="#efb17d" stroke="#fff" stroke-width="5"/><rect x="45" y="16" width="48" height="83" rx="16" fill="#2589db" stroke="#fff" stroke-width="5"/><circle cx="69" cy="0" r="23" fill="#efb17d" stroke="#fff" stroke-width="5"/><rect x="90" y="16" width="48" height="83" rx="16" fill="#2589db" stroke="#fff" stroke-width="5"/><circle cx="114" cy="0" r="23" fill="#efb17d" stroke="#fff" stroke-width="5"/><rect x="135" y="16" width="48" height="83" rx="16" fill="#2589db" stroke="#fff" stroke-width="5"/><circle cx="159" cy="0" r="23" fill="#efb17d" stroke="#fff" stroke-width="5"/><rect x="39" y="-47" width="108" height="32" rx="16" fill="#0d2a63"/><text x="93" y="-24" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="900" fill="#fff">かべ</text></g>
+      <g transform="translate(870 270)"><rect width="145" height="112" fill="none" stroke="#fff" stroke-width="10"/><path d="M0 28H145M0 56H145M0 84H145M36 0V112M72 0V112M108 0V112" stroke="#fff" stroke-width="3"/><rect x="28" y="-38" width="90" height="31" rx="14" fill="#ffcf33"/><text x="73" y="-16" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="900" fill="#0d2a63">ゴール</text><text x="70" y="81" text-anchor="middle" font-size="43">⚽</text></g>
+    </g>
+  </g>
+
+  <g transform="translate(24 724)" font-family="sans-serif">
+    <rect width="1552" height="150" rx="28" fill="#fff" stroke="#ff657f" stroke-width="5"/>
+    <text x="28" y="42" font-size="29" font-weight="900" fill="#0d2a63">できた 自動修正ルール</text>
+    <text x="28" y="72" font-size="18" font-weight="800" fill="#58728e">自分で試した直し方だけが、ここに保存される</text>
+    <g transform="translate(390 25)" filter="url(#shadow)"><rect width="580" height="98" rx="22" fill="#eef8ff" stroke="#2d8ed8" stroke-width="4"/><text x="25" y="38" font-size="19" font-weight="900" fill="#55718d">もし「手前に落ちた」なら</text><text x="25" y="73" font-size="27" font-weight="900" fill="#0d2a63">つぎは x を10増やす</text><text x="540" y="67" text-anchor="middle" font-size="38" fill="#2388d7">→</text></g>
+    <g transform="translate(1000 25)" font-weight="900" filter="url(#shadow)"><rect width="235" height="98" rx="22" fill="#ff5d70"/><text x="117" y="63" text-anchor="middle" font-size="30" fill="#fff">⚽ 1回シュート</text><rect x="253" width="265" height="98" rx="22" fill="#eef8ff" stroke="#2d8ed8" stroke-width="4"/><text x="385" y="48" text-anchor="middle" font-size="23" fill="#0d2a63">試した記録を再生</text><text x="385" y="75" text-anchor="middle" font-size="16" fill="#55718d">最大10回</text></g>
+  </g>
+</svg>

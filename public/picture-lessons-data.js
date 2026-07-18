@@ -96,7 +96,7 @@ export const pictureLessons = {
       title: "ロボット・フリーキック",
       shortTitle: "x・yの力で軌道を再現する",
       description: "蹴る力を変え、壁をこえてゴールへ落ちる軌道を作ろう",
-      thumbnail: "./assets/picture-lessons/mock-upper-free-kick-v3.png",
+      thumbnail: "./assets/picture-lessons/mock-upper-free-kick-v4.svg",
       stageType: "upper-keyframe",
       sprite: "./assets/robot-mascot.png"
     },

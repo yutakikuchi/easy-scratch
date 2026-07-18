@@ -1,4 +1,4 @@
-import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260718f";
+import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260718g";
 import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260718q";
 import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260718p";
 import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";

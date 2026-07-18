@@ -1,6 +1,6 @@
 export const ENGLISH_TEXT = Object.freeze({
   "はじめてのプログラミングにちょうせん": "Try Programming for the First Time",
-  "easy-scratch アプリ": "easy-scratch app",
+  "Eash-Scratch アプリ": "Eash-Scratch app",
   "げんきな 女の子": "Cheerful girl",
   "ジャンプする絵の動き": "Jumping picture movement",
   "あんないする ロボット": "Guide robot",

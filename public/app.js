@@ -4,9 +4,9 @@ import {
   calculationLessons,
   isCalculationComplete
 } from "./calculation.js";
-import { initLowerCalculationMachine } from "./lower-machine.js";
-import { initPictureLessons } from "./picture-lessons.js?v=20260717p";
-import { initUpperCalculationMachine } from "./upper-machine.js";
+import { initLowerCalculationMachine } from "./lower-machine.js?v=20260718c";
+import { initPictureLessons } from "./picture-lessons.js?v=20260718v";
+import { initUpperCalculationMachine } from "./upper-machine.js?v=20260718c";
 
 const lessons = {
   lower: {
@@ -137,7 +137,7 @@ const elements = Object.fromEntries([
   "lessonTitle", "programMascot", "backToCalculationButton", "stageNoteA", "stageNoteB",
   "stageGrid", "robotStatus", "scoreStatus", "commandPalette", "paletteLabel",
   "paletteHeading", "programList", "programListLabel", "programListHeading", "runButton",
-  "resetButton", "undoButton", "clearButton", "sampleButton"
+  "resetButton", "undoButton", "clearButton", "sampleButton", "siteFooter"
 ].map((id) => [id, document.querySelector(`#${id}`)]));
 
 const commandIcons = {
@@ -459,6 +459,7 @@ function renderPage() {
   elements.pageSwitcher.hidden = true;
   elements.calculationPage.hidden = isHome || isProgram;
   elements.programPage.hidden = isHome || !isProgram;
+  elements.siteFooter.hidden = !isHome;
   elements.calculationPageButton.classList.toggle("active", !isProgram);
   elements.programPageButton.classList.toggle("active", isProgram);
   elements.calculationPageButton.setAttribute("aria-pressed", String(!isProgram));
@@ -482,7 +483,7 @@ function renderProgramPage() {
   elements.stageNoteB.textContent = lesson.stageNotes[1];
   elements.programMascot.src = state.mode === "lower" ? "./assets/lower-mascot.png" : "./assets/robot-mascot.png";
   elements.programMascot.alt = state.mode === "lower" ? "キャラクター" : "ロボット";
-  elements.backToCalculationButton.textContent = state.mode === "lower" ? "TOPへ もどる" : "TOPへ戻る";
+  elements.backToCalculationButton.textContent = "もどる";
   elements.runButton.textContent = state.mode === "lower" ? "うごかす" : "実行";
   elements.undoButton.textContent = state.mode === "lower" ? "もどす" : "戻す";
   elements.clearButton.textContent = state.mode === "lower" ? "けす" : "消す";
@@ -777,3 +778,4 @@ const pictureExperience = initPictureLessons({
 renderNumberPad();
 resetStage();
 render();
+document.documentElement.classList.remove("app-booting");

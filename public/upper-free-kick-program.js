@@ -3,7 +3,7 @@ import {
   createKickPath,
   doesKickClearWall,
   kickTargetForce
-} from "./upper-picture-lesson-logic.js?v=20260717o";
+} from "./upper-picture-lesson-logic.js?v=20260717s";
 
 export const kickCorrectionActions = Object.freeze([
   Object.freeze({ id: "x-plus", label: "xを10増やす", variable: "x", delta: 10 }),

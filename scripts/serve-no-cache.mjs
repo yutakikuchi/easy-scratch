@@ -8,6 +8,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const publicDirectory = resolve(root, "public");
 const requestedPort = Number.parseInt(process.argv[2] ?? "43127", 10);
 const port = Number.isInteger(requestedPort) && requestedPort > 0 ? requestedPort : 43127;
+const requestedHost = process.argv[3] ?? "127.0.0.1";
+const host = requestedHost === "0.0.0.0" ? "0.0.0.0" : "127.0.0.1";
 
 const contentTypes = {
   ".css": "text/css; charset=utf-8",
@@ -70,6 +72,7 @@ const server = createServer(async (request, response) => {
   }
 });
 
-server.listen(port, "127.0.0.1", () => {
-  console.log(`No-cache server: http://127.0.0.1:${port}/`);
+server.listen(port, host, () => {
+  const displayHost = host === "0.0.0.0" ? "<このPCのIPアドレス>" : host;
+  console.log(`No-cache server: http://${displayHost}:${port}/`);
 });

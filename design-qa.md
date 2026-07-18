@@ -1,4 +1,4 @@
-# Design QA — iPad向けサマースクール全体
+# Design QA — iPad向けeasy-scratch全体
 
 ## Comparison target
 

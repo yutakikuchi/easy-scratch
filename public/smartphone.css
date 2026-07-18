@@ -1,0 +1,690 @@
+/* Smartphone layout is loaded last so every lesson shares the same reflow rules. */
+@media (max-width: 600px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body {
+    position: relative;
+    background-size: auto, auto, auto, 24px 24px, 24px 24px, auto;
+  }
+
+  body .app-shell,
+  body[data-page="home"] .app-shell,
+  body[data-page="program"] .app-shell,
+  body[data-grade="lower"][data-page="calculation"] .app-shell,
+  body[data-grade="upper"][data-page="calculation"] .app-shell {
+    min-height: 100svh;
+    padding: calc(66px + env(safe-area-inset-top)) 10px calc(24px + env(safe-area-inset-bottom));
+    overflow-x: clip;
+  }
+
+  .workspace,
+  .lesson-page,
+  .calculation-page,
+  .program-page,
+  .home-page,
+  .lower-machine,
+  .upper-machine,
+  .picture-experience,
+  .picture-hub,
+  .picture-lesson,
+  .picture-builder-grid,
+  .picture-palette,
+  .picture-stage-panel,
+  .picture-program-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  strong,
+  small,
+  span,
+  button,
+  a {
+    overflow-wrap: anywhere;
+  }
+
+  button,
+  a,
+  select,
+  input {
+    touch-action: manipulation;
+  }
+
+  .language-switcher {
+    position: absolute;
+    top: max(8px, env(safe-area-inset-top));
+    right: 10px;
+    max-width: calc(100vw - 20px);
+    padding: 3px;
+    box-shadow: 0 4px 12px rgba(20, 55, 100, 0.16);
+  }
+
+  .language-switcher-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 15px;
+  }
+
+  .language-switcher button {
+    min-width: 60px;
+    min-height: 34px;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  /* Home */
+  .home-page {
+    gap: 12px;
+  }
+
+  .home-hero {
+    grid-template-columns: 48px minmax(0, 1fr);
+    min-height: 0;
+    padding: 4px 2px 10px;
+  }
+
+  .home-hero > img {
+    width: 46px;
+    border-radius: 16px;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(29px, 8.7vw, 35px);
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .home-hero p {
+    margin-top: 5px;
+    font-size: 18px;
+  }
+
+  .home-intro {
+    gap: 10px;
+    padding: 12px;
+    border-width: 3px;
+    border-radius: 24px;
+  }
+
+  .home-intro-heading {
+    gap: 7px;
+  }
+
+  .home-intro h2 {
+    padding: 8px 13px;
+    font-size: 21px;
+  }
+
+  .home-intro-heading strong {
+    font-size: 18px;
+  }
+
+  .home-intro-heading p {
+    font-size: 13px;
+  }
+
+  .home-intro ol {
+    gap: 8px;
+  }
+
+  .home-intro li {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 8px;
+    padding: 9px;
+  }
+
+  .home-intro li > span {
+    width: 38px;
+    font-size: 20px;
+  }
+
+  .home-intro li strong {
+    font-size: 17px;
+  }
+
+  .home-intro li p {
+    font-size: 13px;
+  }
+
+  .home-grade {
+    grid-template-rows: 128px 136px;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 24px;
+  }
+
+  .home-grade-intro {
+    grid-template-columns: minmax(90px, 0.8fr) minmax(130px, 1.2fr);
+    min-height: 128px;
+  }
+
+  .home-grade-intro > img {
+    width: min(112px, 100%);
+    max-height: 116px;
+  }
+
+  .home-grade-intro strong {
+    font-size: clamp(42px, 13vw, 52px);
+  }
+
+  .home-grade-intro span {
+    font-size: 21px;
+  }
+
+  .home-course {
+    min-height: 136px;
+    padding: 7px;
+  }
+
+  .home-course img {
+    width: min(72px, 45%);
+  }
+
+  .home-course-program img {
+    width: min(132px, 76%);
+  }
+
+  .home-course strong {
+    font-size: clamp(20px, 6.4vw, 25px);
+    line-height: 1.05;
+  }
+
+  /* Shared lesson headers */
+  .program-header,
+  .picture-hub-header,
+  .picture-lesson-header,
+  .machine-header,
+  .upper-machine .machine-header {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .picture-hub-header,
+  .picture-lesson-header {
+    gap: 10px;
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  .picture-hub-header h1,
+  .picture-lesson-title-card h1 {
+    font-size: clamp(27px, 8.5vw, 34px);
+    line-height: 1.08;
+  }
+
+  .picture-hub-header p,
+  .picture-lesson-title-card p {
+    font-size: 13px;
+  }
+
+  .picture-back-button,
+  .machine-back,
+  .back-button,
+  .teacher-back-link {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    padding: 8px 12px;
+    font-size: 17px;
+  }
+
+  .picture-hub-header > div > span,
+  .picture-lesson-title-card > span {
+    font-size: 13px;
+  }
+
+  /* Program hubs */
+  .picture-lesson-grid,
+  .picture-lower .picture-lesson-grid,
+  .picture-upper .picture-lesson-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .picture-lesson-card,
+  .picture-lower .picture-lesson-card,
+  .picture-upper .picture-lesson-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: 180px auto;
+    row-gap: 8px;
+    min-height: 0;
+    padding: 8px;
+    border-width: 3px;
+    border-radius: 22px;
+  }
+
+  .picture-lesson-card > img,
+  .picture-lower .picture-lesson-card > img,
+  .picture-upper .picture-lesson-card > img {
+    width: 100%;
+    height: 180px;
+    padding: 2%;
+  }
+
+  .picture-lesson-number {
+    top: 12px;
+    left: 12px;
+    width: 44px;
+    font-size: 22px;
+  }
+
+  .picture-lesson-copy {
+    padding: 8px 10px 10px;
+  }
+
+  .picture-lesson-copy strong {
+    font-size: 24px;
+    line-height: 1.12;
+  }
+
+  /* Learning panel */
+  .learning-focus details,
+  .learning-focus summary,
+  .learning-focus-panel,
+  .learning-focus-item {
+    min-width: 0;
+  }
+
+  .learning-focus summary {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 10px 11px;
+    font-size: 20px;
+  }
+
+  .learning-focus summary::after {
+    max-width: 92px;
+    padding: 5px 8px;
+    font-size: 11px;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .learning-focus-panel {
+    gap: 8px;
+    padding: 8px 10px 12px;
+  }
+
+  .learning-focus-item {
+    padding: 10px;
+  }
+
+  .learning-focus-item strong {
+    font-size: 15px;
+  }
+
+  .learning-focus-item p {
+    font-size: 12px;
+  }
+
+  /* Calculation machines */
+  .machine-header,
+  .upper-machine .machine-header {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .machine-header h1,
+  .upper-machine .machine-header h1 {
+    grid-column: 1 / -1;
+    width: 100%;
+    font-size: clamp(27px, 8.4vw, 33px);
+    line-height: 1.08;
+  }
+
+  .machine-grade,
+  .upper-machine .machine-grade {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    padding: 6px;
+    font-size: clamp(18px, 5.8vw, 23px);
+    text-align: center;
+  }
+
+  .machine-top-grid,
+  .upper-machine-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .machine-card,
+  .machine-summary-card {
+    min-width: 0;
+    min-height: 0;
+    padding: 12px;
+    overflow: hidden;
+  }
+
+  .machine-card-heading {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .machine-card-heading h2 {
+    font-size: 23px;
+  }
+
+  .machine-summary,
+  .upper-machine .machine-summary {
+    grid-template-columns: 1fr;
+    padding-right: 0;
+  }
+
+  .machine-child,
+  .machine-robot {
+    display: none;
+  }
+
+  .machine-results-list,
+  .upper-results-list {
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .upper-rule-token-tray {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .upper-rule-builder {
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 3px;
+    overflow: hidden;
+  }
+
+  .upper-rule-builder .rule-drop-slot {
+    width: 34px;
+    min-height: 48px;
+    border-width: 2px;
+    font-size: 27px;
+  }
+
+  .upper-rule-builder .operator-slot {
+    width: 29px;
+    min-height: 44px;
+    font-size: 23px;
+  }
+
+  .upper-rule-static {
+    min-width: 16px;
+    font-size: 22px;
+  }
+
+  .upper-rule-result {
+    min-width: 28px;
+    font-size: 30px;
+  }
+
+  .upper-machine .rule-token {
+    grid-template-columns: 1fr;
+    gap: 1px;
+    min-width: 0;
+    padding-inline: 2px;
+  }
+
+  .upper-machine .rule-token small {
+    font-size: 10px;
+  }
+
+  /* Picture lessons */
+  .picture-builder-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(330px, auto) auto;
+  }
+
+  .picture-palette,
+  .picture-stage-panel,
+  .picture-program-panel {
+    padding: 9px;
+    border-width: 3px;
+    border-radius: 19px;
+  }
+
+  .picture-action-list,
+  .picture-kind-grid-paint .picture-action-list {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: minmax(82px, auto);
+  }
+
+  .picture-action-card,
+  html[lang="en"] .picture-action-card {
+    grid-template-columns: 50px minmax(0, 1fr) auto;
+    gap: 7px;
+    padding: 7px;
+  }
+
+  .picture-action-card > img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .picture-action-card strong {
+    font-size: 17px;
+    line-height: 1.12;
+  }
+
+  .picture-action-card small {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .picture-action-card em,
+  html[lang="en"] .picture-action-card em {
+    justify-self: end;
+    min-width: 0;
+    max-width: 54px;
+    font-size: 10px;
+    line-height: 1.1;
+    text-align: right;
+    white-space: normal;
+  }
+
+  .picture-stage-panel {
+    min-height: 330px;
+  }
+
+  .picture-stage-scene,
+  .picture-story-frame {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .picture-stage-legend {
+    max-width: calc(100% - 16px);
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .picture-program-row,
+  .picture-run-feedback,
+  .picture-program-heading {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .picture-program-dropzone {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .picture-program-dropzone > * {
+    min-width: 0;
+  }
+
+  .picture-run-button,
+  .picture-loop-button {
+    width: 100%;
+    min-width: 0;
+    white-space: normal;
+  }
+
+  /* Teacher page */
+  .teacher-body {
+    width: 100%;
+    max-width: 100%;
+    padding: calc(66px + env(safe-area-inset-top)) 10px calc(24px + env(safe-area-inset-bottom));
+    overflow-x: clip;
+  }
+
+  .teacher-page {
+    width: 100%;
+    max-width: 100%;
+    gap: 12px;
+  }
+
+  .teacher-page > header,
+  .teacher-purpose,
+  .teacher-license,
+  .teacher-contact {
+    width: 100%;
+    min-width: 0;
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .teacher-page > header {
+    gap: 12px;
+  }
+
+  .teacher-page h1 {
+    font-size: 34px;
+  }
+
+  .teacher-purpose h2,
+  .teacher-section-title h2 {
+    font-size: 22px;
+  }
+
+  .teacher-purpose p,
+  .teacher-license li span {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .teacher-license {
+    padding: 14px;
+  }
+
+  .teacher-section-title {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .teacher-section-title > span {
+    width: auto;
+    min-width: 58px;
+    min-height: 44px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    aspect-ratio: auto;
+    font-size: 14px;
+  }
+
+  .teacher-license ol {
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .teacher-license li {
+    padding: 14px;
+  }
+
+  .teacher-contact {
+    gap: 10px;
+  }
+
+  .teacher-contact > a {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .language-switcher button {
+    min-width: 54px;
+    padding-inline: 6px;
+    font-size: 11px;
+  }
+
+  .home-grade {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    overflow: visible;
+  }
+
+  .home-grade-intro {
+    min-height: 138px;
+  }
+
+  .home-course {
+    min-height: 142px;
+    height: auto;
+    padding-block: 10px 12px;
+  }
+
+  .lower-machine:not(.upper-machine) .rule-token-tray {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .machine-rule-builder {
+    gap: 4px;
+  }
+
+  .rule-drop-slot {
+    width: 54px;
+    min-height: 62px;
+    font-size: 42px;
+  }
+
+  .operator-slot {
+    width: 46px;
+    min-height: 56px;
+    font-size: 35px;
+  }
+
+  .machine-variable {
+    min-width: 36px;
+    font-size: 44px;
+  }
+
+  .machine-operator {
+    min-width: 22px;
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  body .app-shell,
+  body[data-page="home"] .app-shell,
+  body[data-page="program"] .app-shell,
+  body[data-grade="lower"][data-page="calculation"] .app-shell,
+  body[data-grade="upper"][data-page="calculation"] .app-shell,
+  .teacher-body {
+    padding-top: calc(58px + env(safe-area-inset-top));
+  }
+
+  .language-switcher button {
+    min-height: 32px;
+  }
+
+  .home-hero h1 {
+    font-size: 34px;
+  }
+}

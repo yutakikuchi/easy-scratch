@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import { findPictureLesson, pictureLessons } from "../public/picture-lessons-data.js";
-import { getJumpRoute, getMovementRoute, getPaintRoute, getPictureProgramStatus } from "../public/picture-lessons.js";
+import { expandPictureProgram, getJumpRoute, getMovementRoute, getPaintRoute, getPictureProgramStatus, setPictureCommandRepeat } from "../public/picture-lessons.js";
 import { createGridPaintState } from "../public/lower-grid-paint.js";
 import {
   createKickPath,
+  createPatternArtRoute,
   createPatternRoute,
   createRescueCoordinateGrid,
   createRescueRoute,
+  expandRescueProgram,
   doesKickClearWall,
   isKickCorrect,
   isPatternCorrect,
@@ -16,7 +18,9 @@ import {
   mapRescuePoint,
   patternTarget,
   rescueInitialValues,
+  rescueRepeatCount,
   rescueTargetProgram,
+  rescueTargetRule,
   rescueTargetValues
 } from "../public/upper-picture-lesson-logic.js";
 import {
@@ -24,10 +28,16 @@ import {
   classifyKickOutcome,
   simulateKickProgram
 } from "../public/upper-free-kick-program.js";
+import {
+  createUpperGridPaintState,
+  createUpperGridPaintTargetState,
+  isUpperGridPaintCorrect,
+  upperGridPaintConfig
+} from "../public/upper-grid-paint-logic.js";
 
 for (const grade of ["lower", "upper"]) {
   const lessons = pictureLessons[grade];
-  const expectedCount = grade === "lower" ? 4 : 3;
+  const expectedCount = 4;
   assert.equal(lessons.length, expectedCount, `${grade} grade must have the expected independent picture lessons`);
   assert.equal(new Set(lessons.map(({ id }) => id)).size, expectedCount, `${grade} lesson ids must be unique`);
 
@@ -47,13 +57,21 @@ for (const grade of ["lower", "upper"]) {
 
 assert.deepEqual(
   pictureLessons.lower.map(({ id }) => id),
-  ["jump", "fish", "grid-paint", "paint"]
+  ["grid-paint", "jump", "fish", "paint"]
 );
 assert.deepEqual(
   pictureLessons.upper.map(({ id }) => id),
-  ["rescue", "keyframe", "pattern"]
+  ["rescue", "keyframe", "pattern", "grid-lab"]
 );
 assert.equal(findPictureLesson("lower", "missing"), null);
+
+const upperGridTarget = createUpperGridPaintTargetState();
+assert.equal(upperGridTarget.painted.length, 6, "the upper grid target must paint six cells");
+assert.deepEqual(upperGridTarget.position, upperGridPaintConfig.goal, "the target rule must finish at the flag");
+assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetValues), true);
+assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, { x: 1, y: 1, n: 1 }), false, "initial values must not solve the lesson");
+assert.equal(isUpperGridPaintCorrect(["right", "up", "paint-blue", "paint-yellow"], upperGridPaintConfig.targetValues), false, "card order must matter");
+assert.equal(createUpperGridPaintState(["right"], { x: 4, y: 1, n: 1 }).outcome, "obstacle", "a shortcut into an obstacle must stop the robot");
 
 const sample = findPictureLesson("lower", "jump").sample;
 assert.deepEqual(getPictureProgramStatus([], sample), { canRun: false, isCorrect: false });
@@ -65,12 +83,20 @@ assert.deepEqual(getPictureProgramStatus(["jump", "right", "stomp"], sample), {
 assert.deepEqual(getPictureProgramStatus(sample, sample), { canRun: true, isCorrect: true });
 
 const jumpRoute = getJumpRoute(1000, 500);
-assert.equal(jumpRoute.length, 10);
+assert.ok(jumpRoute.length >= 45, "jump and stomps must use enough points for smooth arcs");
 assert.deepEqual(
   jumpRoute.filter(({ hit }) => Number.isInteger(hit)).map(({ hit }) => hit),
   [0, 1]
 );
 assert.deepEqual(jumpRoute.at(-1), { x: 820, y: 0, rotation: 0, offset: 1 });
+assert.deepEqual(jumpRoute.filter(({ hit }) => Number.isInteger(hit)).map(({ x, y }) => ({ x, y })), [{ x: 600, y: -80 }, { x: 720, y: -80 }], "each one-stomp command must land on one enemy");
+assert.ok(jumpRoute.slice(1).every((point, index) => Math.abs(point.x - jumpRoute[index].x) <= 140 && Math.abs(point.y - jumpRoute[index].y) <= 60), "the jump route must avoid sharp visual steps");
+
+const jumpLesson = findPictureLesson("lower", "jump");
+assert.deepEqual(jumpLesson.sample, ["right", "jump", "stomp", "stomp", "right"]);
+assert.equal(getPictureProgramStatus(jumpLesson.builderSample, jumpLesson.sample).isCorrect, true, "one stomp command repeated x2 must be correct");
+assert.equal(getPictureProgramStatus(["right", "jump", "stomp", "stomp", "right"], jumpLesson.sample).isCorrect, true, "two direct stomp cards must also be correct");
+assert.equal(setPictureCommandRepeat("stomp", 2), "stomp::repeat-2");
 
 assert.equal(findPictureLesson("lower", "jump").sample.at(-1), "right", "jump must explicitly move right to the goal");
 assert.equal(findPictureLesson("lower", "fish").sample.at(-1), "swim-right", "fish must explicitly swim right to the goal");
@@ -85,6 +111,7 @@ const paintLesson = findPictureLesson("lower", "paint");
 assert.equal(paintLesson.actions.length, 4, "paint must provide at least four action choices");
 assert.equal(paintLesson.actions.some(({ id }) => id === "color"), false, "paint must use one line color without a color action");
 assert.equal(paintLesson.sample.length, 8, "a square must require four moves and four turns");
+assert.equal(getPictureProgramStatus(paintLesson.builderSample, paintLesson.sample, 4).isCorrect, true, "a two-command paint rule repeated x4 must draw the square");
 assert.equal(paintLesson.sample.at(-1), "turn", "the square rule must finish by returning the car to its starting direction");
 assert.ok(paintLesson.description.includes("さいごにも みぎを むこう"), "the paint goal must explicitly ask for the final turn");
 const halfSquareRoute = getPaintRoute(["forward", "turn", "forward", "turn"], 1000, 500);
@@ -94,16 +121,23 @@ assert.equal(squareRoute.filter(({ draws }) => draws).length, 4, "the complete p
 assert.deepEqual(squareRoute.at(-1), { x: 0, y: 0, rotation: 0, color: "#2289df", draws: false, offset: 1 });
 
 const singleJumpRoute = getMovementRoute("jump", ["jump"], 1000, 500);
-assert.equal(singleJumpRoute.length, 3);
+assert.equal(singleJumpRoute.length, 25);
 assert.ok(singleJumpRoute[1].x > 0 && singleJumpRoute[1].y < 0, "a single jump must move diagonally upward");
-assert.deepEqual(singleJumpRoute.at(-1), { x: 320, y: 0, rotation: 0, offset: 1 });
+assert.deepEqual(singleJumpRoute.at(-1), { x: 420, y: 0, rotation: 0, offset: 1 });
 
 const fishLesson = findPictureLesson("lower", "fish");
 assert.equal(fishLesson.actions.length, 4, "fish must provide four distinct actions");
-assert.deepEqual(fishLesson.sample, ["swim-up-right", "bubble", "swim-down-right", "swim-right"]);
+const fishBaseRule = ["swim-up-right", "bubble", "swim-down-right", "swim-right"];
+assert.deepEqual(fishLesson.sample, [...fishBaseRule, ...fishBaseRule]);
+assert.deepEqual(expandPictureProgram(fishBaseRule, 2), fishLesson.sample, "x2 must expand the four-card fish rule twice");
+assert.equal(getPictureProgramStatus(fishBaseRule, fishLesson.sample, 1).isCorrect, false, "one fish rule must stop before the goal");
+assert.equal(getPictureProgramStatus(fishBaseRule, fishLesson.sample, 2).isCorrect, true, "the x2 fish rule must reach the goal");
+assert.equal(getPictureProgramStatus(fishLesson.sample, fishLesson.sample, 1).isCorrect, true, "eight directly entered cards must also reach the goal");
 const swimRoute = getMovementRoute("fish", fishLesson.sample, 1000, 500);
+const bubblePoints = swimRoute.filter(({ bubble }) => bubble);
 const bubbleIndex = swimRoute.findIndex(({ bubble }) => bubble);
 assert.ok(swimRoute.length >= 20, "the fish route must use enough points to make a gentle curve");
+assert.equal(bubblePoints.length, 2, "the repeated fish rule must make bubbles twice");
 assert.ok(bubbleIndex > 2, "the fish must follow a gradual curve before making bubbles");
 assert.equal(swimRoute[bubbleIndex].x, swimRoute[bubbleIndex - 1].x, "bubbles must not move the fish horizontally");
 assert.equal(swimRoute[bubbleIndex].y, swimRoute[bubbleIndex - 1].y, "bubbles must not move the fish vertically");
@@ -114,19 +148,21 @@ assert.ok(swimRoute.slice(1).every((point, index) => Math.abs(point.x - swimRout
 assert.ok(swimRoute.at(-1).x > swimRoute[bubbleIndex].x && Math.abs(swimRoute.at(-1).y) < 0.001, "the fish must finish by swimming gently to the goal height");
 
 const rescueRoute = createRescueRoute(rescueTargetProgram, rescueTargetValues);
-assert.equal(rescueRoute.length, 7, "the rescue goal must require six commands");
+assert.equal(rescueRoute.length, 16, "the rescue goal must require five commands repeated three times");
 assert.deepEqual(rescueRoute.at(-1), {
   x: 180,
-  y: -60,
-  direction: "up",
-  value: 80,
+  y: 160,
+  direction: "left",
+  value: 40,
   offset: 1
 });
-assert.equal(isRescueCorrect(rescueTargetProgram, rescueTargetValues), true);
-assert.equal(isRescueCorrect(rescueTargetProgram, rescueInitialValues), false, "the initial rescue values must require trial and error");
+assert.deepEqual(expandRescueProgram(rescueTargetRule, rescueRepeatCount), rescueTargetProgram);
+assert.equal(isRescueCorrect(rescueTargetRule, rescueTargetValues, rescueRepeatCount), true);
+assert.equal(isRescueCorrect(rescueTargetProgram, rescueTargetValues), false, "the rescue answer must use repetition instead of fifteen direct cards");
+assert.equal(isRescueCorrect(rescueTargetRule, rescueInitialValues, rescueRepeatCount), false, "the initial rescue values must require trial and error");
 assert.ok([...new Set(rescueTargetProgram)].every((direction) => rescueInitialValues[direction] !== rescueTargetValues[direction]), "every direction used by the goal must start with a non-answer value");
-assert.equal(isRescueCorrect([...rescueTargetProgram].reverse(), rescueTargetValues), false, "rescue order must affect correctness");
-assert.equal(isRescueCorrect(rescueTargetProgram, { ...rescueTargetValues, right: 110 }), false, "rescue distance must affect correctness");
+assert.equal(isRescueCorrect([...rescueTargetRule].reverse(), rescueTargetValues, rescueRepeatCount), false, "rescue order must affect correctness");
+assert.equal(isRescueCorrect(rescueTargetRule, { ...rescueTargetValues, right: 70 }, rescueRepeatCount), false, "rescue distance must affect correctness");
 
 const coordinateGrid = createRescueCoordinateGrid(970, 630);
 const gridOrigin = mapRescuePoint({ x: -180, y: 40 }, 970, 630);
@@ -152,8 +188,8 @@ assert.deepEqual(savedRescueRoute.at(-1), {
   value: 80,
   offset: 1
 }, "saved rescue commands must keep the value they had when added");
-const savedTargetProgram = rescueTargetProgram.map((direction) => ({ direction, value: rescueTargetValues[direction] }));
-assert.equal(isRescueCorrect(savedTargetProgram, editedRescueInputs), true, "editing the next input must not change saved command correctness");
+const savedTargetRule = rescueTargetRule.map((direction) => ({ direction, value: rescueTargetValues[direction] }));
+assert.equal(isRescueCorrect(savedTargetRule, editedRescueInputs, rescueRepeatCount), true, "editing the next input must not change saved command correctness");
 
 const kickPath = createKickPath(kickTargetForce, 20);
 assert.deepEqual(kickPath[0], { x: 0, y: 0, rotation: 0, time: 0, offset: 0 });
@@ -166,6 +202,13 @@ assert.equal(isKickCorrect({ ...kickTargetForce, x: kickTargetForce.x - 20 }), f
 assert.equal(doesKickClearWall(kickTargetForce), true, "the target free kick must clear the defensive wall");
 assert.equal(doesKickClearWall(kickInitialForce), false, "the initial free kick must require more upward force to clear the wall");
 assert.equal(createKickPath({ x: 40, y: 40 })[0].x, 0, "every kick must start at the robot's foot");
+const highKickPath = createKickPath({ x: 100, y: 190 }, 40);
+assert.ok(highKickPath.at(-1).time > 2, "a stronger upward force must keep the ball in the air longer");
+assert.ok(Math.abs(highKickPath.at(-1).y) < 0.001, "a high kick must return smoothly to the ground");
+assert.ok(
+  highKickPath.slice(1).every((point, index) => Math.abs(point.y - highKickPath[index].y) < 14),
+  "a high kick must not add an artificial steep drop at the final point"
+);
 
 const learnerKickProgram = [
   { outcome: "wall", actionId: "y-plus" },
@@ -195,7 +238,15 @@ const patternRoute = createPatternRoute(patternTarget);
 assert.equal(patternRoute.filter(({ draws }) => draws).length, 6, "the pattern rule must draw six equal sides");
 assert.ok(Math.abs(patternRoute.at(-1).x) < 0.001 && Math.abs(patternRoute.at(-1).y) < 0.001, "the regular hexagon must close at its start");
 assert.equal(patternRoute.at(-1).rotation, 0, "six 60-degree turns must restore the initial direction");
+const patternArtRoute = createPatternArtRoute(patternTarget);
+assert.equal(patternArtRoute.filter(({ draws }) => draws).length, 36, "the flower must draw six hexagons with six sides each");
+assert.ok(Math.abs(patternArtRoute.at(-1).x) < 0.001 && Math.abs(patternArtRoute.at(-1).y) < 0.001, "all six hexagons must return to the shared center");
+const singlePatternRoute = createPatternArtRoute({ ...patternTarget, count: 1 });
+assert.equal(singlePatternRoute.filter(({ draws }) => draws).length, 6, "n=1 must draw exactly one hexagon");
+assert.ok(Math.abs(singlePatternRoute.at(-1).x) < 0.001 && Math.abs(singlePatternRoute.at(-1).y) < 0.001, "the first hexagon must close before n is increased");
 assert.equal(isPatternCorrect(patternTarget), true);
+assert.equal(isPatternCorrect({ ...patternTarget, distance: 50 }), true, "the side length may change the flower size without changing its shape");
+assert.equal(isPatternCorrect({ ...patternTarget, count: 1 }), false, "one hexagon is not yet the six-hexagon flower");
 assert.equal(isPatternCorrect({ ...patternTarget, angle: 70 }), false);
 
 console.log("Picture lesson tests passed");

@@ -29,7 +29,7 @@ body[data-grade="lower"][data-page="calculation"] .app-shell {
 
 .machine-header {
   display: grid;
-  grid-template-columns: 124px 246px minmax(0, 1fr) 370px;
+  grid-template-columns: 150px 246px minmax(0, 1fr) 370px;
   align-items: center;
   gap: 16px;
   min-height: 92px;
@@ -37,14 +37,27 @@ body[data-grade="lower"][data-page="calculation"] .app-shell {
 }
 
 .machine-back {
-  min-height: 76px;
-  border: 4px solid #ff4059;
-  border-radius: 22px;
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 138px;
+  min-height: 58px;
+  padding: 10px 18px;
+  border: 3px solid #ff4059;
+  border-radius: 18px;
   background: #fff;
   color: #10295a;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 900;
   box-shadow: 0 5px 0 rgba(190, 34, 58, 0.12);
+  white-space: nowrap;
+}
+
+.machine-back.back-with-hand::before {
+  width: 30px;
+  aspect-ratio: 3 / 2;
 }
 
 .machine-back:hover {
@@ -573,7 +586,7 @@ body[data-grade="lower"][data-page="calculation"] .app-shell {
   }
 
   .machine-header {
-    grid-template-columns: 92px 178px minmax(0, 1fr);
+    grid-template-columns: 150px 190px minmax(0, 1fr);
     gap: 10px;
     min-height: 68px;
     padding: 2px 6px;
@@ -620,7 +633,7 @@ body[data-grade="lower"][data-page="calculation"] .app-shell {
 
   .machine-run-card .machine-card-heading h2 {
     font-size: 17px;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .machine-step {
@@ -837,6 +850,31 @@ body[data-grade="lower"][data-page="calculation"] .app-shell {
   }
 }
 
+@media (min-width: 821px) and (max-width: 1400px) {
+  .machine-top-grid {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+  }
+
+  .machine-card-heading h2 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .machine-summary-card {
+    grid-column: 1 / -1;
+    min-height: 190px;
+  }
+
+  .machine-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-right: 96px;
+  }
+
+  .machine-count-picker b {
+    white-space: nowrap;
+  }
+}
+
 @media (pointer: coarse) {
   .machine-back,
   .machine-build-button,
@@ -852,7 +890,7 @@ body[data-grade="lower"][data-page="calculation"] .app-shell {
   }
 
   .machine-header {
-    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-columns: 150px minmax(0, 1fr);
     gap: 10px;
   }
 

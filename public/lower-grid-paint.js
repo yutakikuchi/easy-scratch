@@ -143,9 +143,25 @@ export function drawGridPaintBoard(context, width, height, program, sample, prog
   });
 
   const start = cellCenter(layout, gridPaintStart);
+  const goal = cellCenter(layout, gridPaintTargets.at(-1));
+  context.save();
+  context.fillStyle = "#ffcf33";
+  context.strokeStyle = "#0d2a63";
+  context.lineWidth = Math.max(2, layout.cell * 0.035);
+  context.fillRect(goal.x + layout.cell * 0.06, goal.y - layout.cell * 0.42, layout.cell * 0.46, layout.cell * 0.28);
+  context.strokeRect(goal.x + layout.cell * 0.06, goal.y - layout.cell * 0.42, layout.cell * 0.46, layout.cell * 0.28);
+  context.fillStyle = "#0d2a63";
+  context.font = `900 ${Math.max(12, layout.cell * 0.16)}px sans-serif`;
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(window.easyScratchI18n?.t("ゴール") ?? "ゴール", goal.x + layout.cell * 0.29, goal.y - layout.cell * 0.28);
+  context.font = `${Math.max(22, layout.cell * 0.36)}px sans-serif`;
+  context.fillText("🏁", goal.x, goal.y - layout.cell * 0.34);
+  context.restore();
+
   context.fillStyle = "#0d2a63";
   context.font = `900 ${Math.max(12, layout.cell * 0.2)}px sans-serif`;
   context.textAlign = "center";
-  context.fillText("スタート", start.x, start.y + layout.cell * 0.38);
+  context.fillText(window.easyScratchI18n?.t("スタート") ?? "スタート", start.x, start.y + layout.cell * 0.38);
   return { layout, start };
 }

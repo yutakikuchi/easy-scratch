@@ -1,0 +1,31 @@
+name: 教材への要望
+description: 新しい問題や改善案を提案する
+title: "[要望] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: "児童・生徒の氏名、顔写真、学校内だけで使うURLなどの個人情報は書かないでください。"
+  - type: dropdown
+    id: grade
+    attributes:
+      label: 対象学年
+      options:
+        - 1〜3年生
+        - 4〜6年生
+        - 全学年
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: 追加・改善してほしいこと
+      description: 子どもにどのようなことを学んでほしいかも書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: classroom
+    attributes:
+      label: 授業で困っていること
+      description: 現在の教材で難しい点や、授業中の状況があれば書いてください。

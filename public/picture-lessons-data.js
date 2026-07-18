@@ -1,45 +1,6 @@
 export const pictureLessons = {
   lower: [
     {
-      id: "jump",
-      title: "ジャンプぼうけん",
-      shortTitle: "ジャンプで すすむ",
-      description: "みぎへ すすんで、ジャンプして、2ひき ふもう",
-      thumbnail: "./assets/picture-lessons/mock-lower-jump.png",
-      stageType: "jump",
-      stageTitle: "うごかしてみる",
-      stageBackground: "./assets/picture-lessons/lower-jump-stage.png",
-      sprite: "./assets/lower-mascot.png",
-      repeatLabel: "さいごに みぎへ すすんで ゴールする",
-      success: "できた！ 2ひき ふめた",
-      sample: ["right", "jump", "stomp", "right"],
-      actions: [
-        { id: "right", label: "みぎへ すすむ", hint: "まえへ すすむ" },
-        { id: "jump", label: "ジャンプ", hint: "みずを こえる" },
-        { id: "stomp", label: "2かい ふむ", hint: "おなじ うごき" }
-      ]
-    },
-    {
-      id: "fish",
-      title: "おさかなダンス",
-      shortTitle: "おさかなを およがす",
-      description: "みぎうえで あわを だして かいを ひらき、ゴールへ およごう",
-      thumbnail: "./assets/picture-lessons/mock-lower-fish.png",
-      stageType: "fish",
-      stageTitle: "おさかなを およがそう",
-      stageBackground: "./assets/picture-lessons/lower-fish-stage.png",
-      sprite: "./assets/picture-lessons/lower-fish.png",
-      repeatLabel: "かいを ひらいて、さいごは みぎへ およぐ",
-      success: "できた！ かいが ひらいた！",
-      sample: ["swim-up-right", "bubble", "swim-down-right", "swim-right"],
-      actions: [
-        { id: "swim-up-right", label: "みぎうえへ およぐ", hint: "かいへ ちかづく" },
-        { id: "bubble", label: "あわを だす", hint: "そのばで かいを ひらく" },
-        { id: "swim-down-right", label: "みぎしたへ およぐ", hint: "ゴールへ おりる" },
-        { id: "swim-right", label: "みぎへ およぐ", hint: "さいごは まっすぐ" }
-      ]
-    },
-    {
       id: "grid-paint",
       title: "ほうがんし いろぬり",
       shortTitle: "しょうがいぶつを よけて ぬる",
@@ -58,6 +19,47 @@ export const pictureLessons = {
       ]
     },
     {
+      id: "jump",
+      title: "ジャンプぼうけん",
+      shortTitle: "ジャンプで すすむ",
+      description: "みぎへ すすんで、ジャンプして、「1かい ふむ」を 2かい つかおう",
+      thumbnail: "./assets/picture-lessons/mock-lower-jump.png",
+      stageType: "jump",
+      stageTitle: "うごかしてみる",
+      stageBackground: "./assets/picture-lessons/lower-jump-stage.png",
+      sprite: "./assets/lower-mascot.png",
+      repeatLabel: "「1かい ふむ」を 2まい、または 1まいを ×2にして ゴールする",
+      success: "できた！ 2ひき ふめた",
+      sample: ["right", "jump", "stomp", "stomp", "right"],
+      builderSample: ["right", "jump", "stomp::repeat-2", "right"],
+      actions: [
+        { id: "right", label: "みぎへ すすむ", hint: "まえへ すすむ" },
+        { id: "jump", label: "ジャンプ", hint: "みずを こえる" },
+        { id: "stomp", label: "1かい ふむ", hint: "この めいれいだけ ×2にも できる", repeatable: true }
+      ]
+    },
+    {
+      id: "fish",
+      title: "おさかなダンス",
+      shortTitle: "おさかなを およがす",
+      description: "4つの うごきを 2かい くりかえして、ゴールへ およごう",
+      thumbnail: "./assets/picture-lessons/mock-lower-fish.png",
+      stageType: "fish",
+      stageTitle: "おさかなを およがそう",
+      stageBackground: "./assets/picture-lessons/lower-fish-stage.png",
+      sprite: "./assets/picture-lessons/lower-fish.png",
+      repeatLabel: "4つのルールを 2かい つかって ゴールする",
+      success: "できた！ 2かい くりかえして ゴール！",
+      repeatRuleTimes: 2,
+      sample: ["swim-up-right", "bubble", "swim-down-right", "swim-right", "swim-up-right", "bubble", "swim-down-right", "swim-right"],
+      actions: [
+        { id: "swim-up-right", label: "みぎうえへ およぐ", hint: "かいへ ちかづく" },
+        { id: "bubble", label: "あわを だす", hint: "そのばで かいを ひらく" },
+        { id: "swim-down-right", label: "みぎしたへ およぐ", hint: "ゴールへ おりる" },
+        { id: "swim-right", label: "みぎへ およぐ", hint: "さいごは まっすぐ" }
+      ]
+    },
+    {
       id: "paint",
       title: "おえかきカー",
       shortTitle: "いろの せんを かく",
@@ -66,9 +68,11 @@ export const pictureLessons = {
       stageType: "paint",
       stageTitle: "おえかきカーを うごかそう",
       sprite: "./assets/picture-lessons/lower-paint-car.png",
-      repeatLabel: "8まいめの「みぎを むく」で、はじめの むきに もどる",
+      repeatLabel: "「まえへ すすむ → みぎを むく」を ×4にして、はじめの むきに もどる",
       success: "しかくが かけて、はじめの むきに もどった！",
+      repeatRuleTimes: 4,
       sample: ["forward", "turn", "forward", "turn", "forward", "turn", "forward", "turn"],
+      builderSample: ["forward", "turn"],
       actions: [
         { id: "forward", label: "まえへ すすむ", hint: "せんを かく" },
         { id: "backward", label: "うしろへ もどる", hint: "ぎゃくに すすむ" },
@@ -81,8 +85,8 @@ export const pictureLessons = {
     {
       id: "rescue",
       title: "座標レスキュー",
-      shortTitle: "数で動くきょりを決める",
-      description: "右へ x・上へ y の数を入れ、1・2・3の番号を順番に通ろう",
+      shortTitle: "座標のルールをくりかえす",
+      description: "4つの移動ルールを2回くりかえし、1・2・3の番号を順番に取ろう",
       thumbnail: "./assets/picture-lessons/mock-upper-rescue.png",
       stageType: "upper-rescue",
       sprite: "./assets/robot-mascot.png"
@@ -99,10 +103,19 @@ export const pictureLessons = {
     {
       id: "pattern",
       title: "パターンアートラボ",
-      shortTitle: "変数で正六角形をかく",
-      description: "x・θ・nに数を入れ、同じルールを6回使おう",
+      shortTitle: "二重ループで六角形の花をかく",
+      description: "x・θで六角形を作り、nで同じ六角形をかく回数を変えよう",
       thumbnail: "./assets/picture-lessons/mock-upper-pattern.png",
       stageType: "upper-pattern",
+      sprite: "./assets/robot-mascot.png"
+    },
+    {
+      id: "grid-lab",
+      title: "座標いろぬりラボ",
+      shortTitle: "変数とくりかえしで6マスをぬる",
+      description: "x・y・nと短いルールを組み合わせ、障害物をよけて6マスを順番にぬろう",
+      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint.png",
+      stageType: "upper-grid-paint",
       sprite: "./assets/robot-mascot.png"
     }
   ]

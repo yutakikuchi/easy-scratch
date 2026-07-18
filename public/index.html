@@ -1,29 +1,56 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" class="app-booting">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="4uWqOSuc1HK9pgBXOPjcPo1zA-f_qw45g-RXriotwAY">
     <title>はじめてのプログラミングにちょうせん</title>
-    <meta name="description" content="けいさんとプログラミングを、たのしくたいけんするアプリです。">
+    <meta name="description" content="はじめてのプログラミングに挑戦。小学生が計算ルールや絵を動かすルールを作り、小さく確かめ、くりかえし使う考え方を学べるiPad向け教材です。">
+    <meta name="keywords" content="はじめてのプログラミング,小学校,プログラミング教材,Scratch,スクラッチ,計算,ルール,繰り返し,iPad">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="はじめてのプログラミングにちょうせん | easy-scratch">
+    <meta property="og:description" content="Scratchの考え方をより簡単に体験できる、小学生向けプログラミング教材。ルールを作り、小さく確かめ、くりかえし使います。">
+    <meta property="og:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png">
+    <meta property="og:image:width" content="1448">
+    <meta property="og:image:height" content="1086">
+    <meta property="og:image:alt" content="おさかなダンスでプログラミングのルールを学ぶ教材画面">
+    <meta property="og:url" content="https://easy-scratch.web.app/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="はじめてのプログラミングにちょうせん | easy-scratch">
+    <meta name="twitter:description" content="小学生が安心して使える、はじめてのプログラミング教材です。">
+    <meta name="twitter:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png">
+    <meta name="twitter:image:alt" content="おさかなダンスでプログラミングのルールを学ぶ教材画面">
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <style>
+      html.app-booting .app-shell {
+        visibility: hidden;
+      }
+    </style>
     <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="./program.css?v=20260716a">
+    <link rel="stylesheet" href="./program.css?v=20260716c">
     <link rel="stylesheet" href="./calculation.css">
-    <link rel="stylesheet" href="./home.css?v=20260717c">
-    <link rel="stylesheet" href="./lower-machine.css">
+    <link rel="stylesheet" href="./home.css?v=20260718i">
+    <link rel="stylesheet" href="./learning-focus.css?v=20260718b">
+    <link rel="stylesheet" href="./lower-machine.css?v=20260718d">
     <link rel="stylesheet" href="./rule-builder.css">
-    <link rel="stylesheet" href="./upper-machine.css">
-    <link rel="stylesheet" href="./picture-lessons.css?v=20260717f">
-    <link rel="stylesheet" href="./picture-lessons-effects.css?v=20260717p">
-    <link rel="stylesheet" href="./picture-loop-success.css?v=20260717o">
-    <link rel="stylesheet" href="./upper-picture-lessons.css?v=20260717o">
+    <link rel="stylesheet" href="./upper-machine.css?v=20260718c">
+    <link rel="stylesheet" href="./picture-lessons.css?v=20260718w">
+    <link rel="stylesheet" href="./picture-hub-ipad.css?v=20260718h">
+    <link rel="stylesheet" href="./picture-lessons-effects.css?v=20260718p">
+    <link rel="stylesheet" href="./picture-loop-success.css?v=20260717s">
+    <link rel="stylesheet" href="./upper-picture-lessons.css?v=20260718e">
+    <link rel="stylesheet" href="./upper-rescue-repeat.css?v=20260718i">
     <link rel="stylesheet" href="./upper-picture-soccer.css?v=20260717n">
-    <link rel="stylesheet" href="./upper-free-kick-program.css?v=20260717o">
+    <link rel="stylesheet" href="./upper-free-kick-program.css?v=20260718d">
+    <link rel="stylesheet" href="./upper-grid-paint.css?v=20260718a">
     <link rel="stylesheet" href="./lower-grid-paint.css?v=20260717n">
-    <link rel="stylesheet" href="./site-footer.css?v=20260717n">
+    <link rel="stylesheet" href="./site-footer.css?v=20260718f">
+    <link rel="stylesheet" href="./i18n.css?v=20260718b">
+    <link rel="stylesheet" href="./smartphone.css?v=20260718a">
   </head>
   <body>
     <main class="app-shell">
-      <section class="workspace" aria-label="サマースクール アプリ">
+      <section class="workspace" aria-label="easy-scratch アプリ">
         <section class="home-page" id="homePage" aria-labelledby="homeTitle" hidden>
           <header class="home-hero">
             <img src="./assets/home-sun.png" alt="" aria-hidden="true">
@@ -37,33 +64,33 @@
             <div class="home-intro-heading">
               <h2 id="homeIntroTitle">まず はじめに</h2>
               <div>
-                <strong>プログラミングで おぼえてほしい 3つのこと</strong>
-                <p>ルールを つくって、なんども つかって、べんりな しくみに してみよう。</p>
+                <strong>プログラミングで おぼえる 3つのこと</strong>
+                <p>つくる → 小さく かくにん → くりかえす</p>
               </div>
             </div>
             <ol>
               <li>
                 <span>1</span>
                 <div>
-                  <strong>じぶんで ルールを つくろう</strong>
-                  <p>「けいさんの ルール」や「えを うごかす ルール」を、じぶんで つくります。</p>
-                  <small>たとえば: ○ ＋ △ ＝ □、みぎへ すすむ、ジャンプする</small>
+                  <strong>ルールを つくる</strong>
+                  <p>けいさんや えの うごきを、じぶんで きめよう。</p>
+                  <small>○＋△＝□ ／ みぎへ すすむ</small>
                 </div>
               </li>
               <li>
                 <span>2</span>
                 <div>
-                  <strong>つくった ルールを なんども つかおう</strong>
-                  <p>いちど つくった ルールは、すうじや えを かえて、なんどでも くりかえし つかえます。</p>
-                  <small>おなじ しごとは、ルールに まかせよう</small>
+                  <strong>小さく ルールを かくにんする</strong>
+                  <p>できたルールを すこしだけ じっこうして、あっているか見るよ。</p>
+                <small>まずは 少ない くりかえしで ためす</small>
                 </div>
               </li>
               <li>
                 <span>3</span>
                 <div>
-                  <strong>しくみに すると、かんたん！</strong>
-                  <p>ルールを くみあわせると、いろいろな ことを すくない そうさで できるように なります。</p>
-                  <small>でんたくや ゲームも、ルールから つくれるよ</small>
+                  <strong>なんども つかう</strong>
+                  <p>あっていたら、大きな 数の くりかえしでも ためせるよ。</p>
+                  <small>少ない回数 → 大きな回数へ すすむ</small>
                 </div>
               </li>
             </ol>
@@ -71,7 +98,7 @@
 
           <section class="home-grade home-grade-lower" aria-labelledby="lowerGradeTitle">
             <div class="home-grade-intro">
-              <img src="./assets/child-mascot.png" alt="げんきな こども">
+              <img src="./assets/child-girl-mascot.png" alt="げんきな 女の子">
               <div>
                 <strong id="lowerGradeTitle">1〜3</strong>
                 <span>ねんせい</span>
@@ -81,8 +108,8 @@
               <img src="./assets/home-lower-calculation.png" alt="">
               <strong>けいさん</strong>
             </a>
-            <a class="home-course" href="?grade=lower&amp;page=program">
-              <img src="./assets/home-lower-picture.png" alt="">
+            <a class="home-course home-course-program" href="?grade=lower&amp;page=program">
+              <img src="./assets/picture-lessons/mock-lower-jump.png" alt="ジャンプする絵の動き">
               <strong>えを うごかす</strong>
             </a>
           </section>
@@ -99,8 +126,8 @@
               <img src="./assets/home-upper-calculation.png" alt="">
               <strong>計算</strong>
             </a>
-            <a class="home-course" href="?grade=upper&amp;page=program">
-              <img src="./assets/home-lower-picture.png" alt="">
+            <a class="home-course home-course-program" href="?grade=upper&amp;page=program">
+              <img src="./assets/picture-lessons/mock-upper-rescue.png" alt="座標にそって動くロボット">
               <strong>絵を動かす</strong>
             </a>
           </section>
@@ -122,10 +149,20 @@
         <section class="lesson-page calculation-page" id="calculationPage" aria-label="けいさん">
           <div class="lower-machine" id="lowerMachinePage">
             <header class="machine-header">
-              <button class="machine-back" type="button" id="lowerMachineBackButton">もどる</button>
+              <button class="machine-back back-with-hand" type="button" id="lowerMachineBackButton">もどる</button>
               <span class="machine-grade">1〜3ねんせい</span>
               <h1>けいさんマシンを つくろう</h1>
             </header>
+            <section class="learning-focus" aria-label="ここから まなぶこと">
+              <details open>
+                <summary>ここから まなぶこと</summary>
+                <div class="learning-focus-panel">
+                  <div class="learning-focus-item"><span aria-hidden="true">🧩</span><strong>けいさんの ルールを つくる</strong><p>○・△・＋・−を くみあわせて、じぶんの けいさんマシンを つくります。</p></div>
+                  <div class="learning-focus-item"><span aria-hidden="true">🔍</span><strong>すくない かいすうで ためす</strong><p>まずは すくない くりかえしで、ルールが ただしく うごくか たしかめます。</p></div>
+                  <div class="learning-focus-item"><span aria-hidden="true">🔁</span><strong>おおきな かいすうで つかう</strong><p>うまく うごいたら、おなじ ルールを たくさん つかえることを まなびます。</p></div>
+                </div>
+              </details>
+            </section>
 
             <div class="machine-top-grid">
               <section class="machine-card machine-rule-card" id="machineRuleCard" aria-labelledby="machineRuleTitle">
@@ -176,9 +213,9 @@
               <section class="machine-card machine-run-card" aria-labelledby="machineRunTitle">
                 <div class="machine-card-heading">
                   <span class="machine-step machine-step-coral">2</span>
-                  <h2 id="machineRunTitle">おなじ ルールを 100かい つかう</h2>
+                  <h2 id="machineRunTitle">おなじ ルールを 3かい つかう</h2>
                 </div>
-                <p class="machine-card-lead" id="machineRunLead">つくった ルールを 100かい つかう</p>
+                <p class="machine-card-lead" id="machineRunLead">つくった ルールを 3かい つかう</p>
                 <label class="machine-count-picker" for="machineRepeatCount">
                   <span>くりかえす かいすう</span>
                   <select id="machineRepeatCount" aria-label="くりかえす かいすう"></select>
@@ -195,7 +232,7 @@
                   <span class="machine-variable machine-square">□</span>
                 </div>
                 <button class="machine-run-button" type="button" id="machineRunButton" disabled>
-                  100かい けいさんする
+                  3かい けいさんする
                 </button>
                 <p class="machine-run-hint" id="machineRunHint">はじめに ルールを つくろう</p>
               </section>
@@ -203,7 +240,7 @@
               <section class="machine-card machine-summary-card" aria-labelledby="machineSummaryTitle">
                 <div class="machine-card-heading">
                   <span class="machine-step machine-step-blue">3</span>
-                  <h2 id="machineSummaryTitle">100かい けいさん</h2>
+                  <h2 id="machineSummaryTitle">3かい けいさん</h2>
                 </div>
                 <dl class="machine-summary" aria-live="polite">
                   <div class="summary-time">
@@ -212,7 +249,7 @@
                   </div>
                   <div class="summary-correct">
                     <dt>せいかい</dt>
-                    <dd id="machineCorrect">0 / 100</dd>
+                    <dd id="machineCorrect">0 / 3</dd>
                   </div>
                   <div class="summary-mistakes">
                     <dt>まちがい</dt>
@@ -229,10 +266,10 @@
                   <span class="machine-step machine-step-green">4</span>
                   <h2 id="machineListTitle">けいさんリスト</h2>
                 </div>
-                <strong id="machineListProgress">0 / 100</strong>
+                <strong id="machineListProgress">0 / 3</strong>
               </div>
-              <ol class="machine-results-list" id="machineResultsList" aria-label="100かいの けいさんけっか">
-                <li class="machine-list-empty">ルールを つくって、100かい けいさんしてみよう</li>
+              <ol class="machine-results-list" id="machineResultsList" aria-label="くりかえした けいさんけっか">
+                <li class="machine-list-empty">ルールを つくって、3かい けいさんしてみよう</li>
               </ol>
             </section>
 
@@ -245,10 +282,20 @@
 
           <div class="lower-machine upper-machine" id="upperMachinePage" hidden>
             <header class="machine-header upper-machine-header">
-              <button class="machine-back" type="button" id="upperMachineBackButton">戻る</button>
+              <button class="machine-back back-with-hand" type="button" id="upperMachineBackButton">もどる</button>
               <span class="machine-grade">4〜6年生</span>
               <h1>計算ルールから電卓を作ろう</h1>
             </header>
+            <section class="learning-focus" aria-label="この単元で学ぶこと">
+              <details open>
+                <summary>ここから学ぶこと</summary>
+                <div class="learning-focus-panel">
+                  <div class="learning-focus-item"><span aria-hidden="true">🧮</span><strong>複数の変数を使う</strong><p>A・B・Cと演算を組み合わせ、電卓のような計算ルールを作ります。</p></div>
+                  <div class="learning-focus-item"><span aria-hidden="true">🔍</span><strong>少ない回数で検証する</strong><p>最初は小さく実行し、式の組み立てが正しいか確かめます。</p></div>
+                  <div class="learning-focus-item"><span aria-hidden="true">⚙️</span><strong>再利用できる仕組みにする</strong><p>同じ計算ルールへ数字を入れ替え、何度でも正確に使います。</p></div>
+                </div>
+              </details>
+            </section>
 
             <div class="machine-top-grid upper-machine-grid">
               <section class="machine-card machine-rule-card upper-rule-card" id="upperRuleCard" aria-labelledby="upperRuleTitle">
@@ -292,7 +339,7 @@
                 </label>
                 <div class="upper-run-formula" id="upperRunFormula" aria-live="polite">A × B ＋ C ＝ D</div>
                 <p class="upper-precedence-note">×を先に、＋と−は左から計算します</p>
-                <button class="machine-run-button" type="button" id="upperRunButton" disabled>100回計算する</button>
+                <button class="machine-run-button" type="button" id="upperRunButton" disabled>3回計算する</button>
                 <p class="machine-run-hint" id="upperRunHint">はじめにルールを作ろう</p>
               </section>
 
@@ -303,7 +350,7 @@
                 </div>
                 <dl class="machine-summary" aria-live="polite">
                   <div class="summary-time"><dt>計算にかかった時間</dt><dd id="upperTime">まだ計算していません</dd></div>
-                  <div class="summary-correct"><dt>正解</dt><dd id="upperCorrect">0 / 100</dd></div>
+                  <div class="summary-correct"><dt>正解</dt><dd id="upperCorrect">0 / 3</dd></div>
                   <div class="summary-mistakes"><dt>ミス</dt><dd id="upperMistakes">0回</dd></div>
                 </dl>
                 <img class="machine-robot" src="./assets/robot-mascot.png" alt="計算ルールを実行するロボット">
@@ -313,7 +360,7 @@
             <section class="machine-list-card upper-list-card" aria-labelledby="upperListTitle">
               <div class="machine-list-heading">
                 <div class="machine-card-heading"><span class="machine-step machine-step-blue">4</span><h2 id="upperListTitle">計算リスト</h2></div>
-                <strong id="upperListProgress">0 / 100</strong>
+                <strong id="upperListProgress">0 / 3</strong>
               </div>
               <ol class="machine-results-list upper-results-list" id="upperResultsList" aria-label="繰り返した計算結果">
                 <li class="machine-list-empty">ルールを作り、回数を選んで実行してみよう</li>
@@ -416,7 +463,7 @@
               <h1 id="lessonTitle">えを うごかそう！</h1>
             </div>
             <img class="program-mascot" id="programMascot" src="./assets/lower-mascot.png" alt="キャラクター">
-            <button class="back-button" type="button" id="backToCalculationButton">けいさんへ</button>
+            <button class="back-button back-with-hand" type="button" id="backToCalculationButton">もどる</button>
           </header>
 
             <div class="lesson-console">
@@ -463,12 +510,27 @@
       </section>
     </main>
 
-    <footer class="site-footer">
-      <p><strong>© 2026 yutakikuchi</strong><span>この教材は授業で再利用できます。ページは都度そのままご利用ください。再配布・改変利用の前に、GitHubで一度ご連絡ください。</span></p>
-      <nav aria-label="教材について"><a href="./teacher.html">講師の方へ</a><a href="https://github.com/yutakikuchi" target="_blank" rel="noreferrer">GitHubで連絡</a></nav>
+    <footer class="site-footer" id="siteFooter">
+      <p><strong>© 2026 菊池佑太</strong><span>利用端末：iPad Pro ／ ブラウザ：Safari<br>Scratchにつながる、はじめてのプログラミング教材です。<br>この教材は授業で再利用できます。ページは都度そのままご利用ください。再配布・改変利用の前に、GitHubで一度ご連絡ください。</span></p>
+      <nav aria-label="教材について"><a href="./teacher.html">講師の方へ</a><a href="https://github.com/yutakikuchi/easy-scratch/issues/new/choose" target="_blank" rel="noreferrer">GitHub Issuesで連絡</a></nav>
     </footer>
 
-    <script type="module" src="./app.js?v=20260717p"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "EducationalApplication",
+        "name": "easy-scratch",
+        "headline": "はじめてのプログラミングにちょうせん",
+        "description": "小学生が計算ルールや絵を動かすルールを作り、小さく確かめ、くりかえし使う考え方を学べるiPad向け教材です。",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "iPadOS / Safari",
+        "educationalLevel": "Elementary school",
+        "inLanguage": "ja",
+        "url": "https://easy-scratch.web.app/"
+      }
+    </script>
+    <script type="module" src="./i18n.js?v=20260718b"></script>
+    <script type="module" src="./app.js?v=20260718w"></script>
     <script type="module" src="./firebase-init.js"></script>
   </body>
 </html>

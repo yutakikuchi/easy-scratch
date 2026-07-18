@@ -112,6 +112,23 @@
   font-size: 18px;
 }
 
+.back-with-hand {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.back-with-hand::before {
+  content: "";
+  display: block;
+  width: 30px;
+  aspect-ratio: 3 / 2;
+  background: url("./assets/back-hand.svg") center / contain no-repeat;
+}
+
 body[data-page="program"] .app-header {
   display: none;
 }

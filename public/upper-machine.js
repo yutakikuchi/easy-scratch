@@ -5,6 +5,7 @@ import {
 } from "./calculation.js";
 
 const MAX_RESULT_COUNT = 100;
+const INITIAL_RESULT_COUNT = 3;
 const ROWS_PER_TICK = 5;
 const TICK_MILLISECONDS = 35;
 
@@ -102,9 +103,9 @@ export function initUpperCalculationMachine({ onBack } = {}) {
   const state = {
     draftRule: { first: null, operator1: null, second: null, operator2: null, third: null },
     builtRule: null,
-    repeatCount: MAX_RESULT_COUNT,
+    repeatCount: INITIAL_RESULT_COUNT,
     rows: [],
-    summary: { total: MAX_RESULT_COUNT, correct: 0, mistakes: 0 },
+    summary: { total: INITIAL_RESULT_COUNT, correct: 0, mistakes: 0 },
     visibleCount: 0,
     timer: null,
     pointerDrag: null,
@@ -414,7 +415,7 @@ export function initUpperCalculationMachine({ onBack } = {}) {
     const option = document.createElement("option");
     option.value = String(count);
     option.textContent = String(count);
-    option.selected = count === MAX_RESULT_COUNT;
+    option.selected = count === INITIAL_RESULT_COUNT;
     elements.upperRepeatCount.append(option);
   }
   resetCalculationResult();

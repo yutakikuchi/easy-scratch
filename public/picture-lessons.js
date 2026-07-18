@@ -1,6 +1,8 @@
-import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260717n";
-import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260717o";
-import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260717n";
+import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260718c";
+import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260718q";
+import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260718p";
+import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";
+export { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat };
 
 const sleep = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
@@ -10,80 +12,6 @@ function escapeText(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
-}
-
-export function getPictureProgramStatus(program, sample) {
-  return {
-    canRun: program.length > 0,
-    isCorrect: program.length === sample.length && program.every((item, index) => item === sample[index])
-  };
-}
-
-export function getMovementRoute(stageType, program, width, height) {
-  let x = 0;
-  let y = 0;
-  let rotation = 0;
-  const route = [{ x, y, rotation }];
-  const addPoint = (deltaX, nextY, nextRotation = rotation, details = {}) => {
-    x += deltaX;
-    y = nextY;
-    rotation = nextRotation;
-    route.push({ x, y, rotation, ...details });
-  };
-  const addGentleCurve = (deltaX, nextY, tilt, steps = 7) => {
-    const startX = x;
-    const startY = y;
-    for (let step = 1; step <= steps; step += 1) {
-      const progress = step / steps;
-      const smoothProgress = progress * progress * (3 - 2 * progress);
-      x = startX + deltaX * progress;
-      y = startY + (nextY - startY) * smoothProgress;
-      rotation = tilt * Math.sin(Math.PI * progress);
-      route.push({ x, y, rotation });
-    }
-    rotation = 0;
-    route.at(-1).rotation = 0;
-  };
-
-  program.forEach((actionId) => {
-    if (stageType === "jump") {
-      if (actionId === "right") addPoint(width * 0.16, 0);
-      else if (actionId === "jump") {
-        addPoint(width * 0.16, height * -0.48, -5);
-        addPoint(width * 0.16, 0, 0);
-      } else if (actionId === "stomp") {
-        addPoint(width * 0.04, height * -0.38, 4);
-        addPoint(width * 0.02, height * -0.19, 0, { hit: 0 });
-        addPoint(width * 0.06, height * -0.38, 4);
-        addPoint(width * 0.03, height * -0.19, 0, { hit: 1 });
-        addPoint(width * 0.03, 0, 0);
-      }
-    } else if (stageType === "fish") {
-      if (actionId === "swim-up-right") addGentleCurve(width * 0.24, height * -0.28, -14);
-      else if (actionId === "bubble") addPoint(0, y, rotation, { bubble: true, opensShell: y <= height * -0.2 });
-      else if (actionId === "swim-down-right") addGentleCurve(width * 0.26, 0, 14);
-      else if (actionId === "swim-right") addGentleCurve(width * 0.22, y, 0, 5);
-    } else if (stageType === "motion") {
-      if (actionId === "forward-120" || actionId === "forward-80") {
-        const distance = width * (actionId === "forward-120" ? 0.22 : 0.16);
-        const radians = rotation * Math.PI / 180;
-        addPoint(Math.cos(radians) * distance, y + Math.sin(radians) * distance, rotation);
-      } else if (actionId === "turn-left-45") {
-        addPoint(0, y, rotation - 45);
-      } else if (actionId === "turn-right-90") {
-        addPoint(0, y, rotation + 90);
-      }
-    }
-  });
-
-  return route.map((point, index) => ({
-    ...point,
-    offset: route.length === 1 ? 0 : index / (route.length - 1)
-  }));
-}
-
-export function getJumpRoute(width, height) {
-  return getMovementRoute("jump", ["right", "jump", "stomp", "right"], width, height);
 }
 
 export function getPaintRoute(program, width, height) {
@@ -131,8 +59,8 @@ function gradeCopy(grade) {
         run: "うごかす",
         repeatRun: "くりかえし うごかす",
         stop: "とめる",
-        back: "TOPへ もどる",
-        hubBack: "えらびなおす"
+        back: "もどる",
+        hubBack: "もどる"
       }
     : {
         badge: "4〜6年生",
@@ -143,24 +71,28 @@ function gradeCopy(grade) {
         run: "実行する",
         repeatRun: "繰り返し実行する",
         stop: "止める",
-        back: "TOPへ戻る",
-        hubBack: "レッスンを選ぶ"
+        back: "もどる",
+        hubBack: "もどる"
       };
 }
 
 export function initPictureLessons({ root, onBackHome }) {
   let successOverlayTimer = 0;
+  let additionFeedbackTimer = 0;
   let upperLessons = null;
   const state = {
     grade: "lower",
     lesson: null,
     program: [],
+    ruleMultiplier: 1,
     runs: 0,
     running: false,
     looping: false,
     drag: null,
-    suppressActionClickUntil: 0
+    suppressActionClickUntil: 0,
+    lastAddedActionId: null
   };
+  const activeProgram = () => expandPictureProgram(state.program, state.ruleMultiplier);
 
   function setLessonInUrl(lessonId) {
     const url = new URL(window.location.href);
@@ -170,8 +102,11 @@ export function initPictureLessons({ root, onBackHome }) {
   }
 
   function resetLessonState() {
+    window.clearTimeout(additionFeedbackTimer);
     state.program = [];
+    state.ruleMultiplier = 1;
     state.runs = 0;
+    state.lastAddedActionId = null;
     state.running = false;
     state.looping = false;
     const overlay = document.querySelector("[data-picture-success-overlay]");
@@ -180,7 +115,7 @@ export function initPictureLessons({ root, onBackHome }) {
     root.querySelector("[data-picture-loop-success]")?.remove();
   }
 
-  function ensureSuccessOverlay() {
+  function ensureSuccessOverlay(titleText = "") {
     let overlay = document.querySelector("[data-picture-success-overlay]");
     if (!overlay) {
       overlay = document.createElement("div");
@@ -189,6 +124,7 @@ export function initPictureLessons({ root, onBackHome }) {
       overlay.setAttribute("role", "alert");
       overlay.setAttribute("aria-live", "assertive");
       overlay.setAttribute("aria-hidden", "true");
+      overlay.setAttribute("aria-label", "せいかい。タップでとじる");
       overlay.innerHTML = `
         <div class="picture-success-burst" aria-hidden="true">
           <span>★</span><span>●</span><span>★</span><span>●</span><span>★</span><span>●</span>
@@ -197,15 +133,35 @@ export function initPictureLessons({ root, onBackHome }) {
           <span aria-hidden="true">🎉</span>
           <strong data-picture-success-title></strong>
           <small data-picture-success-detail></small>
+          <em>タップで とじる</em>
         </div>
       `;
+      enableTapDismiss(overlay);
       document.body.append(overlay);
     }
     const title = overlay.querySelector("[data-picture-success-title]");
     const detail = overlay.querySelector("[data-picture-success-detail]");
-    if (title) title.textContent = state.grade === "lower" ? "せいかい！" : "正解！";
+    if (title) title.textContent = titleText || (state.grade === "lower" ? "せいかい！" : "正解！");
     if (detail) detail.textContent = state.grade === "lower" ? "ルールどおりに うごいたよ" : "ルールどおりに動きました";
     return overlay;
+  }
+
+  function dismissSuccess(target) {
+    window.clearTimeout(successOverlayTimer);
+    target.classList.remove("is-visible");
+    target.setAttribute("aria-hidden", "true");
+    target.tabIndex = -1;
+  }
+
+  function enableTapDismiss(target) {
+    target.tabIndex = -1;
+    target.addEventListener("pointerup", () => {
+      if (target.matches("[data-picture-loop-success]")) target.dataset.userDismissed = "true";
+      dismissSuccess(target);
+    });
+    target.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") dismissSuccess(target);
+    });
   }
 
   function openLesson(lessonId) {
@@ -292,8 +248,11 @@ export function initPictureLessons({ root, onBackHome }) {
         : "";
     const fishMission =
       lesson.stageType === "fish"
-        ? `<div class="picture-fish-shell" data-fish-shell aria-label="あわで ひらく かい">
-             <span aria-hidden="true">🐚</span><strong data-fish-shell-text>いちばん うえで<br>あわを だそう</strong>
+        ? `<div class="picture-fish-shell picture-fish-shell-1" data-fish-shell="0" aria-label="1かいめに あわで ひらく かい">
+             <span aria-hidden="true">🐚</span><strong data-fish-shell-text="0">1かいめの かい<br>あわで ひらこう</strong>
+           </div>
+           <div class="picture-fish-shell picture-fish-shell-2" data-fish-shell="1" aria-label="2かいめに あわで ひらく かい">
+             <span aria-hidden="true">🐚</span><strong data-fish-shell-text="1">2かいめの かい<br>あわで ひらこう</strong>
            </div>
            <div class="picture-fish-bubbles" data-fish-bubbles aria-hidden="true"><i></i><i></i><i></i><i></i></div>
            <div class="picture-fish-goal" aria-label="おさかなのゴール"><span aria-hidden="true">🏁</span><strong>ゴール</strong></div>`
@@ -338,6 +297,42 @@ export function initPictureLessons({ root, onBackHome }) {
       .join("");
   }
 
+  function lowerLearningFocus(lesson) {
+    const copyByType = {
+      "grid-paint": [
+        ["🧭", "ほうがんしで じゅんばんを かんがえる", "1マスずつ うごき、しょうがいぶつを よける てじゅんを つくります。"],
+        ["🎨", "ひつような ばしょだけ いろを ぬる", "いどうと いろぬりを わけて かんがえ、もくてきの マスだけを ぬります。"],
+        ["🔍", "すくない うごきで たしかめる", "しろい せんと あかい せんを みくらべて、てじゅんが あっているか たしかめます。"]
+      ],
+      jump: [
+        ["➡️", "みぎへ すすむ ルールを つくる", "すすむ・ジャンプ・ふむを じゅんばんに くみあわせます。"],
+        ["🦶", "おなじ めいれいを くりかえす", "1かい ふむ めいれいを 2まい つかうか、おなじ めいれいを ×2にします。"],
+        ["🏁", "ゴールまで なおす", "まちがっても うごかし、せんを みて なおしながら ゴールを めざします。"]
+      ],
+      fish: [
+        ["🐟", "うえ・したを くみあわせる", "なみのような うごきを ちいさな めいれいで つくります。"],
+        ["🫧", "そのばの めいれいを つかう", "あわを だす めいれいは いどうではなく、かいを ひらくために つかいます。"],
+        ["🔁", "まとまりを くりかえす", "4つの めいれいを 1つの まとまりにして、2かい つかう かんがえかたを まなびます。"]
+      ],
+      paint: [
+        ["🚗", "むきと まえへ すすむを わける", "みぎを むく、まっすぐ すすむ、いろを かえるを べつべつの めいれいにします。"],
+        ["🎨", "おなじ ルールで かたちを つくる", "おなじ うごきを くりかえして、せんと いろで かたちを つくります。"],
+        ["🔁", "みじかい めいれいを なんども つかう", "おなじ まとまりを なんども つかうと、ながい てじゅんを みじかく できます。"]
+      ]
+    };
+    const items = copyByType[lesson.stageType] ?? copyByType.jump;
+    return `
+      <section class="learning-focus" aria-label="ここから まなぶこと">
+        <details open>
+          <summary>ここから まなぶこと</summary>
+          <div class="learning-focus-panel">
+            ${items.map(([icon, title, text]) => `<div class="learning-focus-item"><span aria-hidden="true">${icon}</span><strong>${escapeText(title)}</strong><p>${escapeText(text)}</p></div>`).join("")}
+          </div>
+        </details>
+      </section>
+    `;
+  }
+
   function renderLesson() {
     const lesson = state.lesson;
     if (state.grade === "upper" && upperLessons) {
@@ -349,22 +344,28 @@ export function initPictureLessons({ root, onBackHome }) {
     root.innerHTML = `
       <header class="picture-lesson-header">
         <button class="picture-back-button" type="button" data-picture-action="hub">${copy.hubBack}</button>
-        <div class="picture-lesson-heading">
+        <div class="picture-lesson-title-card">
           <span>${copy.badge}</span>
           <h1>${escapeText(lesson.title)}</h1>
-          <div class="picture-goal-summary" aria-label="きょうのゴール">
-            <span class="picture-goal-icon" aria-hidden="true">🏁</span>
-            <div><small>きょうの ゴール</small><strong>${escapeText(lesson.description)}</strong></div>
-          </div>
+        </div>
+        <div class="picture-goal-summary" aria-label="きょうのゴール">
+          <span class="picture-goal-icon" aria-hidden="true">🏁</span>
+          <div><small>きょうの ゴール</small><strong>${escapeText(lesson.description)}</strong></div>
         </div>
         <img class="picture-goal-preview" src="${lesson.thumbnail}" alt="ゴールの完成イメージ">
       </header>
+      ${lowerLearningFocus(lesson)}
       <div class="picture-builder-grid">
         <section class="picture-palette" aria-labelledby="pictureRuleTitle">
           <div class="picture-section-heading">
             <span>1</span><div><h2 id="pictureRuleTitle">${copy.rule}</h2><p>${state.grade === "lower" ? "カードを はこんで いれよう" : "カードをドラッグして並べよう"}</p></div>
           </div>
           <div class="picture-action-list">${actionCardsMarkup(lesson)}</div>
+          <div class="picture-add-feedback" data-picture-add-feedback aria-live="polite">
+            <span class="picture-add-feedback-mark" aria-hidden="true">✓</span>
+            <div><strong data-picture-add-message>カードを えらんでね</strong><small data-picture-rule-count>できたルール：0まい</small></div>
+            <button type="button" data-picture-action="show-program" aria-label="できたルールを みる">みる <span aria-hidden="true">↓</span></button>
+          </div>
         </section>
         <section class="picture-stage-panel" aria-labelledby="pictureStageTitle">
           <div class="picture-section-heading">
@@ -374,8 +375,11 @@ export function initPictureLessons({ root, onBackHome }) {
         </section>
         <section class="picture-program-panel" aria-labelledby="pictureProgramTitle">
           <div class="picture-program-heading">
-            <div><h2 id="pictureProgramTitle">できたルール</h2><p>${escapeText(lesson.repeatLabel)}</p></div>
+            <div><h2 id="pictureProgramTitle">できたルール</h2><p>${escapeText(lesson.repeatLabel)}</p><small class="picture-tap-delete-note">いらないカードは タップで けせます</small></div>
             <div class="picture-program-actions">
+              ${lesson.repeatRuleTimes ? `<div class="picture-rule-times" aria-label="ルールを使う回数">
+                <span>このルールを</span>${Array.from({ length: lesson.repeatRuleTimes }, (_, index) => `<button type="button" data-picture-multiplier="${index + 1}">×${index + 1}</button>`).join("")}<strong>かい つかう</strong>
+              </div>` : ""}
               <button type="button" data-picture-action="sample">みほん</button>
               <button type="button" data-picture-action="clear">ぜんぶ けす</button>
             </div>
@@ -407,8 +411,18 @@ export function initPictureLessons({ root, onBackHome }) {
     const feedback = root.querySelector("[data-picture-feedback]");
     const runButton = root.querySelector('[data-picture-action="run"]');
     const repeatButton = root.querySelector('[data-picture-action="repeat-run"]');
+    const count = root.querySelector("[data-picture-rule-count]");
+    const addMessage = root.querySelector("[data-picture-add-message]");
+    const addFeedback = root.querySelector("[data-picture-add-feedback]");
     if (!dropzone || !feedback || !runButton || !repeatButton) return;
+    if (count) count.textContent = `できたルール：${state.program.length}まい`;
+    if (addMessage && !state.lastAddedActionId) addMessage.textContent = state.program.length ? "カードを つぎも えらべるよ" : "カードを えらんでね";
+    if (!state.program.length) addFeedback?.classList.remove("is-added", "is-confirmed");
     feedback.classList.remove("is-question", "is-success");
+    root.querySelectorAll("[data-picture-multiplier]").forEach((button) => {
+      button.classList.toggle("is-active", Number(button.dataset.pictureMultiplier) === state.ruleMultiplier);
+      button.disabled = state.running;
+    });
 
     const copy = gradeCopy(state.grade);
     repeatButton.classList.toggle("is-stopping", state.looping);
@@ -416,7 +430,7 @@ export function initPictureLessons({ root, onBackHome }) {
       ? `<strong>${copy.stop}</strong><small>${state.grade === "lower" ? "ここで おわる" : "繰り返しを終了"}</small>`
       : `<strong>${copy.repeatRun}</strong><small>${state.grade === "lower" ? "とめるまで" : "止めるまで"}</small>`;
 
-    const programStatus = getPictureProgramStatus(state.program, state.lesson.sample);
+    const programStatus = getPictureProgramStatus(state.program, state.lesson.sample, state.ruleMultiplier);
     if (!programStatus.canRun) {
       dropzone.innerHTML = `<p>ここに カードを はこぼう</p>`;
       feedback.innerHTML = `<strong>カードを 1まい いれてみよう</strong><span>1まい入れたら、すぐにうごかしてためせます。</span>`;
@@ -426,21 +440,29 @@ export function initPictureLessons({ root, onBackHome }) {
       return;
     }
 
-    const labels = Object.fromEntries(state.lesson.actions.map((action) => [action.id, action.label]));
+    const actions = Object.fromEntries(state.lesson.actions.map((action) => [action.id, action]));
     dropzone.innerHTML = state.program
       .map(
-        (actionId, index) => `
-          <button type="button" class="picture-program-block" data-remove-picture-block="${index}" aria-label="${escapeText(labels[actionId])}を外す">
-            <span>${index + 1}</span><strong>${escapeText(labels[actionId])}</strong>
-          </button>
-        `
+        (token, index) => {
+          const { actionId, repeat } = parsePictureCommandToken(token);
+          const action = actions[actionId];
+          return `<div class="picture-program-item${repeat > 1 ? " is-repeated" : ""}" data-picture-program-item="${index}">
+            <button type="button" class="picture-program-block" data-remove-picture-block="${index}" aria-label="${escapeText(action.label)}を外す">
+              <span>${index + 1}</span><strong>${escapeText(action.label)}${repeat > 1 ? ` <b>×${repeat}</b>` : ""}</strong><em>タップで けす</em>
+            </button>
+            ${action.repeatable ? `<button class="picture-command-repeat" type="button" data-repeat-picture-block="${index}">${repeat > 1 ? "×1に もどす" : "この めいれいを ×2"}</button>` : ""}
+          </div>`;
+        }
       )
       .join("");
     runButton.disabled = state.running;
     repeatButton.disabled = state.running && !state.looping;
+    const hasReusableRule = state.lesson.repeatRuleTimes && getPictureProgramStatus(state.program, state.lesson.sample, state.lesson.repeatRuleTimes).isCorrect;
     feedback.innerHTML = programStatus.isCorrect
-      ? `<strong>ルールが できた！</strong><span>「${escapeText(state.lesson.repeatLabel)}」を実行できます。</span>`
-      : `<strong>1まいでも うごかせるよ</strong><span>できあがる前でも、まずはうごかしてためそう。</span>`;
+      ? `<strong>ルールが できた！</strong><span>できたルールを うごかせます。${escapeText(state.lesson.repeatLabel)}</span>`
+      : hasReusableRule && state.ruleMultiplier === 1
+        ? `<strong>このルールを くりかえそう</strong><span>「×${state.lesson.repeatRuleTimes}」を えらぶか、おなじルールを そのかいすう ならべよう。</span>`
+        : `<strong>1まいでも うごかせるよ</strong><span>できあがる前でも、まずはうごかしてためそう。</span>`;
     window.requestAnimationFrame(drawStagePreview);
   }
 
@@ -451,21 +473,42 @@ export function initPictureLessons({ root, onBackHome }) {
       if (feedback) feedback.innerHTML = `<strong>カードは 10まいまで</strong><span>いらないカードをおして外そう。</span>`;
       return;
     }
+    const action = state.lesson.actions.find((item) => item.id === actionId);
     state.program.push(actionId);
+    state.lastAddedActionId = actionId;
     renderProgram();
+    const addFeedback = root.querySelector("[data-picture-add-feedback]");
+    const addMessage = root.querySelector("[data-picture-add-message]");
+    const sourceCard = root.querySelector(`[data-picture-card="${actionId}"]`);
+    const addedCard = root.querySelector(`[data-picture-program-item="${state.program.length - 1}"]`);
+    if (addMessage) addMessage.textContent = `「${action.label}」を いれたよ！`;
+    addFeedback?.classList.add("is-confirmed");
+    [addFeedback, sourceCard, addedCard].forEach((element) => {
+      element?.classList.remove("is-added");
+      void element?.offsetWidth;
+      element?.classList.add("is-added");
+    });
+    window.clearTimeout(additionFeedbackTimer);
+    additionFeedbackTimer = window.setTimeout(() => {
+      [addFeedback, sourceCard, addedCard].forEach((element) => element?.classList.remove("is-added"));
+      state.lastAddedActionId = null;
+    }, 1800);
   }
 
   function clearProgram() {
     if (state.running) return;
     state.program = [];
+    state.ruleMultiplier = 1;
     state.runs = 0;
+    state.lastAddedActionId = null;
     renderProgram();
     resetStageVisual();
   }
 
   function showSample() {
     if (state.running) return;
-    state.program = [...state.lesson.sample];
+    state.ruleMultiplier = state.lesson.repeatRuleTimes || 1;
+    state.program = [...(state.lesson.builderSample || (state.lesson.repeatRuleTimes ? state.lesson.sample.slice(0, state.lesson.sample.length / state.lesson.repeatRuleTimes) : state.lesson.sample))];
     renderProgram();
   }
 
@@ -473,10 +516,13 @@ export function initPictureLessons({ root, onBackHome }) {
     root.querySelectorAll(".picture-story-frame").forEach((frame) => frame.classList.remove("active", "done"));
     root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
     root.querySelector("[data-fish-bubbles]")?.classList.remove("is-visible");
-    const fishShell = root.querySelector("[data-fish-shell]");
-    fishShell?.classList.remove("is-open");
-    const fishShellText = root.querySelector("[data-fish-shell-text]");
-    if (fishShellText) fishShellText.innerHTML = "いちばん うえで<br>あわを だそう";
+    root.querySelectorAll("[data-fish-shell]").forEach((shell, index) => {
+      shell.classList.remove("is-open");
+      const icon = shell.querySelector("span");
+      if (icon) icon.textContent = "🐚";
+      const text = shell.querySelector("[data-fish-shell-text]");
+      if (text) text.innerHTML = `${index + 1}かいめの かい<br>あわで ひらこう`;
+    });
     const sprite = root.querySelector("[data-picture-sprite]");
     if (sprite) {
       sprite.getAnimations().forEach((animation) => animation.cancel());
@@ -487,7 +533,7 @@ export function initPictureLessons({ root, onBackHome }) {
     drawStagePreview();
   }
 
-  function showSuccessOverlay({ compact = false } = {}) {
+  function showSuccessOverlay({ compact = false, title = "" } = {}) {
     if (compact) {
       const stage = root.querySelector(".upper-stage, .picture-stage-scene");
       if (!stage) return;
@@ -497,30 +543,34 @@ export function initPictureLessons({ root, onBackHome }) {
         badge.className = "picture-loop-success";
         badge.dataset.pictureLoopSuccess = "";
         badge.setAttribute("role", "status");
+        badge.setAttribute("aria-hidden", "true");
+        enableTapDismiss(badge);
         stage.append(badge);
       }
-      badge.textContent = state.grade === "lower" ? "せいかい！" : "正解！";
+      if (badge.dataset.userDismissed === "true") return;
+      badge.textContent = title || (state.grade === "lower" ? "せいかい！" : "正解！");
+      badge.setAttribute("aria-label", `${badge.textContent} タップでとじる`);
       window.clearTimeout(successOverlayTimer);
       badge.classList.remove("is-visible");
       void badge.offsetWidth;
+      badge.setAttribute("aria-hidden", "false");
+      badge.tabIndex = 0;
       badge.classList.add("is-visible");
-      successOverlayTimer = window.setTimeout(() => badge.classList.remove("is-visible"), 3200);
+      successOverlayTimer = window.setTimeout(() => dismissSuccess(badge), 12000);
       return;
     }
-    const overlay = ensureSuccessOverlay();
+    const overlay = ensureSuccessOverlay(title);
     window.clearTimeout(successOverlayTimer);
     overlay.classList.remove("is-visible");
     void overlay.offsetWidth;
     overlay.setAttribute("aria-hidden", "false");
+    overlay.tabIndex = 0;
     overlay.classList.add("is-visible");
-    successOverlayTimer = window.setTimeout(() => {
-      overlay.classList.remove("is-visible");
-      overlay.setAttribute("aria-hidden", "true");
-    }, 2300);
+    successOverlayTimer = window.setTimeout(() => dismissSuccess(overlay), 12000);
   }
 
   async function runRule({ repeating = false } = {}) {
-    const programStatus = getPictureProgramStatus(state.program, state.lesson.sample);
+    const programStatus = getPictureProgramStatus(state.program, state.lesson.sample, state.ruleMultiplier);
     if (state.running || !programStatus.canRun) return;
     const feedback = root.querySelector("[data-picture-feedback]");
 
@@ -538,7 +588,8 @@ export function initPictureLessons({ root, onBackHome }) {
     const reviewQuestion = state.grade === "lower" ? "これで ただしいかな？" : "この動きで正しいかな？";
     if (programStatus.isCorrect) {
       feedback.classList.add("is-success");
-      feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${state.runs}回 つかった！</span>`;
+      const useCount = state.lesson.repeatRuleTimes ? state.ruleMultiplier : state.runs;
+      feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${useCount}回 つかった！</span>`;
       showSuccessOverlay({ compact: repeating });
     } else {
       feedback.classList.add("is-question");
@@ -573,6 +624,7 @@ export function initPictureLessons({ root, onBackHome }) {
     state.looping = false;
     state.running = false;
     root.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+    root.querySelector("[data-picture-loop-success]")?.remove();
     renderProgram();
   }
 
@@ -622,7 +674,7 @@ export function initPictureLessons({ root, onBackHome }) {
   async function animatePaintPath(sprite) {
     const scene = root.querySelector(".picture-stage-paint");
     if (!scene) return;
-    const route = getPaintRoute(state.program, scene.clientWidth, scene.clientHeight);
+    const route = getPaintRoute(activeProgram(), scene.clientWidth, scene.clientHeight);
     const duration = Math.max(900, (route.length - 1) * 300);
     const animation = sprite.animate(
       route.map(({ x, y, rotation, offset }) => ({
@@ -653,13 +705,20 @@ export function initPictureLessons({ root, onBackHome }) {
   async function animateMovementPath(sprite, type, isCorrect) {
     const scene = root.querySelector(`.picture-stage-${type}`);
     if (!scene) return;
-    const route = getMovementRoute(type, state.program, scene.clientWidth, scene.clientHeight);
+    const program = activeProgram();
+    const route = getMovementRoute(type, program, scene.clientWidth, scene.clientHeight);
     const duration = type === "fish"
-      ? Math.max(1200, state.program.length * 760)
-      : Math.max(900, (route.length - 1) * 420);
+      ? Math.max(1200, program.length * 560)
+      : Math.max(1200, program.length * 720);
     root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
     root.querySelector("[data-fish-bubbles]")?.classList.remove("is-visible");
-    root.querySelector("[data-fish-shell]")?.classList.remove("is-open");
+    root.querySelectorAll("[data-fish-shell]").forEach((shell, index) => {
+      shell.classList.remove("is-open");
+      const icon = shell.querySelector("span");
+      if (icon) icon.textContent = "🐚";
+      const text = shell.querySelector("[data-fish-shell-text]");
+      if (text) text.innerHTML = `${index + 1}かいめの かい<br>あわで ひらこう`;
+    });
     const animation = sprite.animate(
       route.map(({ x, y, rotation, offset }) => ({
         transform: `translate(${x}px, ${y}px) rotate(${rotation}deg)`,
@@ -677,7 +736,7 @@ export function initPictureLessons({ root, onBackHome }) {
       : [];
     const bubbleAnimations = type === "fish"
       ? route.filter(({ bubble }) => bubble)
-      .map(async ({ x, y, offset, opensShell }) => {
+      .map(async ({ x, y, offset, opensShell }, bubbleIndex) => {
         await sleep(duration * offset);
         if (!state.running) return;
         const bubbles = root.querySelector("[data-fish-bubbles]");
@@ -689,9 +748,12 @@ export function initPictureLessons({ root, onBackHome }) {
           bubbles.classList.add("is-visible");
         }
         if (opensShell) {
-          root.querySelector("[data-fish-shell]")?.classList.add("is-open");
-          const shellText = root.querySelector("[data-fish-shell-text]");
-          if (shellText) shellText.textContent = "ひらいた！";
+          const shell = root.querySelector(`[data-fish-shell="${bubbleIndex}"]`);
+          shell?.classList.add("is-open");
+          const icon = shell?.querySelector("span");
+          if (icon) icon.textContent = "🦪✨";
+          const shellText = shell?.querySelector("[data-fish-shell-text]");
+          if (shellText) shellText.textContent = `${bubbleIndex + 1}かいめ ひらいた！`;
         }
       })
       : [];
@@ -706,7 +768,7 @@ export function initPictureLessons({ root, onBackHome }) {
     const rightActions = new Set(["right", "swim-right", "swim-up-right", "swim-down-right", "forward", "right-100", "right-80", "x-100"]);
     const upActions = new Set(["jump", "swim-up-right", "up-50", "up-60", "y-50"]);
 
-    state.program.forEach((actionId) => {
+    activeProgram().forEach((actionId) => {
       if (rightActions.has(actionId)) x += 105;
       if (upActions.has(actionId)) y -= 62;
       if (actionId === "down-60" || actionId === "stomp" || actionId === "swim-down-right") y += 55;
@@ -771,7 +833,7 @@ export function initPictureLessons({ root, onBackHome }) {
       const startY = (sprite?.offsetTop ?? h * 0.6) + (sprite?.offsetHeight ?? 0) / 2;
       const goalRoute = getMovementRoute(state.lesson.stageType, state.lesson.sample, w, h);
       if (state.program.length > 0) {
-        const currentRoute = getMovementRoute(state.lesson.stageType, state.program, w, h);
+        const currentRoute = getMovementRoute(state.lesson.stageType, activeProgram(), w, h);
         drawRouteLine(ctx, currentRoute, startX, startY, "rgba(255,255,255,.92)", [], Math.max(10, w * 0.014));
         drawRouteLine(ctx, currentRoute, startX, startY, "#ee4057", [], Math.max(6, w * 0.008));
       }
@@ -820,11 +882,11 @@ export function initPictureLessons({ root, onBackHome }) {
     drawRouteLine(ctx, goalRoute, startX, startY, "rgba(13, 42, 99, .44)", [10, 12], Math.max(8, w * 0.012));
     drawRouteLine(ctx, goalRoute, startX, startY, "#fff", [10, 12], Math.max(4, w * 0.006));
     if (state.program.length > 0) {
-      const currentRoute = getPaintRoute(state.program, w, h);
+      const currentRoute = getPaintRoute(activeProgram(), w, h);
       drawRouteLine(ctx, currentRoute, startX, startY, "rgba(255,255,255,.92)", [], Math.max(10, w * 0.014));
       drawRouteLine(ctx, currentRoute, startX, startY, "#ee4057", [], Math.max(6, w * 0.008));
     }
-    const route = getPaintRoute(state.program, w, h);
+    const route = getPaintRoute(activeProgram(), w, h);
     const amount = progress * Math.max(0, route.length - 1);
     ctx.lineWidth = Math.max(8, w * 0.012);
     route.slice(1).forEach((point, index) => {
@@ -947,6 +1009,11 @@ export function initPictureLessons({ root, onBackHome }) {
   function handleClick(event) {
     const lessonButton = event.target.closest("[data-open-picture-lesson]");
     if (lessonButton) return openLesson(lessonButton.dataset.openPictureLesson);
+    const multiplierButton = event.target.closest("[data-picture-multiplier]");
+    if (multiplierButton && !state.running) {
+      state.ruleMultiplier = Number(multiplierButton.dataset.pictureMultiplier);
+      return renderProgram();
+    }
 
     const card = event.target.closest("[data-picture-card]");
     if (card) {
@@ -957,6 +1024,15 @@ export function initPictureLessons({ root, onBackHome }) {
     const removeButton = event.target.closest("[data-remove-picture-block]");
     if (removeButton && !state.running) {
       state.program.splice(Number(removeButton.dataset.removePictureBlock), 1);
+      state.lastAddedActionId = null;
+      return renderProgram();
+    }
+
+    const repeatCommandButton = event.target.closest("[data-repeat-picture-block]");
+    if (repeatCommandButton && !state.running) {
+      const index = Number(repeatCommandButton.dataset.repeatPictureBlock);
+      const { repeat } = parsePictureCommandToken(state.program[index]);
+      state.program[index] = setPictureCommandRepeat(state.program[index], repeat > 1 ? 1 : 2);
       return renderProgram();
     }
 
@@ -967,6 +1043,9 @@ export function initPictureLessons({ root, onBackHome }) {
     if (action === "hub") openHub();
     if (action === "sample") showSample();
     if (action === "clear") clearProgram();
+    if (action === "show-program") {
+      root.querySelector(".picture-program-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
     if (action === "run") runRule();
     if (action === "repeat-run") runRepeatedly();
   }
@@ -982,7 +1061,7 @@ export function initPictureLessons({ root, onBackHome }) {
 
   upperLessons = initUpperPictureLessons({
     root,
-    onSuccess: ({ repeating = false } = {}) => showSuccessOverlay({ compact: repeating })
+    onSuccess: ({ repeating = false, title = "" } = {}) => showSuccessOverlay({ compact: repeating, title })
   });
   root.addEventListener("click", handleClick);
   root.addEventListener("pointerdown", handlePointerDown);
@@ -991,6 +1070,7 @@ export function initPictureLessons({ root, onBackHome }) {
   root.addEventListener("pointercancel", removeDragGhost);
   window.addEventListener("resize", () => window.requestAnimationFrame(drawStagePreview));
   window.addEventListener("popstate", () => render(state.grade));
+  document.addEventListener("easy-scratch-languagechange", () => window.requestAnimationFrame(drawStagePreview));
 
   return { render };
 }

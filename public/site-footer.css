@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  width: min(calc(100% - 32px), 1040px);
+  width: min(calc(100% - 32px), 1180px);
   margin: 0 auto 24px;
   padding: 16px 20px;
   border: 2px solid rgba(37, 137, 219, .24);
@@ -11,6 +11,10 @@
   background: rgba(255, 255, 255, .92);
   color: #35587b;
   box-shadow: 0 8px 20px rgba(39, 82, 128, .1);
+}
+
+.site-footer[hidden] {
+  display: none;
 }
 
 .site-footer p {

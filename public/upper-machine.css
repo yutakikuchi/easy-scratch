@@ -11,7 +11,7 @@ body[data-grade="upper"][data-page="calculation"] .app-shell {
 }
 
 .upper-machine .machine-header {
-  grid-template-columns: 124px 246px minmax(0, 1fr);
+  grid-template-columns: 150px 246px minmax(0, 1fr);
 }
 
 .upper-machine .machine-header h1 {
@@ -254,7 +254,7 @@ body[data-grade="upper"][data-page="calculation"] .app-shell {
   }
 
   .upper-machine .machine-header {
-    grid-template-columns: 92px 178px minmax(0, 1fr);
+    grid-template-columns: 150px 190px minmax(0, 1fr);
   }
 
   .upper-machine .machine-header h1 {
@@ -319,13 +319,23 @@ body[data-grade="upper"][data-page="calculation"] .app-shell {
   }
 }
 
+@media (min-width: 821px) and (max-width: 1400px) {
+  .upper-machine-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  }
+
+  .upper-machine .upper-summary-card {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 820px) {
   body[data-grade="upper"][data-page="calculation"] .app-shell {
     padding: 10px;
   }
 
   .upper-machine .machine-header {
-    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-columns: 150px minmax(0, 1fr);
   }
 
   .upper-machine .machine-header h1 {

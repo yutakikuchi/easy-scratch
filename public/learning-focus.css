@@ -1,0 +1,105 @@
+.learning-focus {
+  min-width: 0;
+  border: 3px solid #82c8ef;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(39, 82, 128, 0.1);
+}
+
+.learning-focus details {
+  min-width: 0;
+}
+
+.learning-focus summary {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 10px 16px;
+  color: #0d2a63;
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 900;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.learning-focus summary::-webkit-details-marker {
+  display: none;
+}
+
+.learning-focus summary::before {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ff566f;
+  color: #fff;
+  font-size: 24px;
+  content: "☝";
+  animation: learning-focus-point 1.8s ease-in-out infinite;
+}
+
+.learning-focus summary::after {
+  justify-self: end;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #fff1a8;
+  color: #9a5900;
+  font-size: 14px;
+  content: "タップで ひらく";
+}
+
+.learning-focus details[open] summary::after {
+  content: "タップで とじる";
+}
+
+.learning-focus-panel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 16px 16px;
+}
+
+.learning-focus-item {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 2px solid #cde8f8;
+  border-radius: 16px;
+  background: #f7fcff;
+}
+
+.learning-focus-item span {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.learning-focus-item strong {
+  color: #0d2a63;
+  font-size: clamp(15px, 1.55vw, 19px);
+  line-height: 1.2;
+}
+
+.learning-focus-item p {
+  margin: 0;
+  color: #486481;
+  font-size: clamp(12px, 1.25vw, 15px);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+@keyframes learning-focus-point {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(7px); }
+}
+
+@media (max-width: 820px) {
+  .learning-focus-panel {
+    grid-template-columns: 1fr;
+  }
+}

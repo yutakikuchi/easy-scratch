@@ -49,8 +49,8 @@ body[data-page="program"] .picture-experience {
   min-width: 0;
 }
 
-.picture-hub-header span,
-.picture-lesson-header span {
+.picture-hub-header > div > span,
+.picture-lesson-title-card > span {
   display: inline-block;
   margin-bottom: 3px;
   padding: 4px 12px;
@@ -61,14 +61,14 @@ body[data-page="program"] .picture-experience {
   font-weight: 900;
 }
 
-.picture-lower .picture-hub-header span,
-.picture-lower .picture-lesson-header span {
+.picture-lower .picture-hub-header > div > span,
+.picture-lower .picture-lesson-title-card > span {
   background: #fff0b9;
   color: #d45b48;
 }
 
 .picture-hub-header h1,
-.picture-lesson-header h1 {
+.picture-lesson-title-card h1 {
   margin: 0;
   font-size: clamp(30px, 4.4vw, 50px);
   line-height: 1;
@@ -76,7 +76,7 @@ body[data-page="program"] .picture-experience {
 }
 
 .picture-hub-header p,
-.picture-lesson-header p {
+.picture-lesson-title-card p {
   margin: 6px 0 0;
   color: #486481;
   font-size: clamp(14px, 1.8vw, 20px);
@@ -84,6 +84,11 @@ body[data-page="program"] .picture-experience {
 }
 
 .picture-back-button {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-width: 138px;
   min-height: 58px;
   padding: 10px 18px;
@@ -93,6 +98,15 @@ body[data-page="program"] .picture-experience {
   color: #0d2a63;
   font-size: 18px;
   box-shadow: 0 5px 0 rgba(192, 70, 88, 0.13);
+  white-space: nowrap;
+}
+
+.picture-back-button::before {
+  content: "";
+  display: block;
+  width: 30px;
+  aspect-ratio: 3 / 2;
+  background: url("./assets/back-hand.svg") center / contain no-repeat;
 }
 
 .picture-upper .picture-back-button {
@@ -224,23 +238,23 @@ body[data-page="program"] .picture-experience {
 
 .picture-lesson {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 8px;
-  height: calc(100svh - 20px);
-  min-height: 680px;
+  min-height: max(680px, calc(100svh - 20px));
 }
 
 .picture-lesson-header {
-  grid-template-columns: auto minmax(0, 1fr) 76px;
-  min-height: 80px;
-  padding: 7px 12px;
+  grid-template-columns: auto minmax(0, 1fr) 84px;
+  grid-template-rows: auto auto;
+  min-height: 0;
+  padding: 12px 14px;
 }
 
-.picture-lesson-header h1 {
+.picture-lesson-title-card h1 {
   font-size: clamp(28px, 3.5vw, 42px);
 }
 
-.picture-lesson-header p {
+.picture-lesson-title-card p {
   margin-top: 3px;
   font-size: clamp(12px, 1.5vw, 17px);
 }
@@ -282,6 +296,10 @@ body[data-page="program"] .picture-experience {
   grid-template-rows: auto minmax(0, 1fr);
   gap: 8px;
   padding: 10px;
+}
+
+.picture-palette {
+  grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
 .picture-section-heading {
@@ -364,6 +382,12 @@ body[data-page="program"] .picture-experience {
   transform: scale(0.98);
 }
 
+.picture-action-card.is-added {
+  border-color: #169c58;
+  background: #ecfff3;
+  animation: picture-card-added 520ms ease-out;
+}
+
 .picture-action-card > img {
   width: 56px;
   height: 56px;
@@ -393,6 +417,93 @@ body[data-page="program"] .picture-experience {
   font-size: 11px;
   font-style: normal;
   text-align: center;
+}
+
+.picture-add-feedback {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  min-height: 54px;
+  padding: 6px 7px;
+  border: 2px solid #8fc7ea;
+  border-radius: 14px;
+  background: #eef9ff;
+  color: #12366d;
+}
+
+.picture-add-feedback.is-added,
+.picture-add-feedback.is-confirmed {
+  border-color: #28a861;
+  background: #eafff1;
+}
+
+.picture-add-feedback.is-added {
+  animation: picture-feedback-added 620ms ease-out;
+}
+
+.picture-add-feedback-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #d8edf9;
+  color: #287aaf;
+  font-size: 21px;
+  font-weight: 1000;
+}
+
+.picture-add-feedback.is-added .picture-add-feedback-mark,
+.picture-add-feedback.is-confirmed .picture-add-feedback-mark {
+  background: #1fa45b;
+  color: #fff;
+}
+
+.picture-add-feedback > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.picture-add-feedback strong,
+.picture-add-feedback small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picture-add-feedback strong {
+  font-size: clamp(12px, 1.25vw, 16px);
+}
+
+.picture-add-feedback small {
+  color: #526f8c;
+  font-size: clamp(10px, 1vw, 13px);
+  font-weight: 900;
+}
+
+.picture-add-feedback button {
+  min-height: 40px;
+  padding: 5px 8px;
+  border: 2px solid #2b86cf;
+  border-radius: 11px;
+  background: #fff;
+  color: #125e9d;
+  font-size: clamp(10px, 1vw, 13px);
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+@keyframes picture-card-added {
+  0% { transform: scale(0.96); }
+  55% { transform: scale(1.035); }
+  100% { transform: scale(1); }
+}
+
+@keyframes picture-feedback-added {
+  0% { transform: translateY(-5px); opacity: 0.72; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
 .picture-stage-panel {
@@ -440,6 +551,9 @@ body[data-page="program"] .picture-experience {
 .picture-stage-jump .picture-stage-sprite {
   bottom: 12%;
   left: 6%;
+  width: clamp(54px, 8%, 128px);
+  height: auto;
+  aspect-ratio: 1;
 }
 
 .picture-stage-fish .picture-stage-sprite {
@@ -988,6 +1102,35 @@ body[data-page="program"] .picture-experience {
   .picture-story-frame {
     min-height: 220px;
   }
+}
+
+@media (max-width: 1100px) {
+  .picture-add-feedback.is-added::after {
+    position: fixed;
+    z-index: 1200;
+    left: 50%;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    width: min(620px, calc(100vw - 40px));
+    padding: 17px 22px;
+    border: 4px solid #fff;
+    border-radius: 22px;
+    background: #169c58;
+    box-shadow: 0 12px 34px rgba(17, 61, 45, 0.3);
+    color: #fff;
+    content: "✓ できたルールに はいったよ！";
+    font-size: clamp(22px, 3.4vw, 34px);
+    font-weight: 1000;
+    text-align: center;
+    transform: translateX(-50%);
+    animation: picture-added-toast 1800ms ease both;
+    pointer-events: none;
+  }
+}
+
+@keyframes picture-added-toast {
+  0% { opacity: 0; transform: translate(-50%, 20px) scale(0.94); }
+  18%, 76% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, 8px) scale(0.98); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -4,6 +4,9 @@ title: "[要望] "
 labels:
   - enhancement
 body:
+  - type: markdown
+    attributes:
+      value: "児童・生徒の氏名、顔写真、学校内だけで使うURLなどの個人情報は書かないでください。"
   - type: dropdown
     id: grade
     attributes:

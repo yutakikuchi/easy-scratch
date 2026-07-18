@@ -1,0 +1,34 @@
+name: 利用相談
+description: 授業利用、再配布、改変などについて相談する
+title: "[利用相談] "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: "公開Issueです。児童・生徒の氏名、顔写真、学校内だけで使うURLなどの個人情報は書かないでください。"
+  - type: dropdown
+    id: usage
+    attributes:
+      label: 相談の種類
+      options:
+        - 授業・ワークショップでの利用
+        - 再配布
+        - 改変
+        - 別サイトへの掲載
+        - その他
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: 予定している利用方法
+      description: 誰を対象に、どのような場面で利用する予定かを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: 確認したいこと
+    validations:
+      required: true

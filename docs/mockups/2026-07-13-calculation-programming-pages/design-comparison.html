@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>Design comparison</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 24px; background: #1c2430; color: #fff; font-family: sans-serif; }
+      h1 { margin: 0 0 20px; }
+      section { margin: 0 0 28px; padding: 16px; border-radius: 12px; background: #2a3545; }
+      h2 { margin: 0 0 12px; }
+      .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+      figure { margin: 0; }
+      figcaption { margin-bottom: 8px; font-weight: 700; }
+      img { display: block; width: 100%; height: auto; background: #fff; }
+    </style>
+  </head>
+  <body>
+    <h1>モックと実装の比較</h1>
+    <section id="lower-calculation">
+      <h2>低学年・計算</h2>
+      <div class="pair">
+        <figure><figcaption>モック</figcaption><img src="./lower-grade-calculation-v2.png" alt="低学年計算モック"></figure>
+        <figure><figcaption>実装</figcaption><img src="./implementation-lower-calculation.png" alt="低学年計算実装"></figure>
+      </div>
+    </section>
+    <section id="lower-programming">
+      <h2>低学年・プログラミング</h2>
+      <div class="pair">
+        <figure><figcaption>モック</figcaption><img src="./lower-grade-programming.png" alt="低学年プログラミングモック"></figure>
+        <figure><figcaption>実装</figcaption><img src="./implementation-lower-programming.png" alt="低学年プログラミング実装"></figure>
+      </div>
+    </section>
+    <section id="upper-calculation">
+      <h2>高学年・計算</h2>
+      <div class="pair">
+        <figure><figcaption>モック</figcaption><img src="./upper-grade-calculation-v2.png" alt="高学年計算モック"></figure>
+        <figure><figcaption>実装</figcaption><img src="./implementation-upper-calculation.png" alt="高学年計算実装"></figure>
+      </div>
+    </section>
+    <section id="upper-programming">
+      <h2>高学年・プログラミング</h2>
+      <div class="pair">
+        <figure><figcaption>モック</figcaption><img src="./upper-grade-programming.png" alt="高学年プログラミングモック"></figure>
+        <figure><figcaption>実装</figcaption><img src="./implementation-upper-programming.png" alt="高学年プログラミング実装"></figure>
+      </div>
+    </section>
+  </body>
+</html>

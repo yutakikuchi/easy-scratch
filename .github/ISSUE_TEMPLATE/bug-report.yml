@@ -4,6 +4,9 @@ title: "[不具合] "
 labels:
   - bug
 body:
+  - type: markdown
+    attributes:
+      value: "児童・生徒の氏名、顔写真、学校内だけで使うURLなどの個人情報は書かないでください。"
   - type: textarea
     id: problem
     attributes:
@@ -39,3 +42,10 @@ body:
     attributes:
       label: スクリーンショット
       description: 個人情報が写っていないことを確認して添付してください。
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待していた動き
+      description: 本来どのように表示・動作してほしかったかを書いてください。
+    validations:
+      required: true

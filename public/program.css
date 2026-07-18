@@ -1,0 +1,486 @@
+.app-header {
+  display: grid;
+  gap: 14px;
+}
+
+.page-switcher {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.page-button,
+.next-button,
+.back-button {
+  border: 3px solid var(--line);
+  background: #fff;
+  box-shadow: 0 10px 20px rgba(58, 81, 108, 0.1);
+  font-weight: 900;
+}
+
+.page-button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 12px;
+  min-height: 104px;
+  padding: 14px;
+  text-align: left;
+}
+
+.page-button span {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  width: 54px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--accent-3);
+  color: #fff;
+  font-size: 30px;
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.14);
+}
+
+.page-button strong {
+  font-size: clamp(20px, 3vw, 30px);
+  line-height: 1.15;
+}
+
+.page-button small {
+  color: var(--muted);
+  font-size: clamp(13px, 2vw, 17px);
+}
+
+.page-button.active {
+  border-color: #f0b640;
+  background: linear-gradient(135deg, #fff8d8, #e8fbff);
+}
+
+.lesson-page {
+  display: grid;
+  gap: 18px;
+}
+
+.lesson-page[hidden] {
+  display: none;
+}
+
+.paper-page {
+  grid-template-columns: 1fr;
+}
+
+.program-preview {
+  align-content: start;
+}
+
+.next-button {
+  min-height: 78px;
+  background: linear-gradient(180deg, #ff7b64, #df5644);
+  color: #fff;
+  font-size: clamp(22px, 3.4vw, 30px);
+  box-shadow: inset 0 -7px 0 rgba(0, 0, 0, 0.16);
+}
+
+.program-header {
+  display: grid;
+  grid-template-columns: 1fr 110px auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 3px solid #91c9f0;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow);
+}
+
+.program-header h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.12;
+}
+
+.program-mascot {
+  width: 100%;
+  height: 96px;
+  object-fit: contain;
+}
+
+.back-button {
+  min-width: 132px;
+  min-height: 62px;
+  background: #fff8d9;
+  font-size: 18px;
+}
+
+.back-with-hand {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.back-with-hand::before {
+  content: "";
+  display: block;
+  width: 30px;
+  aspect-ratio: 3 / 2;
+  background: url("./assets/back-hand.svg") center / contain no-repeat;
+}
+
+body[data-page="program"] .app-header {
+  display: none;
+}
+
+body[data-page="program"] .app-shell {
+  min-height: 100vh;
+  overflow: visible;
+}
+
+body[data-page="program"] .workspace {
+  width: min(100%, 1380px);
+}
+
+body[data-page="program"] .page-button {
+  min-height: 72px;
+}
+
+body[data-page="program"] .page-button small {
+  display: none;
+}
+
+.lesson-console {
+  display: grid;
+  gap: 18px;
+}
+
+.lesson-console .stage-wrap,
+.lesson-console .command-palette,
+.lesson-console .program-panel {
+  width: min(100%, 1060px);
+  justify-self: center;
+}
+
+.lesson-console .stage-wrap {
+  gap: 16px;
+  padding: 22px;
+}
+
+.lesson-console .stage-grid {
+  justify-self: center;
+  width: min(100%, 900px);
+}
+
+.lesson-console .stage-actions {
+  grid-template-columns: 92px 1fr;
+}
+
+.lesson-console .stage-actions .icon-button,
+.lesson-console .stage-actions .primary-button {
+  min-height: 86px;
+}
+
+.lesson-console .stage-actions .primary-button {
+  font-size: clamp(28px, 4.2vw, 42px);
+}
+
+.lesson-console .command-palette,
+.lesson-console .program-panel {
+  padding: 22px;
+}
+
+.lesson-console .command-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.lesson-console .command-card {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 6px 14px;
+  justify-items: stretch;
+  min-height: 108px;
+}
+
+.command-card strong {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  min-width: 64px;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #1a6f8a;
+  font-size: clamp(26px, 3.2vw, 40px);
+  line-height: 1;
+}
+
+.command-card.action strong,
+.command-card.logic strong {
+  font-size: 26px;
+}
+
+.lesson-console .command-card span {
+  font-size: clamp(20px, 2.6vw, 28px);
+}
+
+.lesson-console .program-list {
+  min-height: 220px;
+}
+
+.lesson-console .program-actions button {
+  min-height: 70px;
+  font-size: clamp(20px, 2.8vw, 28px);
+}
+
+@media (min-width: 860px) {
+  .paper-page {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .paper-page .flow-panel,
+  .paper-page .mission-panel {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 980px) {
+  .lesson-console .command-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 980px) {
+  .lesson-console {
+    grid-template-columns: minmax(0, 1.1fr) minmax(270px, 0.65fr) minmax(400px, 1fr);
+    align-items: start;
+  }
+
+  .lesson-console .stage-wrap,
+  .lesson-console .command-palette,
+  .lesson-console .program-panel {
+    width: 100%;
+  }
+
+  .lesson-console .stage-wrap {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .lesson-console .program-panel {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .lesson-console .command-palette {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .lesson-console .command-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body[data-grade="upper"] .lesson-console {
+    grid-template-columns: minmax(0, 1.1fr) minmax(270px, 0.65fr) minmax(400px, 1fr);
+  }
+
+  body[data-grade="upper"] .lesson-console .stage-wrap {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  body[data-grade="upper"] .lesson-console .program-panel {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  body[data-grade="upper"] .lesson-console .command-palette {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .lesson-console .program-list {
+    max-height: 520px;
+    overflow-y: auto;
+  }
+
+  .lesson-console .command-card {
+    min-height: 88px;
+  }
+
+  .lesson-console .command-card span {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 821px) and (max-height: 900px) {
+  body[data-page="program"] .app-shell {
+    padding: 10px;
+  }
+
+  .lesson-page {
+    gap: 10px;
+  }
+
+  .program-header {
+    grid-template-columns: minmax(0, 1fr) 72px auto;
+    gap: 8px;
+    min-height: 68px;
+    padding: 6px 12px;
+    border-width: 2px;
+    border-radius: 18px;
+  }
+
+  .program-header h1 {
+    font-size: clamp(27px, 3vw, 36px);
+  }
+
+  .program-header .section-label {
+    font-size: 12px;
+  }
+
+  .program-mascot {
+    height: 62px;
+  }
+
+  .back-button {
+    min-width: 112px;
+    min-height: 52px;
+    font-size: 16px;
+  }
+
+  .lesson-console {
+    gap: 10px;
+  }
+
+  .lesson-console .stage-wrap {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .lesson-console .stage-grid {
+    gap: 4px;
+    padding: 8px;
+    border-width: 3px;
+    border-radius: 16px;
+  }
+
+  .lesson-console .stage-note {
+    gap: 6px;
+  }
+
+  .lesson-console .stage-note span {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .lesson-console .status-strip {
+    padding: 8px 10px;
+    border-width: 2px;
+    border-radius: 13px;
+    font-size: 16px;
+  }
+
+  .lesson-console .stage-actions {
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .lesson-console .stage-actions .icon-button,
+  .lesson-console .stage-actions .primary-button {
+    min-height: 54px;
+  }
+
+  .lesson-console .stage-actions .primary-button {
+    font-size: 25px;
+  }
+
+  .lesson-console .command-palette,
+  .lesson-console .program-panel {
+    gap: 8px;
+    padding: 10px;
+    border-width: 2px;
+    border-radius: 16px;
+  }
+
+  .lesson-console .section-heading h2 {
+    font-size: 20px;
+  }
+
+  .lesson-console .section-heading .section-label {
+    font-size: 11px;
+  }
+
+  .lesson-console .command-grid {
+    gap: 8px;
+  }
+
+  .lesson-console .command-card {
+    gap: 3px 7px;
+    min-height: 58px;
+    padding: 5px;
+    border-width: 2px;
+    border-left-width: 7px;
+    border-radius: 12px;
+  }
+
+  .lesson-console .command-card strong {
+    min-width: 42px;
+    border-radius: 10px;
+    font-size: 21px;
+  }
+
+  .lesson-console .command-card.action strong,
+  .lesson-console .command-card.logic strong {
+    font-size: 18px;
+  }
+
+  .lesson-console .command-card span {
+    font-size: 16px;
+  }
+
+  .lesson-console .command-card small {
+    display: none;
+  }
+
+  .lesson-console .program-list {
+    min-height: 120px;
+    max-height: 330px;
+    gap: 6px;
+    padding: 7px;
+    border-width: 2px;
+    border-radius: 13px;
+    overflow-y: auto;
+  }
+
+  .lesson-console .program-item {
+    padding: 7px 8px;
+    border-width: 2px;
+    border-radius: 11px;
+    font-size: 15px;
+  }
+
+  .lesson-console .program-actions {
+    gap: 5px;
+  }
+
+  .lesson-console .program-actions button {
+    min-height: 48px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 720px) {
+  .page-switcher,
+  .program-header,
+  .lesson-console .command-grid,
+  .program-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .program-mascot {
+    display: none;
+  }
+}

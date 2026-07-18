@@ -1,0 +1,59 @@
+.picture-loop-success {
+  position: absolute;
+  right: 3%;
+  bottom: calc(4% + 42px);
+  z-index: 30;
+  max-width: 44%;
+  padding: 10px 20px;
+  border: 5px solid #fff;
+  border-radius: 999px;
+  background: #ffcf33;
+  color: #0d2a63;
+  box-shadow: 0 7px 0 #ef9f00, 0 12px 28px rgba(13, 42, 99, .28);
+  font-size: clamp(24px, 4.5vw, 54px);
+  font-weight: 1000;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  touch-action: manipulation;
+  transform: translateY(20px) scale(.65);
+}
+
+.picture-loop-success.is-visible {
+  pointer-events: auto;
+  cursor: pointer;
+  animation: picture-loop-success-pop 3100ms ease both;
+}
+
+.picture-stage-fish .picture-loop-success {
+  top: 42%;
+  right: 10%;
+  bottom: auto;
+}
+
+.picture-stage-motion .picture-loop-success,
+.upper-soccer-stage .picture-loop-success {
+  right: 8%;
+  bottom: 25%;
+}
+
+.picture-stage-grid-paint .picture-loop-success {
+  top: 12%;
+  right: 5%;
+  bottom: auto;
+}
+
+@keyframes picture-loop-success-pop {
+  0% { opacity: 0; transform: translateY(20px) scale(.65); }
+  16%, 78% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-8px) scale(.92); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picture-loop-success.is-visible {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

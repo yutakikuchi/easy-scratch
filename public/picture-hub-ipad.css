@@ -1,0 +1,58 @@
+.picture-upper .picture-lesson-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.picture-upper .picture-lesson-card,
+.picture-lower .picture-lesson-card {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  align-content: start;
+  row-gap: 18px;
+  min-height: 320px;
+}
+
+.picture-upper .picture-lesson-card > img,
+.picture-lower .picture-lesson-card > img {
+  display: block;
+  align-self: start;
+  width: 100%;
+  height: clamp(240px, 25vw, 420px);
+  min-height: 0;
+  object-fit: contain;
+  overflow: hidden;
+}
+
+.picture-upper .picture-lesson-copy,
+.picture-lower .picture-lesson-copy {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  padding: 12px 10px 10px;
+  background: #f7fcff;
+}
+
+@media (max-width: 1200px) {
+  .picture-upper .picture-lesson-card,
+  .picture-lower .picture-lesson-card {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 820px) {
+  .picture-upper .picture-lesson-card {
+    grid-template-rows: auto auto;
+    row-gap: 12px;
+    min-height: 0;
+  }
+
+  .picture-upper .picture-lesson-card > img,
+  .picture-lower .picture-lesson-card > img {
+    height: 210px;
+  }
+}
+
+@media (max-width: 560px) {
+  .picture-upper .picture-lesson-grid {
+    grid-template-columns: 1fr;
+  }
+}

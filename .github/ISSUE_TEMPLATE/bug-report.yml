@@ -1,0 +1,41 @@
+name: 不具合の報告
+description: 表示崩れや操作できない問題を知らせる
+title: "[不具合] "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 起きていること
+      description: どの画面で、何をしたときに起きたかを書いてください。
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: 画面のURL
+      placeholder: "例: https://.../?grade=lower&page=program"
+  - type: dropdown
+    id: device
+    attributes:
+      label: 利用端末
+      options:
+        - iPad Pro
+        - その他のiPad
+        - PC
+        - その他
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: ブラウザ
+      placeholder: "例: Safari"
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: スクリーンショット
+      description: 個人情報が写っていないことを確認して添付してください。

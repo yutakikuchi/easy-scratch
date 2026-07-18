@@ -1,0 +1,97 @@
+.language-switcher {
+  position: fixed;
+  z-index: 10000;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: 2px solid #2589db;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 5px 15px rgba(20, 55, 100, .18);
+  backdrop-filter: blur(8px);
+}
+
+.language-switcher-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.language-switcher button {
+  min-width: 76px;
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #0d2a63;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.language-switcher button.is-active {
+  background: #2589db;
+  color: #fff;
+}
+
+html[lang="en"] body {
+  word-break: normal;
+}
+
+html[lang="en"] .machine-header h1,
+html[lang="en"] .picture-lesson-header h1,
+html[lang="en"] .upper-lesson-header h1 {
+  letter-spacing: -.02em;
+}
+
+html[lang="en"] .picture-action-card {
+  grid-template-columns: 58px minmax(0, 1fr) minmax(58px, auto);
+}
+
+html[lang="en"] .picture-action-card em {
+  min-width: 0;
+  font-size: clamp(10px, .9vw, 12px);
+  white-space: nowrap;
+}
+
+html[lang="en"] .learning-focus summary::after {
+  content: "Tap to open";
+}
+
+html[lang="en"] .learning-focus details[open] summary::after {
+  content: "Tap to close";
+}
+
+@media (max-width: 760px) {
+  .language-switcher {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+  }
+
+  .language-switcher button {
+    min-width: 64px;
+    min-height: 36px;
+    padding-inline: 9px;
+    font-size: 13px;
+  }
+
+  .language-switcher-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 17px;
+  }
+
+  html[lang="en"] .picture-action-card {
+    grid-template-columns: 48px minmax(0, 1fr) minmax(52px, auto);
+  }
+}

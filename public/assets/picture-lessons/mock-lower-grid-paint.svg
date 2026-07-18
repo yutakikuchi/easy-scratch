@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1449" height="1086" viewBox="0 0 1449 1086">
+  <defs>
+    <pattern id="paper" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#d9eaf4" stroke-width="2"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#244b70" flood-opacity=".18"/></filter>
+  </defs>
+  <g transform="translate(58 43) scale(.92)">
+  <rect width="1449" height="1086" rx="48" fill="#f8fdff"/>
+  <rect width="1449" height="1086" rx="48" fill="url(#paper)"/>
+  <text x="724" y="104" text-anchor="middle" font-family="sans-serif" font-size="58" font-weight="900" fill="#0d2a63">ほうがんし いろぬり</text>
+  <text x="724" y="158" text-anchor="middle" font-family="sans-serif" font-size="30" font-weight="800" fill="#47657f">しょうがいぶつを よけて、3つの マスを ぬろう</text>
+  <g transform="translate(140 215)" filter="url(#shadow)">
+    <rect width="1169" height="580" rx="34" fill="#fff" stroke="#54a8dc" stroke-width="8"/>
+    <g transform="translate(184 40)">
+      <rect x="0" y="0" width="800" height="500" rx="8" fill="#f8fcff" stroke="#0d2a63" stroke-width="6"/>
+      <g stroke="#78b6db" stroke-width="5">
+        <path d="M100 0V500M200 0V500M300 0V500M400 0V500M500 0V500M600 0V500M700 0V500"/>
+        <path d="M0 100H800M0 200H800M0 300H800M0 400H800"/>
+      </g>
+      <rect x="306" y="406" width="88" height="88" rx="14" fill="#ffcf33"/>
+      <rect x="306" y="206" width="88" height="88" rx="14" fill="#35b7e8"/>
+      <rect x="606" y="206" width="88" height="88" rx="14" fill="#ff6f91"/>
+      <g fill="#6e7f91"><rect x="406" y="406" width="88" height="88" rx="14"/><rect x="406" y="306" width="88" height="88" rx="14"/><rect x="506" y="306" width="88" height="88" rx="14"/></g>
+      <g fill="#fff" font-family="sans-serif" font-size="54" font-weight="900" text-anchor="middle"><text x="450" y="470">×</text><text x="450" y="370">×</text><text x="550" y="370">×</text></g>
+      <path d="M150 450H350V250H650" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="20 22"/>
+      <circle cx="150" cy="450" r="38" fill="#fff" stroke="#17884a" stroke-width="8"/>
+      <text x="150" y="463" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="900" fill="#17884a">S</text>
+      <image href="../lower-mascot.png" x="103" y="393" width="94" height="94" preserveAspectRatio="xMidYMid meet"/>
+    </g>
+  </g>
+  <g transform="translate(120 840)" font-family="sans-serif" font-weight="900" filter="url(#shadow)">
+    <rect width="265" height="130" rx="28" fill="#eef8ff" stroke="#2589db" stroke-width="6"/><text x="132" y="58" text-anchor="middle" font-size="32" fill="#0d2a63">みぎへ 1マス</text><text x="132" y="103" text-anchor="middle" font-size="44" fill="#2589db">→</text>
+    <rect x="315" width="265" height="130" rx="28" fill="#fff6cf" stroke="#f0b12a" stroke-width="6"/><text x="447" y="58" text-anchor="middle" font-size="32" fill="#0d2a63">いろを ぬる</text><text x="447" y="105" text-anchor="middle" font-size="42">🎨</text>
+    <rect x="630" width="265" height="130" rx="28" fill="#eef8ff" stroke="#2589db" stroke-width="6"/><text x="762" y="58" text-anchor="middle" font-size="32" fill="#0d2a63">うえへ 1マス</text><text x="762" y="103" text-anchor="middle" font-size="44" fill="#2589db">↑</text>
+    <rect x="945" width="265" height="130" rx="28" fill="#fff6cf" stroke="#f0b12a" stroke-width="6"/><text x="1077" y="58" text-anchor="middle" font-size="32" fill="#0d2a63">もういちど</text><text x="1077" y="102" text-anchor="middle" font-size="30" fill="#17884a">ルールを つかう</text>
+  </g>
+  </g>
+</svg>

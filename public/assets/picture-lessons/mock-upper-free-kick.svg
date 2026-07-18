@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1449" height="1086" viewBox="0 0 1449 1086">
+  <defs>
+    <pattern id="stripe" width="220" height="40" patternUnits="userSpaceOnUse"><rect width="110" height="40" fill="#2c9d4a"/><rect x="110" width="110" height="40" fill="#35aa53"/></pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#123d29" flood-opacity=".25"/></filter>
+  </defs>
+  <g transform="translate(58 43) scale(.92)">
+  <rect width="1449" height="1086" rx="48" fill="#f8fdff"/>
+  <text x="724" y="100" text-anchor="middle" font-family="sans-serif" font-size="58" font-weight="900" fill="#0d2a63">ロボット・フリーキック</text>
+  <text x="724" y="154" text-anchor="middle" font-family="sans-serif" font-size="30" font-weight="800" fill="#47657f">x・yの力を変えて、壁をこえる軌道を再現しよう</text>
+  <g transform="translate(82 202)" filter="url(#shadow)">
+    <rect width="1285" height="620" rx="34" fill="url(#stripe)" stroke="#54a8dc" stroke-width="8"/>
+    <rect x="48" y="44" width="1189" height="532" fill="none" stroke="#fff" stroke-width="8" opacity=".9"/>
+    <path d="M940 155H1237V466H940" fill="none" stroke="#fff" stroke-width="8" opacity=".9"/>
+    <g transform="translate(1065 354)"><rect width="150" height="150" fill="none" stroke="#fff" stroke-width="14"/><path d="M0 30H150M0 65H150M0 100H150M35 0V150M75 0V150M115 0V150" stroke="#fff" stroke-width="5" opacity=".75"/><rect x="27" y="-46" width="96" height="40" rx="18" fill="#ffcf33"/><text x="75" y="-17" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="900" fill="#0d2a63">GOAL</text></g>
+    <image href="../robot-mascot.png" x="90" y="390" width="150" height="170" preserveAspectRatio="xMidYMid meet"/>
+    <g transform="translate(570 410)">
+      <rect x="-12" y="0" width="62" height="110" rx="22" fill="#2589db" stroke="#fff" stroke-width="7"/><circle cx="19" cy="-26" r="31" fill="#efb17d" stroke="#fff" stroke-width="7"/>
+      <rect x="46" y="0" width="62" height="110" rx="22" fill="#2589db" stroke="#fff" stroke-width="7"/><circle cx="77" cy="-26" r="31" fill="#efb17d" stroke="#fff" stroke-width="7"/>
+      <rect x="104" y="0" width="62" height="110" rx="22" fill="#2589db" stroke="#fff" stroke-width="7"/><circle cx="135" cy="-26" r="31" fill="#efb17d" stroke="#fff" stroke-width="7"/>
+      <rect x="162" y="0" width="62" height="110" rx="22" fill="#2589db" stroke="#fff" stroke-width="7"/><circle cx="193" cy="-26" r="31" fill="#efb17d" stroke="#fff" stroke-width="7"/>
+      <rect x="43" y="-92" width="128" height="44" rx="22" fill="#0d2a63"/><text x="107" y="-61" text-anchor="middle" font-family="sans-serif" font-size="25" font-weight="900" fill="#fff">かべ</text>
+    </g>
+    <path d="M225 500Q610 68 1128 426" fill="none" stroke="#0d2a63" stroke-width="23" stroke-linecap="round" stroke-dasharray="28 26" opacity=".45"/>
+    <path d="M225 500Q610 68 1128 426" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-dasharray="28 26"/>
+    <circle cx="225" cy="500" r="30" fill="#fff" stroke="#0d2a63" stroke-width="5"/><text x="225" y="514" text-anchor="middle" font-size="42">⚽</text>
+    <circle cx="1128" cy="426" r="30" fill="#fff" stroke="#0d2a63" stroke-width="5"/><text x="1128" y="440" text-anchor="middle" font-size="42">⚽</text>
+  </g>
+  <g transform="translate(185 868)" font-family="sans-serif" font-weight="900" filter="url(#shadow)">
+    <rect width="480" height="138" rx="30" fill="#eef8ff" stroke="#2589db" stroke-width="7"/><text x="52" y="58" font-size="34" fill="#0d2a63">よこの力 x</text><path d="M54 94H400" stroke="#2589db" stroke-width="16" stroke-linecap="round"/><circle cx="298" cy="94" r="27" fill="#fff" stroke="#2589db" stroke-width="8"/></g>
+  <g transform="translate(785 868)" font-family="sans-serif" font-weight="900" filter="url(#shadow)">
+    <rect width="480" height="138" rx="30" fill="#fff5d9" stroke="#f0b12a" stroke-width="7"/><text x="52" y="58" font-size="34" fill="#0d2a63">うえの力 y</text><path d="M54 94H400" stroke="#f0b12a" stroke-width="16" stroke-linecap="round"/><circle cx="340" cy="94" r="27" fill="#fff" stroke="#f0b12a" stroke-width="8"/></g>
+  </g>
+</svg>

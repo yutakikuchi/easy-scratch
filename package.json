@@ -1,0 +1,16 @@
+{
+  "name": "easy-scratch",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve-no-cache.mjs 43127",
+    "start:lan": "node scripts/serve-no-cache.mjs 43127 0.0.0.0",
+    "test": "node scripts/validate-static.mjs && node scripts/calculation.test.mjs && node scripts/picture-lessons.test.mjs",
+    "build": "node scripts/build.mjs",
+    "deploy:firebase": "npm run build && firebase deploy --only hosting --project easy-scratch"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

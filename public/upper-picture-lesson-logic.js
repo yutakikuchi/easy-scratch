@@ -13,6 +13,7 @@ export const kickInitialForce = Object.freeze({ x: 90, y: 100 });
 export const kickDuration = 2;
 export const kickGravity = 140;
 export const kickWall = Object.freeze({ x: 120, topY: -26 });
+export const kickGoalTolerance = 20;
 
 export const patternSideCount = 6;
 export const patternTarget = Object.freeze({ distance: 80, angle: 60, count: 6 });
@@ -133,7 +134,9 @@ export function createKickPath(forces, samples = 40) {
 export function isKickCorrect(forces) {
   const finish = createKickPath(forces).at(-1);
   const target = createKickPath(kickTargetForce).at(-1);
-  return doesKickClearWall(forces) && Math.abs(finish.x - target.x) <= 12 && Math.abs(finish.y - target.y) <= 12;
+  return doesKickClearWall(forces)
+    && Math.abs(finish.x - target.x) <= kickGoalTolerance
+    && Math.abs(finish.y - target.y) <= kickGoalTolerance;
 }
 
 export function doesKickClearWall(forces) {

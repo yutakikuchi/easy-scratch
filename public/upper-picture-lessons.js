@@ -16,12 +16,12 @@ import {
   rescueTargetProgram,
   rescueTargetRule,
   rescueTargetValues
-} from "./upper-picture-lesson-logic.js?v=20260718l";
+} from "./upper-picture-lesson-logic.js?v=20260718m";
 import {
   applyKickProgram,
   kickCorrectionActions,
   kickOutcomeLabels,
-} from "./upper-free-kick-program.js?v=20260717s";
+} from "./upper-free-kick-program.js?v=20260718a";
 import { initUpperGridPaintLesson } from "./upper-grid-paint.js?v=20260718a";
 import {
   canvasBounds,

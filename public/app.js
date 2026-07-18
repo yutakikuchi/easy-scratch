@@ -5,7 +5,7 @@ import {
   isCalculationComplete
 } from "./calculation.js";
 import { initLowerCalculationMachine } from "./lower-machine.js?v=20260718c";
-import { initPictureLessons } from "./picture-lessons.js?v=20260718aa";
+import { initPictureLessons } from "./picture-lessons.js?v=20260719a";
 import { initUpperCalculationMachine } from "./upper-machine.js?v=20260718c";
 
 const lessons = {
@@ -96,10 +96,10 @@ function readPageFromUrl() {
   return "home";
 }
 
-const mode = readModeFromUrl();
-const initialQuestions = calculationLessons[mode].questions;
+const initialMode = readModeFromUrl();
+const initialQuestions = calculationLessons[initialMode].questions;
 const state = {
-  mode,
+  mode: initialMode,
   page: readPageFromUrl(),
   calculation: {
     phase: "ready",
@@ -427,17 +427,42 @@ function resetStage() {
   state.rules = { ifWall: false, ifTreasure: false, ifGoal: false };
 }
 
-function setPage(page) {
+function resetForGrade(grade) {
+  const questions = calculationLessons[grade].questions;
+  state.mode = grade;
+  state.calculation = {
+    phase: "ready",
+    answers: questions.map(() => null),
+    drafts: questions.map(() => ""),
+    activeQuestion: 0,
+    programDone: false,
+    startedAt: 0,
+    finishedAt: 0,
+    selectedReasons: new Set(),
+    insightRevealed: false
+  };
+  state.program = [];
+  resetStage();
+}
+
+function setPage(page, { grade = state.mode, replace = false } = {}) {
+  const normalizedGrade = grade === "upper" ? "upper" : "lower";
+  if (normalizedGrade !== state.mode) resetForGrade(normalizedGrade);
   state.page = page;
   const url = new URL(window.location.href);
   if (page === "home") {
+    const language = url.searchParams.get("lang");
     url.search = "";
+    if (language === "en") url.searchParams.set("lang", "en");
   } else {
+    url.searchParams.set("grade", state.mode);
     url.searchParams.set("page", page);
+    url.searchParams.delete("lesson");
   }
-  window.history.replaceState({}, "", url);
-  renderPage();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  const method = replace ? "replaceState" : "pushState";
+  window.history[method]({}, "", url);
+  render();
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
 function expandProgram(program) {
@@ -721,9 +746,9 @@ function render() {
   elements.calculationTabHint.textContent = isLower ? "おなじ しきを やってみよう" : "速さと正確さを確かめる";
   elements.programTabTitle.textContent = "プログラミング";
   elements.programTabHint.textContent = isLower ? "カードで えを うごかそう" : "命令で絵を動かす";
-  renderCalculation();
-  renderProgramPage();
   renderPage();
+  if (state.page === "calculation") renderCalculation();
+  if (state.page === "program") renderProgramPage();
 }
 
 elements.calculationStartButton.addEventListener("click", resetCalculation);
@@ -763,6 +788,25 @@ elements.sampleButton.addEventListener("click", () => {
   renderProgram();
   renderStage();
   renderStats();
+});
+
+elements.homePage.addEventListener("click", (event) => {
+  const link = event.target.closest("a.home-course");
+  if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const target = new URL(link.href, window.location.href);
+  if (target.origin !== window.location.origin) return;
+  event.preventDefault();
+  const grade = target.searchParams.get("grade") === "upper" ? "upper" : "lower";
+  const page = target.searchParams.get("page") === "program" ? "program" : "calculation";
+  setPage(page, { grade });
+});
+
+window.addEventListener("popstate", () => {
+  const grade = readModeFromUrl();
+  if (grade !== state.mode) resetForGrade(grade);
+  state.page = readPageFromUrl();
+  render();
+  window.scrollTo({ top: 0, behavior: "auto" });
 });
 
 initLowerCalculationMachine({

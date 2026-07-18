@@ -155,9 +155,12 @@ export function t(value) {
 function init() {
   updateMetadata();
   renderSwitcher();
-  translateTree(document);
+  // 日本語表示では、画面を描き直すたびに全DOMを走査する必要がない。
+  // iPadではこの走査がリンクをタップした直後の反応を遅らせるため、
+  // 英語表示のときだけ翻訳対象を監視する。
+  if (language === "en") translateTree(document);
   const observer = new MutationObserver((mutations) => {
-    if (applying) return;
+    if (applying || language !== "en") return;
     mutations.forEach((mutation) => {
       if (mutation.type === "characterData") translateTree(mutation.target);
       mutation.addedNodes.forEach((node) => translateTree(node));

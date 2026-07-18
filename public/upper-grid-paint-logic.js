@@ -1,26 +1,36 @@
 export const upperGridPaintConfig = {
-  columns: 9,
+  columns: 17,
   rows: 8,
-  start: { column: 0, row: 7 },
-  goal: { column: 6, row: 1 },
-  targetValues: { x: 2, y: 2, n: 3 },
-  targetProgram: ["right", "paint-blue", "up", "paint-yellow"],
+  start: { column: 0, row: 5 },
+  goal: { column: 16, row: 5 },
+  targetValues: { x: 2, y: 2, n: 4 },
+  targetProgram: ["right", "up", "paint-blue", "right", "down", "paint-yellow"],
   targets: [
-    { column: 2, row: 7, color: "blue" },
-    { column: 2, row: 5, color: "yellow" },
-    { column: 4, row: 5, color: "blue" },
-    { column: 4, row: 3, color: "yellow" },
+    { column: 2, row: 3, color: "blue" },
+    { column: 4, row: 5, color: "yellow" },
     { column: 6, row: 3, color: "blue" },
-    { column: 6, row: 1, color: "yellow" }
+    { column: 8, row: 5, color: "yellow" },
+    { column: 10, row: 3, color: "blue" },
+    { column: 12, row: 5, color: "yellow" },
+    { column: 14, row: 3, color: "blue" },
+    { column: 16, row: 5, color: "yellow" }
   ],
   obstacles: [
-    { column: 1, row: 5 },
-    { column: 3, row: 7 },
-    { column: 3, row: 4 },
-    { column: 5, row: 6 },
-    { column: 5, row: 2 },
-    { column: 7, row: 4 },
-    { column: 7, row: 2 }
+    { column: 3, row: 5 },
+    { column: 7, row: 5 },
+    { column: 11, row: 5 },
+    { column: 15, row: 5 },
+    { column: 5, row: 3 },
+    { column: 9, row: 3 },
+    { column: 13, row: 3 },
+    { column: 2, row: 2 },
+    { column: 6, row: 2 },
+    { column: 10, row: 2 },
+    { column: 14, row: 2 },
+    { column: 4, row: 6 },
+    { column: 8, row: 6 },
+    { column: 12, row: 6 },
+    { column: 16, row: 6 }
   ]
 };
 

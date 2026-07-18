@@ -71,11 +71,14 @@ const requiredFiles = [
   "public/assets/picture-lessons/mock-lower-paint.png",
   "public/assets/picture-lessons/mock-lower-grid-paint.png",
   "public/assets/picture-lessons/mock-upper-grid-paint.png",
+  "public/assets/picture-lessons/mock-upper-grid-paint-v2.svg",
   "public/assets/picture-lessons/mock-upper-motion.png",
   "public/assets/picture-lessons/mock-upper-story.png",
   "public/assets/picture-lessons/mock-upper-coordinate.png",
   "public/assets/picture-lessons/mock-upper-rescue.png",
   "public/assets/picture-lessons/mock-upper-free-kick.png",
+  "public/assets/picture-lessons/mock-upper-free-kick-v3.png",
+  "public/assets/picture-lessons/mock-upper-free-kick.svg",
   "public/assets/picture-lessons/mock-upper-pattern.png"
 ];
 
@@ -130,7 +133,7 @@ const firebaseWebConfig = await readFile(resolve(root, "public/firebase-config.j
 const checks = [
   [html.includes('<html lang="ja" class="app-booting">') && html.includes("html.app-booting .app-shell"), "index.html must hide the app shell until the initial route is rendered"],
   [html.includes('<meta name="google-site-verification" content="4uWqOSuc1HK9pgBXOPjcPo1zA-f_qw45g-RXriotwAY">'), "index.html must include Google site verification metadata"],
-  [html.includes('<script type="module" src="./i18n.js?v=20260718b"></script>') && html.includes('<script type="module" src="./app.js?v=20260718w"></script>'), "index.html must load internationalization before app.js"],
+  [html.includes('<script type="module" src="./i18n.js?v=20260718b"></script>') && html.includes('<script type="module" src="./app.js?v=20260718y"></script>'), "index.html must load internationalization before app.js"],
   [html.includes('property="og:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"') && html.includes('name="twitter:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"'), "social previews must use the Fish Dance cover image"],
   [html.includes('<link rel="stylesheet" href="./program.css?v=20260716c">'), "index.html must load the versioned program.css"],
   [html.includes('<link rel="stylesheet" href="./calculation.css">'), "index.html must load calculation.css"],
@@ -216,7 +219,7 @@ const checks = [
   [js.includes('from "./calculation.js"'), "app.js must load calculation data"],
   [js.includes('from "./lower-machine.js?v=20260718c"'), "app.js must initialize the versioned lower-grade calculation machine"],
   [js.includes('from "./upper-machine.js?v=20260718c"'), "app.js must initialize the versioned upper-grade calculation machine"],
-  [js.includes('from "./picture-lessons.js?v=20260718v"'), "app.js must initialize the versioned picture lessons"],
+  [js.includes('from "./picture-lessons.js?v=20260718y"'), "app.js must initialize the versioned picture lessons"],
   [pictureLessonsJs.includes('data-picture-action="show-program"') && pictureLessonsJs.includes('scrollIntoView({ behavior: "smooth"'), "lower picture lessons must offer an optional jump from the palette to the built rule"],
   [pictureLessonsJs.includes("data-picture-rule-count"), "lower picture lessons must show the built rule count next to the palette"],
   [js.includes('document.documentElement.classList.remove("app-booting")'), "app.js must reveal the app only after the first render"],

@@ -202,14 +202,14 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
       <header class="upper-picture-header">
         <button class="picture-back-button" type="button" data-picture-action="hub">もどる</button>
         <div class="upper-picture-title"><small>4〜6年生</small><h1>${escapeText(lesson.title)}</h1></div>
-        <div class="upper-picture-goal"><span>きょうのゴール</span><strong>x・y・nと短いルールで、6つのマスを順番にぬろう</strong></div>
+        <div class="upper-picture-goal"><span>きょうのゴール</span><strong>6枚のルールを4回くりかえし、8つのマスを2色でぬろう</strong></div>
         <img src="./assets/robot-mascot.png" alt="案内ロボット">
       </header>
       <section class="learning-focus" aria-label="この単元で学ぶこと">
         <details open><summary>ここから学ぶこと</summary><div class="learning-focus-panel">
           <div class="learning-focus-item"><span aria-hidden="true">🧭</span><strong>座標の差を変数にする</strong><p>xとyを変えると、1枚の移動カードで進むマス数が変わります。</p></div>
-          <div class="learning-focus-item"><span aria-hidden="true">🧩</span><strong>短いルールを作る</strong><p>移動と色ぬりの順番を考え、4枚のまとまりを作ります。</p></div>
-          <div class="learning-focus-item"><span aria-hidden="true">🔁</span><strong>少なく試してから増やす</strong><p>まずn=1で確かめ、正しければnを増やして6マスをぬります。</p></div>
+          <div class="learning-focus-item"><span aria-hidden="true">🧩</span><strong>6枚のルールを組み立てる</strong><p>上下の移動と2色の色ぬりを組み合わせ、ジグザグに進むまとまりを作ります。</p></div>
+          <div class="learning-focus-item"><span aria-hidden="true">🔁</span><strong>少なく試してから増やす</strong><p>まずn=1で動きと色を確かめ、正しければn=4まで増やして8マスをぬります。</p></div>
         </div></details>
       </section>
       <main class="upper-grid-lab-main">
@@ -258,7 +258,7 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
     state.running = false;
     root.classList.remove("is-running");
     if (isUpperGridPaintCorrect(state.program, state.values)) {
-      showFeedback("正解！6つのマスを順番にぬれました", "短いルールをn=3回使い、同じ動きを仕組みにできました。", "is-success");
+      showFeedback("正解！8つのマスを2色でぬれました", "6枚のルールをn=4回使い、ジグザグの動きを仕組みにできました。", "is-success");
       onSuccess({ repeating: state.looping });
       return true;
     }

@@ -13,6 +13,7 @@ const requiredFiles = [
   "public/calculation.css",
   "public/learning-focus.css",
   "public/i18n.css",
+  "public/smartphone.css",
   "public/home.css",
   "public/lower-machine.css",
   "public/rule-builder.css",
@@ -25,6 +26,7 @@ const requiredFiles = [
   "public/upper-rescue-repeat.css",
   "public/upper-picture-soccer.css",
   "public/upper-free-kick-program.css",
+  "public/upper-grid-paint.css",
   "public/lower-grid-paint.css",
   "public/site-footer.css",
   "public/teacher.css",
@@ -42,6 +44,9 @@ const requiredFiles = [
   "public/picture-lessons.js",
   "public/upper-picture-lesson-logic.js",
   "public/upper-free-kick-program.js",
+  "public/upper-grid-paint-logic.js",
+  "public/upper-grid-paint.js",
+  "public/upper-picture-shared.js",
   "public/upper-picture-lessons.js",
   "public/lower-grid-paint.js",
   "public/firebase-init.js",
@@ -65,6 +70,7 @@ const requiredFiles = [
   "public/assets/picture-lessons/mock-lower-fish.png",
   "public/assets/picture-lessons/mock-lower-paint.png",
   "public/assets/picture-lessons/mock-lower-grid-paint.png",
+  "public/assets/picture-lessons/mock-upper-grid-paint.png",
   "public/assets/picture-lessons/mock-upper-motion.png",
   "public/assets/picture-lessons/mock-upper-story.png",
   "public/assets/picture-lessons/mock-upper-coordinate.png",
@@ -93,9 +99,11 @@ const upperPictureLessonsCss = await readFile(resolve(root, "public/upper-pictur
 const upperRescueRepeatCss = await readFile(resolve(root, "public/upper-rescue-repeat.css"), "utf8");
 const upperPictureSoccerCss = await readFile(resolve(root, "public/upper-picture-soccer.css"), "utf8");
 const upperFreeKickProgramCss = await readFile(resolve(root, "public/upper-free-kick-program.css"), "utf8");
+const upperGridPaintCss = await readFile(resolve(root, "public/upper-grid-paint.css"), "utf8");
 const lowerGridPaintCss = await readFile(resolve(root, "public/lower-grid-paint.css"), "utf8");
 const siteFooterCss = await readFile(resolve(root, "public/site-footer.css"), "utf8");
 const learningFocusCss = await readFile(resolve(root, "public/learning-focus.css"), "utf8");
+const smartphoneCss = await readFile(resolve(root, "public/smartphone.css"), "utf8");
 const teacherHtml = await readFile(resolve(root, "public/teacher.html"), "utf8");
 const sitemapXml = await readFile(resolve(root, "public/sitemap.xml"), "utf8");
 const robotsTxt = await readFile(resolve(root, "public/robots.txt"), "utf8");
@@ -107,6 +115,8 @@ const pictureProgramLogic = await readFile(resolve(root, "public/picture-program
 const pictureLessonsData = await readFile(resolve(root, "public/picture-lessons-data.js"), "utf8");
 const upperPictureLessonLogic = await readFile(resolve(root, "public/upper-picture-lesson-logic.js"), "utf8");
 const upperFreeKickProgramJs = await readFile(resolve(root, "public/upper-free-kick-program.js"), "utf8");
+const upperGridPaintJs = await readFile(resolve(root, "public/upper-grid-paint.js"), "utf8");
+const upperPictureSharedJs = await readFile(resolve(root, "public/upper-picture-shared.js"), "utf8");
 const upperPictureLessonsJs = await readFile(resolve(root, "public/upper-picture-lessons.js"), "utf8");
 const rescueRunBlock = upperPictureLessonsJs.slice(
   upperPictureLessonsJs.indexOf("async function runRescue"),
@@ -139,8 +149,11 @@ const checks = [
   [html.includes('<link rel="stylesheet" href="./upper-rescue-repeat.css?v=20260718i">'), "index.html must load coordinate rescue repetition styles"],
   [html.includes('<link rel="stylesheet" href="./upper-picture-soccer.css?v=20260717n">'), "index.html must load the free-kick field styles"],
   [html.includes('<link rel="stylesheet" href="./upper-free-kick-program.css?v=20260718d">'), "index.html must load the free-kick program styles"],
+  [html.includes('<link rel="stylesheet" href="./upper-grid-paint.css?v=20260718a">'), "index.html must load the upper grid-paint styles"],
   [html.includes('<link rel="stylesheet" href="./lower-grid-paint.css?v=20260717n">'), "index.html must load the grid-paint lesson styles"],
   [html.includes('<link rel="stylesheet" href="./site-footer.css?v=20260718f">'), "index.html must load the shared footer styles"],
+  [html.includes('<link rel="stylesheet" href="./smartphone.css?v=20260718a">') && teacherHtml.includes('<link rel="stylesheet" href="./smartphone.css?v=20260718a">'), "all pages must load the shared smartphone layout last"],
+  [smartphoneCss.includes("@media (max-width: 600px)") && smartphoneCss.includes("overflow-x: clip") && smartphoneCss.includes(".upper-rule-builder"), "smartphone.css must prevent horizontal overflow and reflow the upper rule builder"],
   [html.includes("はじめてのプログラミングにちょうせん"), "TOP page must introduce the first programming challenge"],
   [html.includes('id="homePage"'), "index.html must include the grade and course TOP page"],
   [html.includes('id="homeIntroTitle"'), "TOP page must explain the programming learning goals first"],
@@ -195,10 +208,11 @@ const checks = [
   [pictureLessonsEffectsCss.includes("grid-template-rows: minmax(520px, 1fr) auto"), "the picture stage must keep enough height when the built rule grows"],
   [pictureLessonsEffectsCss.includes("100% { opacity: 1; transform: scale(1) rotate(0); }"), "the centered success message must stay visible until the overlay closes"],
   [upperPictureLessonsCss.includes(".upper-number-control"), "upper picture lessons must style large numeric controls"],
+  [upperGridPaintCss.includes(".upper-grid-lab-main") && upperGridPaintJs.includes("data-grid-lab-remove"), "upper grid-paint must provide responsive layout and tap-to-remove rules"],
   [upperRescueRepeatCss.includes(".upper-rescue-repeat"), "coordinate rescue must style its learner-selected repeat count"],
   [upperPictureLessonsCss.includes(".upper-path-legend"), "upper picture lessons must explain target and current paths"],
   [learningFocusCss.includes("タップで ひらく") && learningFocusCss.includes("タップで とじる") && learningFocusCss.includes("learning-focus-point"), "learning-focus sections must make their toggle action visually obvious"],
-  [html.match(/<details open>/g)?.length >= 2 && pictureLessonsJs.includes("<details open>") && upperPictureLessonsJs.includes("<details open>"), "every learning-focus section must be expanded by default"],
+  [html.match(/<details open>/g)?.length >= 2 && pictureLessonsJs.includes("<details open>") && upperPictureSharedJs.includes("<details open>"), "every learning-focus section must be expanded by default"],
   [js.includes('from "./calculation.js"'), "app.js must load calculation data"],
   [js.includes('from "./lower-machine.js?v=20260718c"'), "app.js must initialize the versioned lower-grade calculation machine"],
   [js.includes('from "./upper-machine.js?v=20260718c"'), "app.js must initialize the versioned upper-grade calculation machine"],
@@ -304,14 +318,14 @@ const checks = [
   [pictureLessonsJs.includes("showSuccessOverlay({ compact: repeating })"), "repeated lower lessons must show compact success near the stage goal"],
   [pictureLoopSuccessCss.includes(".picture-loop-success"), "compact repeated success must be styled near the goal instead of covering the screen"],
   [html.includes('<link rel="icon" href="./favicon.svg" type="image/svg+xml">') && teacherHtml.includes('<link rel="icon" href="./favicon.svg" type="image/svg+xml">'), "all pages must use the robot favicon"],
-  [html.includes("講師の方へ") && html.includes("GitHubで連絡"), "the TOP footer must link to the instructor guide and GitHub contact"],
+  [html.includes("講師の方へ") && html.includes("GitHub Issuesで連絡") && html.includes("https://github.com/yutakikuchi/easy-scratch/issues/new/choose"), "the TOP footer must link to the instructor guide and easy-scratch issue forms"],
   [html.includes("© 2026 菊池佑太") && html.includes("利用端末：iPad Pro") && html.includes("ブラウザ：Safari") && html.includes("Scratchにつながる") && html.includes("この教材は授業で再利用できます"), "the TOP footer must identify the creator, purpose, device, browser, and reuse terms"],
   [html.includes('property="og:title"') && html.includes('mock-lower-fish.png') && html.includes('"@type": "EducationalApplication"'), "the app must provide SEO/AEO metadata and a share image"],
   [sitemapXml.includes("https://easy-scratch.web.app/?grade=lower&amp;page=program&amp;lesson=fish") && sitemapXml.includes("https://easy-scratch.web.app/?grade=upper&amp;page=program&amp;lesson=pattern&amp;lang=en"), "sitemap.xml must list Japanese and English lesson URLs"],
   [robotsTxt.includes("Sitemap: https://easy-scratch.web.app/sitemap.xml"), "robots.txt must advertise the sitemap URL"],
   [!html.includes("localStorage") && !js.includes("localStorage") && !lowerMachineJs.includes("localStorage") && !upperMachineJs.includes("localStorage") && !pictureLessonsJs.includes("localStorage") && !upperPictureLessonsJs.includes("localStorage"), "the app must not persist learner state in localStorage"],
   [js.includes("elements.siteFooter.hidden = !isHome"), "copyright and reuse links must only be visible on TOP"],
-  [teacherHtml.includes("作成者：菊池佑太") && !teacherHtml.includes("teacher-copyright") && teacherHtml.includes("ページは都度ご利用ください") && teacherHtml.includes("GitHubで一度ご連絡ください"), "the instructor guide must identify the creator without repeating the TOP copyright footer"],
+  [teacherHtml.includes("作成者：菊池佑太") && !teacherHtml.includes("teacher-copyright") && teacherHtml.includes("ページは都度ご利用ください") && teacherHtml.includes("GitHub Issuesでご連絡ください") && teacherHtml.includes("https://github.com/yutakikuchi/easy-scratch/issues/new/choose"), "the instructor guide must identify the creator and link to the issue forms without repeating the TOP copyright footer"],
   [siteFooterCss.includes(".site-footer"), "the shared copyright and reuse notice must be styled"],
   [!html.includes("きぬた"), "the visible app must not include the old school name"],
   [firebaseInit.includes('import("./firebase-config.js")'), "firebase-init.js must load the Firebase web configuration"],

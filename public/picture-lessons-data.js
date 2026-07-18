@@ -108,6 +108,15 @@ export const pictureLessons = {
       thumbnail: "./assets/picture-lessons/mock-upper-pattern.png",
       stageType: "upper-pattern",
       sprite: "./assets/robot-mascot.png"
+    },
+    {
+      id: "grid-lab",
+      title: "座標いろぬりラボ",
+      shortTitle: "変数とくりかえしで6マスをぬる",
+      description: "x・y・nと短いルールを組み合わせ、障害物をよけて6マスを順番にぬろう",
+      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint.png",
+      stageType: "upper-grid-paint",
+      sprite: "./assets/robot-mascot.png"
     }
   ]
 };

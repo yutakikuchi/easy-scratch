@@ -60,6 +60,7 @@ html[lang="en"] .picture-action-card {
 
 html[lang="en"] .picture-action-card em {
   min-width: 0;
+  max-width: 100%;
   font-size: clamp(10px, .9vw, 12px);
   white-space: nowrap;
 }
@@ -92,6 +93,13 @@ html[lang="en"] .learning-focus details[open] summary::after {
   }
 
   html[lang="en"] .picture-action-card {
-    grid-template-columns: 48px minmax(0, 1fr) minmax(52px, auto);
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  html[lang="en"] .picture-action-card em {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 4px;
+    font-size: 11px;
   }
 }

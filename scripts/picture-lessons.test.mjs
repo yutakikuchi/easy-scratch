@@ -28,10 +28,16 @@ import {
   classifyKickOutcome,
   simulateKickProgram
 } from "../public/upper-free-kick-program.js";
+import {
+  createUpperGridPaintState,
+  createUpperGridPaintTargetState,
+  isUpperGridPaintCorrect,
+  upperGridPaintConfig
+} from "../public/upper-grid-paint-logic.js";
 
 for (const grade of ["lower", "upper"]) {
   const lessons = pictureLessons[grade];
-  const expectedCount = grade === "lower" ? 4 : 3;
+  const expectedCount = 4;
   assert.equal(lessons.length, expectedCount, `${grade} grade must have the expected independent picture lessons`);
   assert.equal(new Set(lessons.map(({ id }) => id)).size, expectedCount, `${grade} lesson ids must be unique`);
 
@@ -55,9 +61,17 @@ assert.deepEqual(
 );
 assert.deepEqual(
   pictureLessons.upper.map(({ id }) => id),
-  ["rescue", "keyframe", "pattern"]
+  ["rescue", "keyframe", "pattern", "grid-lab"]
 );
 assert.equal(findPictureLesson("lower", "missing"), null);
+
+const upperGridTarget = createUpperGridPaintTargetState();
+assert.equal(upperGridTarget.painted.length, 6, "the upper grid target must paint six cells");
+assert.deepEqual(upperGridTarget.position, upperGridPaintConfig.goal, "the target rule must finish at the flag");
+assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetValues), true);
+assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, { x: 1, y: 1, n: 1 }), false, "initial values must not solve the lesson");
+assert.equal(isUpperGridPaintCorrect(["right", "up", "paint-blue", "paint-yellow"], upperGridPaintConfig.targetValues), false, "card order must matter");
+assert.equal(createUpperGridPaintState(["right"], { x: 4, y: 1, n: 1 }).outcome, "obstacle", "a shortcut into an obstacle must stop the robot");
 
 const sample = findPictureLesson("lower", "jump").sample;
 assert.deepEqual(getPictureProgramStatus([], sample), { canRun: false, isCorrect: false });

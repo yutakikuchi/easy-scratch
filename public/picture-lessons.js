@@ -1,4 +1,4 @@
-import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260718h";
+import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260719a";
 import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260718q";
 import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260718p";
 import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";
@@ -171,7 +171,7 @@ export function initPictureLessons({ root, onBackHome }) {
     state.lesson = lesson;
     resetLessonState();
     renderLesson();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   }
 
   function openHub({ updateUrl = true } = {}) {
@@ -179,7 +179,7 @@ export function initPictureLessons({ root, onBackHome }) {
     state.lesson = null;
     resetLessonState();
     renderHub();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   }
 
   function renderHub() {
@@ -201,7 +201,7 @@ export function initPictureLessons({ root, onBackHome }) {
             (lesson, index) => `
               <button class="picture-lesson-card" type="button" data-open-picture-lesson="${lesson.id}">
                 <span class="picture-lesson-number">${index + 1}</span>
-                <img src="${lesson.thumbnail}" alt="" aria-hidden="true">
+                <img src="${lesson.thumbnail}" alt="" aria-hidden="true" loading="lazy" decoding="async">
                 <span class="picture-lesson-copy">
                   <strong>${escapeText(lesson.title)}</strong>
                   <b>${escapeText(lesson.shortTitle)}</b>
@@ -239,7 +239,7 @@ export function initPictureLessons({ root, onBackHome }) {
     }
 
     const background = lesson.stageBackground
-      ? `<img class="picture-stage-background" src="${lesson.stageBackground}" alt="">`
+      ? `<img class="picture-stage-background" src="${lesson.stageBackground}" alt="" decoding="async" fetchpriority="high">`
       : "";
     const jumpHitMessages =
       lesson.stageType === "jump"
@@ -1069,7 +1069,6 @@ export function initPictureLessons({ root, onBackHome }) {
   root.addEventListener("pointerup", handlePointerUp);
   root.addEventListener("pointercancel", removeDragGhost);
   window.addEventListener("resize", () => window.requestAnimationFrame(drawStagePreview));
-  window.addEventListener("popstate", () => render(state.grade));
   document.addEventListener("easy-scratch-languagechange", () => window.requestAnimationFrame(drawStagePreview));
 
   return { render };

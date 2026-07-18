@@ -2,8 +2,9 @@ import {
   clampLessonValue,
   createKickPath,
   doesKickClearWall,
+  kickGoalTolerance,
   kickTargetForce
-} from "./upper-picture-lesson-logic.js?v=20260717s";
+} from "./upper-picture-lesson-logic.js?v=20260718m";
 
 export const kickCorrectionActions = Object.freeze([
   Object.freeze({ id: "x-plus", label: "xを10増やす", variable: "x", delta: 10 }),
@@ -24,8 +25,8 @@ export function classifyKickOutcome(forces) {
   if (!doesKickClearWall(forces)) return "wall";
   const finish = createKickPath(forces).at(-1);
   const target = createKickPath(kickTargetForce).at(-1);
-  if (finish.x < target.x - 12) return "short";
-  if (finish.x > target.x + 12) return "over";
+  if (finish.x < target.x - kickGoalTolerance) return "short";
+  if (finish.x > target.x + kickGoalTolerance) return "over";
   return "goal";
 }
 

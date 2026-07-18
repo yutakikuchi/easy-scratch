@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">座標いろぬりラボの紹介</title>
+  <desc id="desc">x・y・nの変数と6枚のルールを組み合わせ、障害物をよけながら8つのマスを青と黄色でぬる教材</desc>
+  <defs>
+    <pattern id="paper" width="32" height="32" patternUnits="userSpaceOnUse">
+      <rect width="32" height="32" fill="#f7fcff"/>
+      <path d="M32 0H0V32" fill="none" stroke="#d9edf8" stroke-width="2"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#345b7c" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" rx="30" fill="url(#paper)"/>
+  <rect x="24" y="22" width="1552" height="96" rx="24" fill="#fff" stroke="#70b9e5" stroke-width="5"/>
+  <circle cx="80" cy="70" r="34" fill="#268bdc"/>
+  <text x="80" y="82" text-anchor="middle" font-size="34" font-weight="900" fill="#fff">4–6</text>
+  <text x="132" y="70" font-size="39" font-weight="900" fill="#0d2a63">座標いろぬりラボ</text>
+  <text x="132" y="99" font-size="21" font-weight="800" fill="#526c8b">変数と6枚のルールを組み合わせ、8マスを2色でぬろう</text>
+  <rect x="965" y="39" width="570" height="62" rx="20" fill="#fff3bd" stroke="#efad12" stroke-width="4"/>
+  <text x="992" y="64" font-size="17" font-weight="900" fill="#a35a00">きょうのゴール</text>
+  <text x="992" y="91" font-size="23" font-weight="900" fill="#0d2a63">短いルールを n 回くりかえす</text>
+
+  <rect x="30" y="140" width="360" height="520" rx="26" fill="#fff" stroke="#ff637c" stroke-width="5" filter="url(#shadow)"/>
+  <circle cx="74" cy="188" r="30" fill="#ff536e"/>
+  <text x="74" y="200" text-anchor="middle" font-size="32" font-weight="900" fill="#fff">1</text>
+  <text x="118" y="188" font-size="30" font-weight="900" fill="#0d2a63">変数を決める</text>
+  <text x="118" y="217" font-size="18" font-weight="800" fill="#5a718c">最初の数は正解ではありません</text>
+  <g font-family="sans-serif">
+    <g transform="translate(52 246)"><rect width="316" height="88" rx="18" fill="#eef8ff" stroke="#81c3e7" stroke-width="4"/><text x="20" y="35" font-size="25" font-weight="900" fill="#0d2a63">x</text><rect x="64" y="14" width="72" height="58" rx="14" fill="#d8effc"/><text x="100" y="53" text-anchor="middle" font-size="34" font-weight="900" fill="#1474bf">−</text><rect x="137" y="14" width="100" height="58" fill="#fff"/><text x="187" y="53" text-anchor="middle" font-size="30" font-weight="900" fill="#0d2a63">2</text><rect x="238" y="14" width="62" height="58" rx="14" fill="#d8effc"/><text x="269" y="53" text-anchor="middle" font-size="34" font-weight="900" fill="#1474bf">＋</text><text x="20" y="80" font-size="14" font-weight="800" fill="#56708e">よこのマス数</text></g>
+    <g transform="translate(52 347)"><rect width="316" height="88" rx="18" fill="#eef8ff" stroke="#81c3e7" stroke-width="4"/><text x="20" y="35" font-size="25" font-weight="900" fill="#0d2a63">y</text><rect x="64" y="14" width="72" height="58" rx="14" fill="#d8effc"/><text x="100" y="53" text-anchor="middle" font-size="34" font-weight="900" fill="#1474bf">−</text><rect x="137" y="14" width="100" height="58" fill="#fff"/><text x="187" y="53" text-anchor="middle" font-size="30" font-weight="900" fill="#0d2a63">2</text><rect x="238" y="14" width="62" height="58" rx="14" fill="#d8effc"/><text x="269" y="53" text-anchor="middle" font-size="34" font-weight="900" fill="#1474bf">＋</text><text x="20" y="80" font-size="14" font-weight="800" fill="#56708e">たてのマス数</text></g>
+    <g transform="translate(52 448)"><rect width="316" height="88" rx="18" fill="#eef8ff" stroke="#81c3e7" stroke-width="4"/><text x="20" y="35" font-size="25" font-weight="900" fill="#0d2a63">n</text><rect x="64" y="14" width="72" height="58" rx="14" fill="#d8effc"/><text x="100" y="53" text-anchor="middle" font-size="34" font-weight="900" fill="#1474bf">−</text><rect x="137" y="14" width="100" height="58" fill="#fff"/><text x="187" y="53" text-anchor="middle" font-size="30" font-weight="900" fill="#0d2a63">4</text><rect x="238" y="14" width="62" height="58" rx="14" fill="#d8effc"/><text x="269" y="53" text-anchor="middle" font-size="34" font-weight="900" fill="#1474bf">＋</text><text x="20" y="80" font-size="14" font-weight="800" fill="#56708e">くりかえす回数</text></g>
+  </g>
+  <rect x="52" y="560" width="145" height="76" rx="16" fill="#f2faff" stroke="#67b1df" stroke-width="3"/><text x="74" y="593" font-size="29" font-weight="900" fill="#1884d3">→</text><text x="108" y="590" font-size="18" font-weight="900" fill="#0d2a63">右へ x</text><text x="108" y="616" font-size="14" font-weight="800" fill="#56708e">2マス</text>
+  <rect x="215" y="560" width="153" height="76" rx="16" fill="#fff8df" stroke="#efae21" stroke-width="3"/><text x="237" y="593" font-size="29" font-weight="900" fill="#e99500">↑</text><text x="271" y="590" font-size="18" font-weight="900" fill="#0d2a63">上へ y</text><text x="271" y="616" font-size="14" font-weight="800" fill="#56708e">2マス</text>
+
+  <rect x="414" y="140" width="1156" height="520" rx="26" fill="#fff" stroke="#ff637c" stroke-width="5" filter="url(#shadow)"/>
+  <circle cx="460" cy="188" r="30" fill="#ff536e"/>
+  <text x="460" y="200" text-anchor="middle" font-size="32" font-weight="900" fill="#fff">2</text>
+  <text x="505" y="188" font-size="30" font-weight="900" fill="#0d2a63">動きを小さく確かめる</text>
+  <text x="505" y="217" font-size="18" font-weight="800" fill="#5a718c">白い目標線と赤い今の線を見くらべよう</text>
+  <rect x="442" y="240" width="1100" height="392" rx="20" fill="#f8fcff" stroke="#78bee7" stroke-width="4"/>
+  <g stroke="#afd8ee" stroke-width="2">
+    <path d="M486 264V608M546 264V608M606 264V608M666 264V608M726 264V608M786 264V608M846 264V608M906 264V608M966 264V608M1026 264V608M1086 264V608M1146 264V608M1206 264V608M1266 264V608M1326 264V608M1386 264V608M1446 264V608M1506 264V608"/>
+    <path d="M466 276H1518M466 324H1518M466 372H1518M466 420H1518M466 468H1518M466 516H1518M466 564H1518M466 612H1518"/>
+  </g>
+  <g fill="#74879a"><rect x="700" y="468" width="52" height="44" rx="7"/><rect x="880" y="372" width="52" height="44" rx="7"/><rect x="1060" y="468" width="52" height="44" rx="7"/><rect x="1240" y="372" width="52" height="44" rx="7"/><text x="726" y="499" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">×</text><text x="906" y="403" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">×</text><text x="1086" y="499" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">×</text><text x="1266" y="403" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">×</text></g>
+  <g stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M514 564H634V468H754V372H874V276H994V372H1114V468H1234V564H1354"/></g>
+  <g stroke="#73839a" stroke-width="4" stroke-dasharray="10 9" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M514 564H634V468H754V372H874V276H994V372H1114V468H1234V564H1354"/></g>
+  <g><rect x="615" y="449" width="38" height="38" rx="8" fill="#3cb8e4"/><rect x="735" y="353" width="38" height="38" rx="8" fill="#ffc738"/><rect x="855" y="257" width="38" height="38" rx="8" fill="#3cb8e4"/><rect x="975" y="353" width="38" height="38" rx="8" fill="#ffc738"/><rect x="1095" y="449" width="38" height="38" rx="8" fill="#3cb8e4"/><rect x="1215" y="545" width="38" height="38" rx="8" fill="#ffc738"/><rect x="1335" y="545" width="38" height="38" rx="8" fill="#3cb8e4"/><rect x="495" y="545" width="38" height="38" rx="8" fill="#ffc738"/></g>
+  <circle cx="500" cy="564" r="29" fill="#157bc2" stroke="#fff" stroke-width="5"/><text x="500" y="574" text-anchor="middle" font-size="24" fill="#fff">🤖</text>
+  <rect x="1350" y="530" width="156" height="64" rx="18" fill="#fff3bd" stroke="#efad12" stroke-width="4"/><text x="1372" y="571" font-size="22" font-weight="900" fill="#0d2a63">🏁 ゴール</text>
+
+  <rect x="30" y="684" width="1540" height="184" rx="26" fill="#fff" stroke="#348fdf" stroke-width="5" filter="url(#shadow)"/>
+  <text x="56" y="728" font-size="29" font-weight="900" fill="#0d2a63">6枚のルールを n 回くりかえす</text>
+  <text x="56" y="758" font-size="17" font-weight="800" fill="#56708e">カードは左から順番に実行します</text>
+  <g font-size="16" font-weight="900" fill="#0d2a63" text-anchor="middle">
+    <g transform="translate(54 782)"><rect width="178" height="64" rx="14" fill="#eef8ff" stroke="#5eb0df" stroke-width="3"/><text x="89" y="39">→ 右へ x</text></g>
+    <g transform="translate(242 782)"><rect width="178" height="64" rx="14" fill="#fff7da" stroke="#ecad24" stroke-width="3"/><text x="89" y="39">■ 青でぬる</text></g>
+    <g transform="translate(430 782)"><rect width="178" height="64" rx="14" fill="#eef8ff" stroke="#5eb0df" stroke-width="3"/><text x="89" y="39">↑ 上へ y</text></g>
+    <g transform="translate(618 782)"><rect width="178" height="64" rx="14" fill="#fff7da" stroke="#ecad24" stroke-width="3"/><text x="89" y="39">■ 黄でぬる</text></g>
+    <g transform="translate(806 782)"><rect width="178" height="64" rx="14" fill="#eef8ff" stroke="#5eb0df" stroke-width="3"/><text x="89" y="39">← 左へ x</text></g>
+    <g transform="translate(994 782)"><rect width="178" height="64" rx="14" fill="#eef8ff" stroke="#5eb0df" stroke-width="3"/><text x="89" y="39">↓ 下へ y</text></g>
+  </g>
+  <rect x="1200" y="758" width="162" height="88" rx="18" fill="#ff566e"/><text x="1281" y="811" text-anchor="middle" font-size="27" font-weight="900" fill="#fff">▶ 実行</text>
+  <rect x="1380" y="758" width="162" height="88" rx="18" fill="#eaf6ff" stroke="#2788d5" stroke-width="4"/><text x="1461" y="796" text-anchor="middle" font-size="20" font-weight="900" fill="#0d2a63">🔁 くりかえす</text><text x="1461" y="822" text-anchor="middle" font-size="14" font-weight="800" fill="#56708e">止めるまで</text>
+</svg>

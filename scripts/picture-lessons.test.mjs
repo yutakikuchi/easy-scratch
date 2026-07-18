@@ -49,7 +49,8 @@ for (const grade of ["lower", "upper"]) {
       assert.equal(actionIds.has("repeat"), false, `${lesson.id} must use the repeat-run control instead of a repeat card`);
       assert.ok(lesson.sample.every((id) => actionIds.has(id)), `${lesson.id} sample must only use available cards`);
     }
-    assert.ok(lesson.thumbnail.endsWith(".png"), `${lesson.id} must use a raster mock thumbnail`);
+    const supportedThumbnail = lesson.thumbnail.endsWith(".png") || lesson.thumbnail.endsWith(".svg");
+    assert.ok(supportedThumbnail, `${lesson.id} must use a supported mock thumbnail`);
     assert.ok(lesson.sprite.endsWith(".png"), `${lesson.id} must use a raster sprite`);
     assert.equal(findPictureLesson(grade, lesson.id), lesson);
   }
@@ -66,12 +67,13 @@ assert.deepEqual(
 assert.equal(findPictureLesson("lower", "missing"), null);
 
 const upperGridTarget = createUpperGridPaintTargetState();
-assert.equal(upperGridTarget.painted.length, 6, "the upper grid target must paint six cells");
+assert.equal(upperGridTarget.painted.length, 8, "the upper grid target must paint eight cells");
 assert.deepEqual(upperGridTarget.position, upperGridPaintConfig.goal, "the target rule must finish at the flag");
 assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetValues), true);
 assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, { x: 1, y: 1, n: 1 }), false, "initial values must not solve the lesson");
 assert.equal(isUpperGridPaintCorrect(["right", "up", "paint-blue", "paint-yellow"], upperGridPaintConfig.targetValues), false, "card order must matter");
 assert.equal(createUpperGridPaintState(["right"], { x: 4, y: 1, n: 1 }).outcome, "obstacle", "a shortcut into an obstacle must stop the robot");
+assert.equal(isUpperGridPaintCorrect(["right", "up", "paint-blue", "right", "down", "paint-yellow"], { x: 2, y: 2, n: 3 }), false, "three repeats must stop before the goal");
 
 const sample = findPictureLesson("lower", "jump").sample;
 assert.deepEqual(getPictureProgramStatus([], sample), { canRun: false, isCorrect: false });
@@ -199,6 +201,7 @@ assert.ok(kickPath.every((point, index) => index === 0 || point.offset >= kickPa
 assert.equal(isKickCorrect(kickTargetForce), true);
 assert.equal(isKickCorrect(kickInitialForce), false, "the soccer forces must start from values that require trial and error");
 assert.equal(isKickCorrect({ ...kickTargetForce, x: kickTargetForce.x - 20 }), false);
+assert.equal(isKickCorrect({ x: 120, y: 130 }), true, "a ball that visibly lands inside the goal must count as a goal");
 assert.equal(doesKickClearWall(kickTargetForce), true, "the target free kick must clear the defensive wall");
 assert.equal(doesKickClearWall(kickInitialForce), false, "the initial free kick must require more upward force to clear the wall");
 assert.equal(createKickPath({ x: 40, y: 40 })[0].x, 0, "every kick must start at the robot's foot");
@@ -217,6 +220,7 @@ const learnerKickProgram = [
   { outcome: "goal", actionId: "stop" }
 ];
 assert.equal(classifyKickOutcome(kickInitialForce), "wall", "the first limited kick must visibly hit the wall");
+assert.equal(classifyKickOutcome({ x: 120, y: 130 }), "goal", "the goal judgment must match the displayed landing position");
 assert.equal(applyKickProgram(kickInitialForce, []).action, null, "missing learner rules must stop for reflection");
 assert.deepEqual(
   applyKickProgram(kickInitialForce, [{ outcome: "wall", actionId: "y-plus" }]).nextForce,

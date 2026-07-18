@@ -96,7 +96,7 @@ export const pictureLessons = {
       title: "ロボット・フリーキック",
       shortTitle: "x・yの力で軌道を再現する",
       description: "蹴る力を変え、壁をこえてゴールへ落ちる軌道を作ろう",
-      thumbnail: "./assets/picture-lessons/mock-upper-free-kick.png",
+      thumbnail: "./assets/picture-lessons/mock-upper-free-kick-v3.png",
       stageType: "upper-keyframe",
       sprite: "./assets/robot-mascot.png"
     },
@@ -112,9 +112,9 @@ export const pictureLessons = {
     {
       id: "grid-lab",
       title: "座標いろぬりラボ",
-      shortTitle: "変数とくりかえしで6マスをぬる",
-      description: "x・y・nと短いルールを組み合わせ、障害物をよけて6マスを順番にぬろう",
-      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint.png",
+      shortTitle: "6枚のルールで8マスをぬる",
+      description: "x・y・nと6枚のルールを組み合わせ、ジグザグに進んで8マスを2色でぬろう",
+      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint-v2.svg",
       stageType: "upper-grid-paint",
       sprite: "./assets/robot-mascot.png"
     }

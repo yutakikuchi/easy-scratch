@@ -40,6 +40,7 @@ const requiredFiles = [
   "public/calculation.js",
   "public/lower-machine.js",
   "public/upper-machine.js",
+  "public/downloads/easy-scratch-paper-worksheet.pdf",
   "public/picture-lessons-data.js",
   "public/picture-program-logic.js",
   "public/picture-lessons.js",
@@ -140,17 +141,21 @@ const firebaseInit = await readFile(resolve(root, "public/firebase-init.js"), "u
 const firebaseConfig = await readFile(resolve(root, "firebase.json"), "utf8");
 const firebaseProject = await readFile(resolve(root, ".firebaserc"), "utf8");
 const firebaseWebConfig = await readFile(resolve(root, "public/firebase-config.js"), "utf8");
+const worksheetPdf = await readFile(resolve(root, "public/downloads/easy-scratch-paper-worksheet.pdf"));
 
 const checks = [
   [html.includes('<html lang="ja" class="app-booting">') && html.includes("html.app-booting .app-shell"), "index.html must hide the app shell until the initial route is rendered"],
   [html.includes('<meta name="google-site-verification" content="4uWqOSuc1HK9pgBXOPjcPo1zA-f_qw45g-RXriotwAY">'), "index.html must include Google site verification metadata"],
-  [html.includes('<script type="module" src="./i18n.js?v=20260825g"></script>') && html.includes('<script type="module" src="./app.js?v=20260825g"></script>'), "index.html must load internationalization before app.js"],
+  [html.includes('<script type="module" src="./i18n.js?v=20260825h"></script>') && html.includes('<script type="module" src="./app.js?v=20260825g"></script>'), "index.html must load internationalization before app.js"],
   [html.includes('property="og:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"') && html.includes('name="twitter:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"'), "social previews must use the Fish Dance cover image"],
   [html.includes('<link rel="stylesheet" href="./program.css?v=20260716c">'), "index.html must load the versioned program.css"],
   [html.includes('<link rel="stylesheet" href="./calculation.css">'), "index.html must load calculation.css"],
-  [html.includes('<link rel="stylesheet" href="./home.css?v=20260718i">'), "index.html must load the versioned home.css"],
+  [html.includes('<link rel="stylesheet" href="./home.css?v=20260825h">'), "index.html must load the versioned home.css"],
   [html.includes('<link rel="stylesheet" href="./learning-focus.css?v=20260718b">'), "index.html must load the expandable learning-focus styles"],
   [html.includes("プログラミングで おぼえる 3つのこと") && html.includes("小さく ルールを かくにんする") && html.includes("少ない くりかえしで ためす") && html.includes("大きな 数の くりかえし"), "TOP intro must describe rule creation, small verification, and larger repetition"],
+  [html.includes('class="home-download"') && html.includes('href="./downloads/easy-scratch-paper-worksheet.pdf" download type="application/pdf"'), "TOP must provide a direct printable worksheet PDF download below the grade cards"],
+  [homeCss.includes(".home-download-button") && homeCss.includes(".home-download-preview"), "the printable worksheet download must have a responsive, touch-friendly design"],
+  [worksheetPdf.subarray(0, 4).toString() === "%PDF" && worksheetPdf.length > 100000, "the downloadable worksheet must be a non-empty PDF file"],
   [homeCss.includes('body[data-page="home"] .app-shell {\n  min-height: 0;'), "home page must not reserve an empty full viewport before the footer"],
   [html.includes('<link rel="stylesheet" href="./lower-machine.css?v=20260718d">'), "index.html must load lower-machine.css"],
   [html.includes('<link rel="stylesheet" href="./rule-builder.css">'), "index.html must load rule-builder.css"],

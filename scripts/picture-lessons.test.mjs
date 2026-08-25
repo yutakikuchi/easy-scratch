@@ -64,7 +64,8 @@ for (const grade of ["lower", "upper"]) {
       assert.equal(actionIds.has("repeat"), false, `${lesson.id} must use the repeat-run control instead of a repeat card`);
       assert.ok(lesson.sample.every((id) => actionIds.has(id)), `${lesson.id} sample must only use available cards`);
     }
-    const supportedThumbnail = [".png", ".webp", ".svg"].some((extension) => lesson.thumbnail.endsWith(extension));
+    const thumbnailPath = lesson.thumbnail.split("?")[0];
+    const supportedThumbnail = [".png", ".webp", ".svg"].some((extension) => thumbnailPath.endsWith(extension));
     assert.ok(supportedThumbnail, `${lesson.id} must use a supported mock thumbnail`);
     assert.ok([".png", ".webp"].some((extension) => lesson.sprite.endsWith(extension)), `${lesson.id} must use a raster sprite`);
     assert.equal(findPictureLesson(grade, lesson.id), lesson);

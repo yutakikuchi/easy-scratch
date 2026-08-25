@@ -130,7 +130,7 @@ final result: passed
 
 ---
 
-# Design QA — 変数つきルール・ラボ
+# Design QA — ルールを部品にしよう
 
 ## Evidence
 

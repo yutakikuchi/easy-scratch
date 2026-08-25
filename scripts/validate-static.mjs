@@ -21,8 +21,9 @@ const requiredFiles = [
   "public/picture-lessons.css",
   "public/picture-hub-ipad.css",
   "public/picture-lessons-effects.css",
-  "public/picture-loop-success.css",
+  "public/picture-success-overlay.js",
   "public/upper-picture-lessons.css",
+  "public/upper-sort-robot.css",
   "public/upper-rescue-repeat.css",
   "public/upper-picture-soccer.css",
   "public/upper-free-kick-program.css",
@@ -48,6 +49,8 @@ const requiredFiles = [
   "public/upper-grid-paint.js",
   "public/upper-picture-shared.js",
   "public/upper-picture-lessons.js",
+  "public/upper-sort-robot-logic.js",
+  "public/upper-sort-robot.js",
   "public/lower-grid-paint.js",
   "public/firebase-init.js",
   "public/firebase-config.js",
@@ -79,7 +82,11 @@ const requiredFiles = [
   "public/assets/picture-lessons/mock-upper-free-kick.png",
   "public/assets/picture-lessons/mock-upper-free-kick-v3.png",
   "public/assets/picture-lessons/mock-upper-free-kick.svg",
-  "public/assets/picture-lessons/mock-upper-pattern.png"
+  "public/assets/picture-lessons/mock-upper-pattern.png",
+  "public/assets/picture-lessons/concept-upper-sort-robot.png",
+  "public/assets/picture-lessons/concept-upper-sort-robot-debug.png",
+  "public/assets/picture-lessons/sort-warehouse-stage.png",
+  "public/assets/picture-lessons/sort-fragile-chilled-parcel.png"
 ];
 
 for (const file of requiredFiles) {
@@ -97,8 +104,9 @@ const upperMachineCss = await readFile(resolve(root, "public/upper-machine.css")
 const pictureLessonsCss = await readFile(resolve(root, "public/picture-lessons.css"), "utf8");
 const pictureHubIpadCss = await readFile(resolve(root, "public/picture-hub-ipad.css"), "utf8");
 const pictureLessonsEffectsCss = await readFile(resolve(root, "public/picture-lessons-effects.css"), "utf8");
-const pictureLoopSuccessCss = await readFile(resolve(root, "public/picture-loop-success.css"), "utf8");
+const pictureSuccessOverlayJs = await readFile(resolve(root, "public/picture-success-overlay.js"), "utf8");
 const upperPictureLessonsCss = await readFile(resolve(root, "public/upper-picture-lessons.css"), "utf8");
+const upperSortRobotCss = await readFile(resolve(root, "public/upper-sort-robot.css"), "utf8");
 const upperRescueRepeatCss = await readFile(resolve(root, "public/upper-rescue-repeat.css"), "utf8");
 const upperPictureSoccerCss = await readFile(resolve(root, "public/upper-picture-soccer.css"), "utf8");
 const upperFreeKickProgramCss = await readFile(resolve(root, "public/upper-free-kick-program.css"), "utf8");
@@ -119,8 +127,11 @@ const pictureLessonsData = await readFile(resolve(root, "public/picture-lessons-
 const upperPictureLessonLogic = await readFile(resolve(root, "public/upper-picture-lesson-logic.js"), "utf8");
 const upperFreeKickProgramJs = await readFile(resolve(root, "public/upper-free-kick-program.js"), "utf8");
 const upperGridPaintJs = await readFile(resolve(root, "public/upper-grid-paint.js"), "utf8");
+const upperGridPaintLogic = await readFile(resolve(root, "public/upper-grid-paint-logic.js"), "utf8");
 const upperPictureSharedJs = await readFile(resolve(root, "public/upper-picture-shared.js"), "utf8");
 const upperPictureLessonsJs = await readFile(resolve(root, "public/upper-picture-lessons.js"), "utf8");
+const upperSortRobotLogic = await readFile(resolve(root, "public/upper-sort-robot-logic.js"), "utf8");
+const upperSortRobotJs = await readFile(resolve(root, "public/upper-sort-robot.js"), "utf8");
 const rescueRunBlock = upperPictureLessonsJs.slice(
   upperPictureLessonsJs.indexOf("async function runRescue"),
   upperPictureLessonsJs.indexOf("async function runKeyframe")
@@ -133,7 +144,7 @@ const firebaseWebConfig = await readFile(resolve(root, "public/firebase-config.j
 const checks = [
   [html.includes('<html lang="ja" class="app-booting">') && html.includes("html.app-booting .app-shell"), "index.html must hide the app shell until the initial route is rendered"],
   [html.includes('<meta name="google-site-verification" content="4uWqOSuc1HK9pgBXOPjcPo1zA-f_qw45g-RXriotwAY">'), "index.html must include Google site verification metadata"],
-  [html.includes('<script type="module" src="./i18n.js?v=20260719a"></script>') && html.includes('<script type="module" src="./app.js?v=20260719a"></script>'), "index.html must load internationalization before app.js"],
+  [html.includes('<script type="module" src="./i18n.js?v=20260719a"></script>') && html.includes('<script type="module" src="./app.js?v=20260825e"></script>'), "index.html must load internationalization before app.js"],
   [html.includes('property="og:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"') && html.includes('name="twitter:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"'), "social previews must use the Fish Dance cover image"],
   [html.includes('<link rel="stylesheet" href="./program.css?v=20260716c">'), "index.html must load the versioned program.css"],
   [html.includes('<link rel="stylesheet" href="./calculation.css">'), "index.html must load calculation.css"],
@@ -147,12 +158,11 @@ const checks = [
   [html.includes('<link rel="stylesheet" href="./picture-lessons.css?v=20260718w">'), "index.html must load the versioned picture-lessons.css"],
   [html.includes('<link rel="stylesheet" href="./picture-hub-ipad.css?v=20260718h">') && pictureHubIpadCss.includes("repeat(2, minmax(0, 1fr))"), "picture lesson hubs must use a two-column iPad layout"],
   [html.includes('<link rel="stylesheet" href="./picture-lessons-effects.css?v=20260718p">'), "index.html must load picture lesson effects"],
-  [html.includes('<link rel="stylesheet" href="./picture-loop-success.css?v=20260717s">'), "index.html must load compact repeated-success styles"],
   [html.includes('<link rel="stylesheet" href="./upper-picture-lessons.css?v=20260718e">'), "index.html must load upper picture lesson styles"],
   [html.includes('<link rel="stylesheet" href="./upper-rescue-repeat.css?v=20260718i">'), "index.html must load coordinate rescue repetition styles"],
   [html.includes('<link rel="stylesheet" href="./upper-picture-soccer.css?v=20260717n">'), "index.html must load the free-kick field styles"],
   [html.includes('<link rel="stylesheet" href="./upper-free-kick-program.css?v=20260718d">'), "index.html must load the free-kick program styles"],
-  [html.includes('<link rel="stylesheet" href="./upper-grid-paint.css?v=20260718a">'), "index.html must load the upper grid-paint styles"],
+  [html.includes('<link rel="stylesheet" href="./upper-grid-paint.css?v=20260825d">'), "index.html must load the upper grid-paint styles"],
   [html.includes('<link rel="stylesheet" href="./lower-grid-paint.css?v=20260717n">'), "index.html must load the grid-paint lesson styles"],
   [html.includes('<link rel="stylesheet" href="./site-footer.css?v=20260718f">'), "index.html must load the shared footer styles"],
   [html.includes('<link rel="stylesheet" href="./smartphone.css?v=20260718a">') && teacherHtml.includes('<link rel="stylesheet" href="./smartphone.css?v=20260718a">'), "all pages must load the shared smartphone layout last"],
@@ -212,6 +222,10 @@ const checks = [
   [pictureLessonsEffectsCss.includes("100% { opacity: 1; transform: scale(1) rotate(0); }"), "the centered success message must stay visible until the overlay closes"],
   [upperPictureLessonsCss.includes(".upper-number-control"), "upper picture lessons must style large numeric controls"],
   [upperGridPaintCss.includes(".upper-grid-lab-main") && upperGridPaintJs.includes("data-grid-lab-remove"), "upper grid-paint must provide responsive layout and tap-to-remove rules"],
+  [pictureLessonsData.includes('upper: [\n    {\n      id: "grid-lab"'), "the parameterized reusable-rule lesson must be the first upper-grade challenge"],
+  [upperGridPaintJs.includes("同じルールへ3組の値を渡す") && upperGridPaintJs.includes("data-grid-lab-call-adjust") && upperGridPaintJs.includes('data-grid-lab-run="first"') && upperGridPaintJs.includes('data-grid-lab-run="all"'), "upper grid-paint must teach one rule reused with separate arguments and a one-call test"],
+  [upperGridPaintJs.includes("lastResult: null") && upperGridPaintJs.includes("hasUnrunChanges") && upperGridPaintJs.includes("markEdited: true") && upperGridPaintJs.includes("赤い線は前回の実行結果です"), "upper grid-paint must draw only executed results and preserve the previous result while new edits are pending"],
+  [upperGridPaintLogic.includes("targetCalls") && upperGridPaintLogic.includes("values: { ...values }") && upperGridPaintLogic.includes("callIndex"), "upper grid-paint logic must apply different x and y values to each reuse of one rule"],
   [upperRescueRepeatCss.includes(".upper-rescue-repeat"), "coordinate rescue must style its learner-selected repeat count"],
   [upperPictureLessonsCss.includes(".upper-path-legend"), "upper picture lessons must explain target and current paths"],
   [learningFocusCss.includes("タップで ひらく") && learningFocusCss.includes("タップで とじる") && learningFocusCss.includes("learning-focus-point"), "learning-focus sections must make their toggle action visually obvious"],
@@ -219,7 +233,7 @@ const checks = [
   [js.includes('from "./calculation.js"'), "app.js must load calculation data"],
   [js.includes('from "./lower-machine.js?v=20260718c"'), "app.js must initialize the versioned lower-grade calculation machine"],
   [js.includes('from "./upper-machine.js?v=20260718c"'), "app.js must initialize the versioned upper-grade calculation machine"],
-  [js.includes('from "./picture-lessons.js?v=20260719a"'), "app.js must initialize the versioned picture lessons"],
+  [js.includes('from "./picture-lessons.js?v=20260825e"'), "app.js must initialize the versioned picture lessons"],
   [pictureLessonsJs.includes('data-picture-action="show-program"') && pictureLessonsJs.includes('scrollIntoView({ behavior: "smooth"'), "lower picture lessons must offer an optional jump from the palette to the built rule"],
   [pictureLessonsJs.includes("data-picture-rule-count"), "lower picture lessons must show the built rule count next to the palette"],
   [js.includes('document.documentElement.classList.remove("app-booting")'), "app.js must reveal the app only after the first render"],
@@ -245,9 +259,11 @@ const checks = [
   [pictureLessonsJs.includes("pointerdown"), "picture lesson cards must support iPad pointer dragging"],
   [pictureLessonsJs.includes("getPictureProgramStatus"), "picture lessons must classify runnable and correct rules"],
   [pictureLessonsJs.includes("これで ただしいかな？"), "incorrect picture rules must show a prominent review question after running"],
-  [pictureLessonsJs.includes('data-picture-success-overlay'), "picture lessons must render a success announcement overlay"],
-  [pictureLessonsJs.includes('addEventListener("pointerup"') && pictureLessonsJs.includes("dismissSuccess"), "success announcements must close immediately when tapped"],
-  [pictureLessonsJs.includes("showSuccessOverlay({ compact: repeating })"), "correct picture rules must trigger the appropriate success announcement"],
+  [pictureLessonsJs.includes('from "./picture-success-overlay.js?v=20260825e"') && pictureLessonsJs.includes('from "./upper-picture-lessons.js?v=20260825e"'), "picture lessons must load the versioned large success flow"],
+  [pictureSuccessOverlayJs.includes('data-picture-success-overlay'), "picture lessons must render a success announcement overlay"],
+  [pictureSuccessOverlayJs.includes('addEventListener("pointerup"') && pictureSuccessOverlayJs.includes("dismiss(overlay)"), "success announcements must close immediately when tapped"],
+  [pictureLessonsJs.includes("successOverlay.show()") && pictureLessonsJs.includes("successOverlay.show({ title })"), "all correct picture rules must trigger the large success announcement"],
+  [!pictureLessonsJs.includes("ensureSuccessOverlay") && !pictureLessonsJs.includes("showSuccessOverlay"), "picture lessons must not retain removed success helper calls"],
   [pictureLessonsJs.includes("getJumpRoute"), "jump guide and animation must share one route"],
   [pictureLessonsJs.includes("getMovementRoute"), "movement guide and animation must use the same program route"],
   [pictureProgramLogic.includes("addGentleCurve"), "the fish guide and animation must use a gentle shared curve"],
@@ -276,7 +292,15 @@ const checks = [
   [pictureLessonsData.indexOf('id: "grid-paint"') < pictureLessonsData.indexOf('id: "jump"') && pictureLessonsData.indexOf('id: "jump"') < pictureLessonsData.indexOf('id: "fish"'), "grid painting must be the first lower-grade lesson"],
   [lowerGridPaintCss.includes(".picture-stage-grid-paint"), "the grid-paint lesson must show a graph-paper stage"],
   [lowerGridPaintCss.includes("grid-template-columns: repeat(2, minmax(0, 1fr))"), "the four lower-grade lessons must use a two-by-two grid"],
-  [pictureLessonsData.includes('title: "座標レスキュー"'), "upper grade must include coordinate rescue"],
+  [pictureLessonsData.includes('title: "仕分けロボットを設計せよ"') && !pictureLessonsData.includes('title: "座標レスキュー"'), "upper grade must replace coordinate rescue with the parcel sorting design challenge"],
+  [upperPictureLessonsJs.includes("initUpperSortRobotLesson") && html.includes("upper-sort-robot.css"), "the upper lesson router must load the parcel sorting experience and styles"],
+  [upperSortRobotLogic.includes("sortBasicRule") && upperSortRobotLogic.includes('conditions: ["fragile", "chilled"]') && upperSortRobotLogic.includes("Array.from({ length: 20 }"), "parcel sorting must teach compound conditions, rule priority, and reuse for twenty packages"],
+  [upperSortRobotJs.includes("program: []") && upperSortRobotJs.includes("ルールを0から設計しよう") && upperSortRobotJs.includes("例外も入れて6個") && upperSortRobotJs.includes("data-sort-move") && upperSortRobotJs.includes("tracePackage"), "parcel sorting must start empty, build compound rules, expose an edge case, reorder rules, and visualize each check"],
+  [upperSortRobotJs.includes("時間と電力が2倍") && upperSortRobotJs.includes("両方が必要な荷物だけ") && upperSortRobotLogic.includes('equipment: "冷蔵＋衝撃対策"'), "parcel sorting must explain why the special lane is useful but should not be overused"],
+  [upperSortRobotJs.includes('upperLearningFocus("sort-robot")') && upperPictureSharedJs.includes('"sort-robot":') && upperPictureSharedJs.includes("役割から分類条件を作る") && upperPictureSharedJs.includes("ルールの優先度を正しく決める"), "parcel sorting must show classification and rule priority as explicit learning goals at the top of the page"],
+  [upperSortRobotJs.includes("荷物はベルトを") && upperSortRobotJs.includes("左から右へ") && upperSortRobotJs.includes("優先度1位の一番上のルールから") && upperSortRobotJs.includes("最初に一致したルール"), "parcel sorting must explain how parcel direction and rule priority work together"],
+  [upperSortRobotJs.includes("sort-fragile-chilled-parcel.png") && upperSortRobotCss.includes("sort-warehouse-stage.png") && upperSortRobotJs.includes("waitForPaint") && upperSortRobotCss.includes("is-entering") && upperSortRobotCss.includes("is-routing.to-special") && upperSortRobotCss.includes("is-dropping"), "parcel sorting must use project image assets and visibly travel from the entrance, along the belt, and into four lanes"],
+  [upperSortRobotCss.includes("@media (max-width: 700px)") && upperSortRobotCss.includes("grid-template-columns: 1fr"), "parcel sorting must adapt to narrow screens"],
   [pictureLessonsData.includes('title: "ロボット・フリーキック"'), "upper grade must include the free-kick trajectory lesson"],
   [pictureLessonsData.includes('title: "パターンアートラボ"'), "upper grade must include reusable pattern art"],
   [upperPictureLessonLogic.includes("createRescueRoute"), "coordinate rescue must have one shared route calculation"],
@@ -301,6 +325,7 @@ const checks = [
   [upperPictureSoccerCss.includes(".upper-free-kick-wall"), "the free-kick stage must show a defensive wall"],
   [!upperPictureSoccerCss.includes(".upper-soccer-field-lines::before") && !upperPictureSoccerCss.includes(".upper-soccer-field-lines::after"), "the soccer pitch must not draw broken white area lines"],
   [upperPictureLessonsJs.includes("ここは1つの共有ルールです"), "pattern controls must explain why one edit changes every repetition"],
+  [upperPictureLessonsJs.includes("const patternInitial = Object.freeze({ distance: 60, angle: 40, count: 1 })") && upperPictureLessonsJs.includes("state.pattern = { ...patternInitial }"), "the pattern lesson must start from an intentionally incomplete 40-degree turn and reset to it"],
   [upperPictureLessonLogic.includes("createKickPath"), "soccer line and animation must share one force-based path calculation"],
   [upperPictureLessonLogic.includes("const landingTime = 2 * yForce / kickGravity") && !upperPictureLessonLogic.includes("index === sampleCount && !hitsWall ? 0"), "soccer paths must land naturally without an artificial final drop"],
   [upperFreeKickProgramJs.includes("classifyKickOutcome") && upperFreeKickProgramJs.includes("applyKickProgram"), "the soccer program must classify results and apply learner-created rules"],
@@ -318,8 +343,7 @@ const checks = [
   [upperPictureLessonsJs.includes("runRepeatedly") && upperPictureLessonsJs.includes("stopRepeating"), "upper repeat execution must run until the learner stops it"],
   [upperPictureLessonsJs.includes('type="number"'), "upper picture lessons must accept numeric values"],
   [rescueRunBlock.includes("canvasBounds(root)") && !rescueRunBlock.includes("canvasSetup(root)"), "rescue animation must not clear the drawn paths before it runs"],
-  [pictureLessonsJs.includes("showSuccessOverlay({ compact: repeating })"), "repeated lower lessons must show compact success near the stage goal"],
-  [pictureLoopSuccessCss.includes(".picture-loop-success"), "compact repeated success must be styled near the goal instead of covering the screen"],
+  [!pictureLessonsJs.includes("compact: repeating") && !html.includes("picture-loop-success.css"), "repeated lessons must use the same large final success announcement"],
   [html.includes('<link rel="icon" href="./favicon.svg" type="image/svg+xml">') && teacherHtml.includes('<link rel="icon" href="./favicon.svg" type="image/svg+xml">'), "all pages must use the robot favicon"],
   [html.includes("講師の方へ") && html.includes("GitHub Issuesで連絡") && html.includes("https://github.com/yutakikuchi/easy-scratch/issues/new/choose"), "the TOP footer must link to the instructor guide and easy-scratch issue forms"],
   [html.includes("© 2026 菊池佑太") && html.includes("利用端末：iPad Pro") && html.includes("ブラウザ：Safari") && html.includes("Scratchにつながる") && html.includes("この教材は授業で再利用できます"), "the TOP footer must identify the creator, purpose, device, browser, and reuse terms"],

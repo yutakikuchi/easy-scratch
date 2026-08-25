@@ -83,12 +83,21 @@ export const pictureLessons = {
   ],
   upper: [
     {
-      id: "rescue",
-      title: "座標レスキュー",
-      shortTitle: "座標のルールをくりかえす",
-      description: "4つの移動ルールを2回くりかえし、1・2・3の番号を順番に取ろう",
-      thumbnail: "./assets/picture-lessons/mock-upper-rescue.webp",
-      stageType: "upper-rescue",
+      id: "grid-lab",
+      title: "変数つきルール・ラボ",
+      shortTitle: "値を変えて同じルールを再利用する",
+      description: "ルール(x, y)を1つ作り、呼び出すたびに違う値を渡して3つの形をぬろう",
+      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint-v2.svg",
+      stageType: "upper-grid-paint",
+      sprite: "./assets/robot-mascot.png"
+    },
+    {
+      id: "sort-robot",
+      title: "仕分けロボットを設計せよ",
+      shortTitle: "条件と順番を設計する",
+      description: "4つのレーンの役割を読み、ルールを0から作って例外まで正しく仕分けよう",
+      thumbnail: "./assets/picture-lessons/concept-upper-sort-robot-debug.png",
+      stageType: "upper-sort-robot",
       sprite: "./assets/robot-mascot.png"
     },
     {
@@ -107,15 +116,6 @@ export const pictureLessons = {
       description: "x・θで六角形を作り、nで同じ六角形をかく回数を変えよう",
       thumbnail: "./assets/picture-lessons/mock-upper-pattern.webp",
       stageType: "upper-pattern",
-      sprite: "./assets/robot-mascot.png"
-    },
-    {
-      id: "grid-lab",
-      title: "座標いろぬりラボ",
-      shortTitle: "6枚のルールで8マスをぬる",
-      description: "x・y・nと6枚のルールを組み合わせ、ジグザグに進んで8マスを2色でぬろう",
-      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint-v2.svg",
-      stageType: "upper-grid-paint",
       sprite: "./assets/robot-mascot.png"
     }
   ]

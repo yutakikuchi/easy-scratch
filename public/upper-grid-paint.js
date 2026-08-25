@@ -1,12 +1,12 @@
 import {
   createUpperGridPaintState,
   createUpperGridPaintTargetState,
+  findUpperGridPaintMismatch,
   isUpperGridPaintCorrect,
-  normalizeUpperGridPaintValues,
+  isUpperGridPaintPrefixCorrect,
+  normalizeUpperGridPaintCalls,
   upperGridPaintConfig
-} from "./upper-grid-paint-logic.js?v=20260718a";
-
-const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+} from "./upper-grid-paint-logic.js?v=20260825d";
 
 const actions = [
   { id: "right", icon: "→", label: "右へ xマス", hint: "xの数だけ進む" },
@@ -115,6 +115,11 @@ function drawBoard(root, result, progress = 1) {
     const y = layout.top + targetCell.row * layout.cell;
     context.fillStyle = targetCell.color === "blue" ? "rgba(57,181,224,.22)" : "rgba(255,205,48,.28)";
     context.fillRect(x + 3, y + 3, layout.cell - 6, layout.cell - 6);
+    context.fillStyle = "#0d2a63";
+    context.font = `900 ${Math.max(11, layout.cell * 0.22)}px sans-serif`;
+    context.textAlign = "left";
+    context.textBaseline = "top";
+    context.fillText(`${targetCell.callIndex + 1}`, x + 7, y + 5);
   });
 
   upperGridPaintConfig.obstacles.forEach(({ column, row }) => {
@@ -156,7 +161,28 @@ function drawBoard(root, result, progress = 1) {
 }
 
 export function initUpperGridPaintLesson({ root, onSuccess }) {
-  const state = { active: false, running: false, looping: false, token: 0, values: { x: 1, y: 1, n: 1 }, program: [] };
+  const freshCalls = () => upperGridPaintConfig.initialCalls.map((call) => ({ ...call }));
+  const state = { active: false, running: false, token: 0, calls: freshCalls(), program: [], lastResult: null, hasUnrunChanges: false };
+
+  function idleResult() {
+    return {
+      route: [{ ...upperGridPaintConfig.start, command: "start", callIndex: -1 }],
+      painted: []
+    };
+  }
+
+  function drawStoredResult() {
+    const stage = root.querySelector(".upper-grid-lab-stage");
+    const status = root.querySelector("[data-grid-lab-stage-status]");
+    stage?.classList.toggle("has-result", Boolean(state.lastResult));
+    stage?.classList.toggle("has-unrun-changes", Boolean(state.lastResult && state.hasUnrunChanges));
+    if (status) {
+      if (!state.lastResult) status.textContent = "まだ実行していません。「試す」を押すと赤い線が出ます";
+      else if (state.hasUnrunChanges) status.textContent = "赤い線は前回の実行結果です。追加したルールや数値は、次に「試す」を押すと反映されます";
+      else status.textContent = "赤い線は、最後に実行した結果です";
+    }
+    drawBoard(root, state.lastResult ?? idleResult());
+  }
 
   function showFeedback(title, detail, kind = "") {
     const feedback = root.querySelector("[data-grid-lab-feedback]");
@@ -165,84 +191,100 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
     feedback.innerHTML = `<strong>${escapeText(title)}</strong><span>${escapeText(detail)}</span>`;
   }
 
-  function updateProgram() {
+  function updateProgram({ markEdited = false } = {}) {
     const list = root.querySelector("[data-grid-lab-program]");
     if (!list) return;
+    if (markEdited && state.lastResult) state.hasUnrunChanges = true;
     list.innerHTML = state.program.length
       ? state.program.map((id, index) => {
           const action = actionById.get(id);
           return `<button type="button" data-grid-lab-remove="${index}" aria-label="${escapeText(action.label)}を消す"><span>${index + 1}</span><strong>${escapeText(action.label)}</strong><em>タップで消す</em></button>`;
         }).join("")
-      : "<p>左のカードをタップして、短いルールを作ろう</p>";
+      : "<p>左のカードをタップして、再利用するルールを1つ作ろう</p>";
+    const count = root.querySelector("[data-grid-lab-rule-count]");
+    if (count) count.textContent = `${state.program.length} / 6`;
     const canRun = state.program.length > 0;
     root.querySelectorAll("[data-grid-lab-run]").forEach((button) => { button.disabled = !canRun; });
-    drawBoard(root, createUpperGridPaintState(state.program, state.values));
+    drawStoredResult();
   }
 
-  function updateValues() {
-    state.values = normalizeUpperGridPaintValues(state.values);
-    for (const key of ["x", "y", "n"]) {
-      const input = root.querySelector(`[data-grid-lab-input="${key}"]`);
-      if (input) input.value = state.values[key];
-      const output = root.querySelector(`[data-grid-lab-value="${key}"]`);
-      if (output) output.textContent = state.values[key];
-    }
-    updateProgram();
+  function updateCalls() {
+    state.calls = normalizeUpperGridPaintCalls(state.calls);
+    state.calls.forEach((call, callIndex) => {
+      for (const key of ["x", "y"]) {
+        const input = root.querySelector(`[data-grid-lab-call-input="${callIndex}"][data-key="${key}"]`);
+        if (input) input.value = call[key];
+      }
+    });
+    updateProgram({ markEdited: true });
   }
 
   function render(lesson) {
     state.active = true;
     state.running = false;
-    state.looping = false;
     state.token += 1;
-    state.values = { x: 1, y: 1, n: 1 };
+    state.calls = freshCalls();
     state.program = [];
+    state.lastResult = null;
+    state.hasUnrunChanges = false;
     root.className = "picture-experience upper-grid-lab-screen";
     root.innerHTML = `
       <header class="upper-picture-header">
         <button class="picture-back-button" type="button" data-picture-action="hub">もどる</button>
         <div class="upper-picture-title"><small>4〜6年生</small><h1>${escapeText(lesson.title)}</h1></div>
-        <div class="upper-picture-goal"><span>きょうのゴール</span><strong>6枚のルールを4回くりかえし、8つのマスを2色でぬろう</strong></div>
+        <div class="upper-picture-goal"><span>きょうのゴール</span><strong>1つのルールへ毎回ちがうx・yを渡し、3つの形をぬろう</strong></div>
         <img src="./assets/robot-mascot.png" alt="案内ロボット">
       </header>
       <section class="learning-focus" aria-label="この単元で学ぶこと">
         <details open><summary>ここから学ぶこと</summary><div class="learning-focus-panel">
-          <div class="learning-focus-item"><span aria-hidden="true">🧭</span><strong>座標の差を変数にする</strong><p>xとyを変えると、1枚の移動カードで進むマス数が変わります。</p></div>
-          <div class="learning-focus-item"><span aria-hidden="true">🧩</span><strong>6枚のルールを組み立てる</strong><p>上下の移動と2色の色ぬりを組み合わせ、ジグザグに進むまとまりを作ります。</p></div>
-          <div class="learning-focus-item"><span aria-hidden="true">🔁</span><strong>少なく試してから増やす</strong><p>まずn=1で動きと色を確かめ、正しければn=4まで増やして8マスをぬります。</p></div>
+          <div class="learning-focus-item"><span aria-hidden="true">📦</span><strong>値を受け取るルールを作る</strong><p>移動する数を固定せず、ルール(x, y)が値を受け取る形にします。</p></div>
+          <div class="learning-focus-item"><span aria-hidden="true">♻️</span><strong>同じルールを再利用する</strong><p>6枚をコピーせず、呼び出すたびにx・yだけを変えて3つの形を作ります。</p></div>
+          <div class="learning-focus-item"><span aria-hidden="true">🔎</span><strong>呼び出しごとに確かめる</strong><p>まず1回目だけを試し、その後に3組の値をまとめて実行します。</p></div>
         </div></details>
       </section>
       <main class="upper-grid-lab-main">
         <section class="upper-grid-lab-builder">
-          <div class="upper-step-heading"><span>1</span><div><h2>変数とルールを作る</h2><p>最初の数字は正解ではありません</p></div></div>
-          <div class="upper-grid-lab-values">
-            ${["x", "y", "n"].map((key) => `<label><strong>${key}</strong><button type="button" data-grid-lab-adjust="${key}" data-delta="-1">−</button><input type="number" min="1" max="4" value="1" data-grid-lab-input="${key}"><button type="button" data-grid-lab-adjust="${key}" data-delta="1">＋</button><small>${key === "x" ? "よこのマス数" : key === "y" ? "たてのマス数" : "まとまりを使う回数"}</small></label>`).join("")}
+          <div class="upper-step-heading"><span>1</span><div><h2>変数を使うルールを1つ作る</h2><p>x・yの値は、ルールを使うときに渡します</p></div></div>
+          <div class="upper-grid-lab-function-note">
+            <strong>再利用するルール（x, y）</strong>
+            <p><code>x</code>は横、<code>y</code>は縦に動くマス数。ここでは数字を決めず、x・yを使う6枚を組み立てます。</p>
           </div>
           <div class="upper-grid-lab-palette">
             ${actions.map((action) => `<button type="button" data-grid-lab-add="${action.id}" class="is-${action.id}"><span>${action.icon}</span><strong>${escapeText(action.label)}</strong><small>${escapeText(action.hint)}</small></button>`).join("")}
           </div>
         </section>
         <section class="upper-grid-lab-stage-panel">
-          <div class="upper-step-heading"><span>2</span><div><h2>動きを小さく確かめる</h2><p>白い目標線と赤い今の線を見くらべよう</p></div></div>
-          <div class="upper-grid-lab-stage"><canvas data-grid-lab-canvas aria-label="マス色ぬりの目標と今の動き"></canvas><div class="upper-path-legend"><span><i class="upper-goal-line"></i>目標</span><span><i class="upper-current-line"></i>今の動き</span></div></div>
+          <div class="upper-step-heading"><span>2</span><div><h2>3つの呼び出しを見くらべる</h2><p>白い線の①②③は、同じルールを別の値で使う区切りです</p></div></div>
+          <div class="upper-grid-lab-stage"><canvas data-grid-lab-canvas aria-label="マス色ぬりの目標と実行結果"></canvas><div class="upper-path-legend"><span><i class="upper-goal-line"></i>目標</span><span><i class="upper-current-line"></i>実行結果</span></div><p class="upper-grid-lab-stage-status" data-grid-lab-stage-status>まだ実行していません。「試す」を押すと赤い線が出ます</p></div>
         </section>
         <section class="upper-grid-lab-program-panel">
-          <div><h2>くりかえすルール</h2><p>カードはタップすると消せます。まずn=1で試し、正しければ回数を増やそう。</p></div>
-          <div class="upper-grid-lab-program" data-grid-lab-program></div>
-          <div class="upper-grid-lab-run-buttons"><button type="button" data-grid-lab-run="once" disabled>実行する</button><button type="button" data-grid-lab-run="repeat" disabled>繰り返し実行する<small>止めるまで</small></button></div>
-          <div class="upper-grid-lab-feedback" data-grid-lab-feedback aria-live="polite"><strong>まずは短いルールを作ろう</strong><span>x・y・nも自分で変えて試せます。</span></div>
+          <div class="upper-grid-lab-program-heading"><div><span class="upper-step-number">3</span><div><h2>同じルールへ3組の値を渡す</h2><p>6枚は1つだけ。呼び出すたびにx・yを変えて再利用します。</p></div></div><strong data-grid-lab-rule-count>0 / 6</strong></div>
+          <div class="upper-grid-lab-rule-area"><strong>再利用するルール（x, y）</strong><div class="upper-grid-lab-program" data-grid-lab-program></div></div>
+          <div class="upper-grid-lab-calls" aria-label="ルールを再利用する3回の呼び出し">
+            ${state.calls.map((call, callIndex) => `<section class="upper-grid-lab-call"><strong><span>${callIndex + 1}</span>回目：ルール（x, y）</strong><div>${["x", "y"].map((key) => `<label><b>${key}</b><button type="button" data-grid-lab-call-adjust="${callIndex}" data-key="${key}" data-delta="-1" aria-label="${callIndex + 1}回目の${key}を1減らす">−</button><input type="number" min="1" max="4" value="${call[key]}" data-grid-lab-call-input="${callIndex}" data-key="${key}" aria-label="${callIndex + 1}回目の${key}"><button type="button" data-grid-lab-call-adjust="${callIndex}" data-key="${key}" data-delta="1" aria-label="${callIndex + 1}回目の${key}を1増やす">＋</button></label>`).join("")}</div><small>白い線の${callIndex + 1}に合う値を渡そう</small></section>`).join("")}
+          </div>
+          <div class="upper-grid-lab-run-buttons"><button type="button" data-grid-lab-run="first" disabled>① 1回目だけ試す</button><button type="button" data-grid-lab-run="all" disabled>② 3回をまとめて実行<small>同じ6枚を3回再利用</small></button></div>
+          <div class="upper-grid-lab-feedback" data-grid-lab-feedback aria-live="polite"><strong>まずは再利用するルールを作ろう</strong><span>次に、①②③へ別々のx・yを渡します。</span></div>
         </section>
       </main>`;
     window.requestAnimationFrame(updateProgram);
   }
 
-  async function runOnce() {
+  async function runCalls(callCount) {
     if (state.running || state.program.length === 0) return false;
     const token = ++state.token;
     state.running = true;
     root.classList.add("is-running");
-    const result = createUpperGridPaintState(state.program, state.values);
-    showFeedback("実行しています", `x=${state.values.x}、y=${state.values.y}、n=${state.values.n}で確かめています。`);
+    const selectedCalls = state.calls.slice(0, callCount);
+    const result = createUpperGridPaintState(state.program, selectedCalls);
+    state.lastResult = result;
+    state.hasUnrunChanges = false;
+    root.querySelector(".upper-grid-lab-stage")?.classList.add("has-result");
+    root.querySelector(".upper-grid-lab-stage")?.classList.remove("has-unrun-changes");
+    const stageStatus = root.querySelector("[data-grid-lab-stage-status]");
+    if (stageStatus) stageStatus.textContent = "赤い実行結果を描いています";
+    const callText = selectedCalls.map((call, index) => `${index + 1}回目(x=${call.x}, y=${call.y})`).join("、");
+    showFeedback("同じルールを呼び出しています", callText);
     const duration = Math.max(700, result.route.length * 130);
     const started = performance.now();
     await new Promise((resolve) => {
@@ -257,36 +299,21 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
     if (token !== state.token) return false;
     state.running = false;
     root.classList.remove("is-running");
-    if (isUpperGridPaintCorrect(state.program, state.values)) {
-      showFeedback("正解！8つのマスを2色でぬれました", "6枚のルールをn=4回使い、ジグザグの動きを仕組みにできました。", "is-success");
-      onSuccess({ repeating: state.looping });
+    if (stageStatus) stageStatus.textContent = "赤い線は、最後に実行した結果です";
+    if (callCount === 1 && isUpperGridPaintPrefixCorrect(state.program, state.calls, 1)) {
+      showFeedback("1回目の呼び出しは正解！", "同じ6枚はそのままに、2回目と3回目へ別のx・yを渡そう。", "is-success");
       return true;
     }
-    if (result.outcome === "obstacle") showFeedback("しょうがいぶつに当たりました", "x・yの数や、カードの順番を直してみよう。", "is-question");
-    else if (result.outcome === "outside") showFeedback("マスの外へ出ました", "動く数と、くりかえす回数を見直そう。", "is-question");
-    else showFeedback("目標どおりにぬれたかな？", "白い点線、ぬった色、最後の旗を見て直そう。", "is-question");
+    if (callCount === upperGridPaintConfig.targetCalls.length && isUpperGridPaintCorrect(state.program, state.calls)) {
+      showFeedback("正解！1つのルールを3回再利用できました", "同じ6枚へ毎回ちがうx・yを渡して、3つの形を作れました。", "is-success");
+      onSuccess({ repeating: false });
+      return true;
+    }
+    const mismatch = callCount === 1 ? 0 : findUpperGridPaintMismatch(state.program, state.calls);
+    if (result.outcome === "obstacle") showFeedback("しょうがいぶつに当たりました", `${Math.max(1, mismatch + 1)}回目のx・yか、6枚の順番を見直そう。`, "is-question");
+    else if (result.outcome === "outside") showFeedback("マスの外へ出ました", `${Math.max(1, mismatch + 1)}回目に渡すx・yを小さくして確かめよう。`, "is-question");
+    else showFeedback(`${Math.max(1, mismatch + 1)}回目を見直そう`, "白い線の番号と、青・黄のマスを見てx・yを直そう。", "is-question");
     return true;
-  }
-
-  async function runRepeatedly() {
-    if (state.looping) {
-      state.looping = false;
-      state.token += 1;
-      state.running = false;
-      root.classList.remove("is-running");
-      showFeedback("繰り返しを止めました", "数字やルールを直して、また試せます。");
-      return;
-    }
-    state.looping = true;
-    const button = root.querySelector('[data-grid-lab-run="repeat"]');
-    if (button) button.innerHTML = "止める<small>繰り返しを終了</small>";
-    while (state.looping) {
-      const complete = await runOnce();
-      if (!complete || !state.looping || isUpperGridPaintCorrect(state.program, state.values)) break;
-      await wait(320);
-    }
-    state.looping = false;
-    if (button) button.innerHTML = "繰り返し実行する<small>止めるまで</small>";
   }
 
   root.addEventListener("click", (event) => {
@@ -294,34 +321,36 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
     const add = event.target.closest("[data-grid-lab-add]");
     if (add && !state.running && state.program.length < 6) {
       state.program.push(add.dataset.gridLabAdd);
-      updateProgram();
+      updateProgram({ markEdited: true });
       return;
     }
     const remove = event.target.closest("[data-grid-lab-remove]");
     if (remove && !state.running) {
       state.program.splice(Number(remove.dataset.gridLabRemove), 1);
-      updateProgram();
+      updateProgram({ markEdited: true });
       return;
     }
-    const adjust = event.target.closest("[data-grid-lab-adjust]");
+    const adjust = event.target.closest("[data-grid-lab-call-adjust]");
     if (adjust && !state.running) {
-      const key = adjust.dataset.gridLabAdjust;
-      state.values[key] += Number(adjust.dataset.delta);
-      updateValues();
+      const callIndex = Number(adjust.dataset.gridLabCallAdjust);
+      const key = adjust.dataset.key;
+      state.calls[callIndex][key] += Number(adjust.dataset.delta);
+      updateCalls();
       return;
     }
     const run = event.target.closest("[data-grid-lab-run]");
-    if (run?.dataset.gridLabRun === "once") runOnce();
-    if (run?.dataset.gridLabRun === "repeat") runRepeatedly();
+    if (run?.dataset.gridLabRun === "first") runCalls(1);
+    if (run?.dataset.gridLabRun === "all") runCalls(upperGridPaintConfig.targetCalls.length);
   });
 
   root.addEventListener("input", (event) => {
-    const input = event.target.closest("[data-grid-lab-input]");
+    const input = event.target.closest("[data-grid-lab-call-input]");
     if (!input || !state.active || state.running) return;
-    state.values[input.dataset.gridLabInput] = input.value;
-    updateValues();
+    const callIndex = Number(input.dataset.gridLabCallInput);
+    state.calls[callIndex][input.dataset.key] = input.value;
+    updateCalls();
   });
   window.addEventListener("resize", () => { if (state.active) window.requestAnimationFrame(updateProgram); });
   document.addEventListener("easy-scratch-languagechange", () => { if (state.active) window.requestAnimationFrame(updateProgram); });
-  return { render, deactivate: () => { state.active = false; state.looping = false; state.token += 1; } };
+  return { render, deactivate: () => { state.active = false; state.token += 1; } };
 }

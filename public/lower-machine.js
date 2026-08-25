@@ -1,8 +1,8 @@
 import {
-  createRuleBatch,
+  createPaperCheckRuleBatch,
   formatCalculationDuration,
   summarizeRuleBatch
-} from "./calculation.js";
+} from "./calculation.js?v=20260825g";
 
 const MAX_RESULT_COUNT = 100;
 const INITIAL_RESULT_COUNT = 3;
@@ -209,7 +209,9 @@ export function initLowerCalculationMachine({ onBack } = {}) {
     elements.machineSummaryTitle.textContent = `${state.repeatCount}かい けいさん`;
     elements.machineRunButton.textContent = `${state.repeatCount}かい けいさんする`;
     elements.machineRunHint.textContent = isBuilt
-      ? `おなじ ルールに すうじを ${state.repeatCount}くみ いれるよ`
+      ? (state.repeatCount <= INITIAL_RESULT_COUNT
+        ? `かみの もんだいと おなじ すうじを ${state.repeatCount}くみ いれるよ`
+        : "はじめの 3もんは かみと おなじ。4もんめから すうじを かえるよ")
       : "はじめに ルールを つくろう";
     renderRuleSlots();
     renderRunRule();
@@ -343,7 +345,7 @@ export function initLowerCalculationMachine({ onBack } = {}) {
 
   function prepareCalculationBatch() {
     const startedAt = performance.now();
-    state.rows = createRuleBatch(state.builtRule, state.repeatCount);
+    state.rows = createPaperCheckRuleBatch(state.builtRule, state.repeatCount);
     state.summary = summarizeRuleBatch(state.rows);
     const elapsedMilliseconds = performance.now() - startedAt;
     renderSummary();

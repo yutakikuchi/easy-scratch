@@ -22,7 +22,8 @@ import {
   kickCorrectionActions,
   kickOutcomeLabels,
 } from "./upper-free-kick-program.js?v=20260718a";
-import { initUpperGridPaintLesson } from "./upper-grid-paint.js?v=20260718a";
+import { initUpperGridPaintLesson } from "./upper-grid-paint.js?v=20260825d";
+import { initUpperSortRobotLesson } from "./upper-sort-robot.js?v=20260825a";
 import {
   canvasBounds,
   canvasSetup,
@@ -35,6 +36,8 @@ import {
   upperHeader,
   upperLearningFocus
 } from "./upper-picture-shared.js?v=20260718a";
+
+const patternInitial = Object.freeze({ distance: 60, angle: 40, count: 1 });
 
 const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
@@ -97,6 +100,7 @@ function drawRescueGrid(context, width, height) {
 
 export function initUpperPictureLessons({ root, onSuccess }) {
   const gridPaintLesson = initUpperGridPaintLesson({ root, onSuccess });
+  const sortRobotLesson = initUpperSortRobotLesson({ root, onSuccess });
   const state = {
     lesson: null,
     kind: null,
@@ -110,7 +114,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       repeatCount: 1
     },
     keyframe: { force: { ...kickInitialForce }, program: [], history: [], pendingOutcome: null },
-    pattern: { distance: 60, angle: 60, count: 1 }
+    pattern: { ...patternInitial }
   };
 
   function reset(lesson) {
@@ -122,13 +126,15 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = false;
     state.rescue = { values: { ...rescueInitialValues }, program: [], repeatCount: 1 };
     state.keyframe = { force: { ...kickInitialForce }, program: [], history: [], pendingOutcome: null };
-    state.pattern = { distance: 60, angle: 60, count: 1 };
+    state.pattern = { ...patternInitial };
   }
 
   function render(lesson) {
     gridPaintLesson.deactivate();
+    sortRobotLesson.deactivate();
     reset(lesson);
-    if (lesson.id === "rescue") renderRescue();
+    if (lesson.id === "sort-robot") sortRobotLesson.render(lesson);
+    else if (lesson.id === "rescue") renderRescue();
     else if (lesson.id === "keyframe") renderKeyframe();
     else if (lesson.id === "pattern") renderPattern();
     else gridPaintLesson.render(lesson);
@@ -645,8 +651,10 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     setBusy(false);
     const correct = isRescueCorrect(state.rescue.program, state.rescue.values, state.rescue.repeatCount);
     if (correct) {
+      state.looping = false;
+      updateRepeatButton();
       showFeedback("正解！くりかえしで1〜6を取れました", "5枚の移動ルールを3回使って、15回の移動を短い仕組みにできました。", "is-success");
-      onSuccess({ repeating: state.looping });
+      onSuccess();
     } else {
       showFeedback("1〜6を順番に取れたかな？", "白い点線と赤い線、座標の差を見て、5枚の順番・数・回数を直そう。", "is-question");
     }
@@ -755,8 +763,11 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     setBusy(false);
     drawPattern();
     if (isPatternCorrect(state.pattern)) {
+      state.looping = false;
+      updateRepeatButton();
       showFeedback("正解！六角形の花ができました", `「前へ${state.pattern.distance} → 右へ60°」で六角形を作り、その六角形をn=6回かきました。`, "is-success");
-      onSuccess({ repeating: state.looping });
+      onSuccess();
+      return false;
     } else if (state.pattern.angle === patternTarget.angle) {
       showFeedback(`六角形を${state.pattern.count}個かけました`, `nを6にすると、向きを変えながら六角形を6個かいて花になります。`, "is-question");
     } else {
@@ -962,7 +973,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       return;
     }
     if (action === "reset-pattern") {
-      state.pattern = { distance: 60, angle: 60, count: 1 };
+      state.pattern = { ...patternInitial };
       return renderPattern();
     }
     if (action === "run-pattern") return runPattern();

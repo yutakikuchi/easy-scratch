@@ -31,9 +31,24 @@ import {
 import {
   createUpperGridPaintState,
   createUpperGridPaintTargetState,
+  expandUpperGridPaintProgram,
+  findUpperGridPaintMismatch,
   isUpperGridPaintCorrect,
+  isUpperGridPaintPrefixCorrect,
   upperGridPaintConfig
 } from "../public/upper-grid-paint-logic.js";
+import {
+  classifyPackage,
+  createSortRule,
+  isSortRuleCorrect,
+  runSortProgram,
+  sortBatchPackages,
+  sortBasicRule,
+  sortTargetRule,
+  sortTestPackages,
+  sortWarmupPackages,
+  tracePackage
+} from "../public/upper-sort-robot-logic.js";
 
 for (const grade of ["lower", "upper"]) {
   const lessons = pictureLessons[grade];
@@ -62,18 +77,49 @@ assert.deepEqual(
 );
 assert.deepEqual(
   pictureLessons.upper.map(({ id }) => id),
-  ["rescue", "keyframe", "pattern", "grid-lab"]
+  ["grid-lab", "sort-robot", "keyframe", "pattern"]
 );
 assert.equal(findPictureLesson("lower", "missing"), null);
 
+assert.equal(isSortRuleCorrect(sortTargetRule), true, "the target sorting rule must prioritize the compound condition");
+assert.equal(runSortProgram([], sortWarmupPackages).correctCount, 0, "the lesson must begin without supplied sorting rules");
+assert.equal(runSortProgram(sortBasicRule, sortWarmupPackages).complete, true, "three learner-built basic rules must pass the first check");
+assert.equal(runSortProgram(sortBasicRule, sortTestPackages).correctCount, 5, "the fragile and chilled package must reveal the missing compound rule");
+assert.equal(isSortRuleCorrect([...sortBasicRule, sortTargetRule[0]]), false, "a compound rule placed after the catch-all rule must never run");
+assert.equal(classifyPackage(sortTestPackages[0], sortTargetRule), "fragile");
+assert.equal(classifyPackage(sortTestPackages[1], sortTargetRule), "chilled");
+assert.equal(classifyPackage(sortTestPackages[2], sortTargetRule), "default");
+assert.equal(classifyPackage(sortTestPackages[3], sortTargetRule), "special");
+assert.deepEqual(tracePackage(sortTestPackages[3], sortBasicRule), {
+  destination: "fragile",
+  matchedRuleIndex: 0,
+  checks: [{ index: 0, matched: true }]
+});
+assert.deepEqual(
+  createSortRule({ firstCondition: "chilled", useAnd: true, secondCondition: "fragile", destination: "special" }),
+  { conditions: ["chilled", "fragile"], destination: "special", isDefault: false },
+  "learners must be able to build the compound condition in either order"
+);
+assert.equal(runSortProgram(sortTargetRule, sortTestPackages).complete, true, "six packages must cover every attribute combination");
+assert.equal(sortBatchPackages.length, 20, "the validated sorting rule must scale to twenty packages");
+assert.equal(runSortProgram(sortTargetRule, sortBatchPackages).correctCount, 20, "the same rule must sort every batch package correctly");
+assert.equal(runSortProgram([{ conditions: [], destination: "default", isDefault: true }], sortTestPackages).correctCount, 1, "a catch-all-only rule must expose mistakes");
+
 const upperGridTarget = createUpperGridPaintTargetState();
-assert.equal(upperGridTarget.painted.length, 8, "the upper grid target must paint eight cells");
+assert.equal(upperGridTarget.painted.length, 6, "the parameterized target must paint two cells per rule call");
 assert.deepEqual(upperGridTarget.position, upperGridPaintConfig.goal, "the target rule must finish at the flag");
-assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetValues), true);
-assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, { x: 1, y: 1, n: 1 }), false, "initial values must not solve the lesson");
-assert.equal(isUpperGridPaintCorrect(["right", "up", "paint-blue", "paint-yellow"], upperGridPaintConfig.targetValues), false, "card order must matter");
-assert.equal(createUpperGridPaintState(["right"], { x: 4, y: 1, n: 1 }).outcome, "obstacle", "a shortcut into an obstacle must stop the robot");
-assert.equal(isUpperGridPaintCorrect(["right", "up", "paint-blue", "right", "down", "paint-yellow"], { x: 2, y: 2, n: 3 }), false, "three repeats must stop before the goal");
+assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetCalls), true);
+assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, upperGridPaintConfig.initialCalls), false, "identical initial arguments must not solve the lesson");
+assert.equal(isUpperGridPaintCorrect(["right", "up", "paint-blue", "paint-yellow"], upperGridPaintConfig.targetCalls), false, "card order must matter");
+assert.equal(createUpperGridPaintState(["right"], [{ x: 4, y: 1 }]).outcome, "obstacle", "a shortcut into an obstacle must stop the robot");
+assert.equal(isUpperGridPaintPrefixCorrect(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetCalls, 1), true, "the first parameterized call must be testable on its own");
+assert.equal(findUpperGridPaintMismatch(upperGridPaintConfig.targetProgram, [upperGridPaintConfig.targetCalls[0], { x: 1, y: 1 }, upperGridPaintConfig.targetCalls[2]]), 1, "feedback must identify the first incorrect call");
+assert.deepEqual(
+  expandUpperGridPaintProgram(["right"], upperGridPaintConfig.targetCalls).map(({ values }) => values),
+  upperGridPaintConfig.targetCalls,
+  "each reuse of the same rule must receive its own x and y values"
+);
+assert.equal(isUpperGridPaintCorrect(upperGridPaintConfig.targetProgram, Array(3).fill({ x: 2, y: 2 })), false, "repeating one fixed set of values must not solve the parameterized lesson");
 
 const sample = findPictureLesson("lower", "jump").sample;
 assert.deepEqual(getPictureProgramStatus([], sample), { canRun: false, isCorrect: false });

@@ -127,3 +127,153 @@
 - [x] No visible forbidden school name is present.
 
 final result: passed
+
+---
+
+# Design QA — 変数つきルール・ラボ
+
+## Evidence
+
+- Browser-rendered upper-grade hub at 1280 × 720: the parameterized-rule lesson is card 1 and uses the revised SVG thumbnail.
+- Browser-rendered lesson at 1280 × 720: the header and learning-focus section state that one rule receives different values on each call.
+- Browser-rendered reusable-rule panel at 1280 × 720: one six-card rule is followed by three separate `ルール(x, y)` call cards.
+- Browser-rendered edit/run states: adding two cards before the first run leaves only the white target and start robot; running the two-card rule draws the expected red three-step staircase; adding another card preserves that path as the labeled previous result.
+- Responsive verification at 390 × 844: all three call cards stack, the program uses two columns, and `scrollWidth` equals the 390px viewport width.
+
+## Findings and fixes
+
+- [P1] The old task repeated one fixed six-card rule `n` times, so it taught repetition rather than parameterized reuse.
+  - Fix: removed the global `n` control and added three calls that each pass their own `x` and `y` values to one shared six-card rule.
+- [P1] Repeating one set of values could previously solve the entire target.
+  - Fix: changed the target into three different shapes. The correct calls require different argument pairs; three identical pairs cannot pass the correctness check.
+- [P1] The lesson was the fourth upper-grade challenge.
+  - Fix: moved it to card 1 and revised the hub title, description, and thumbnail to introduce parameterized reuse first.
+- [P2] The initial call heading rendered its numeric badge and number twice in accessible text.
+  - Fix: separated the badge from the `回目` label so each heading reads once as `1回目`, `2回目`, or `3回目`.
+- [P1] Editing the shared rule immediately drew a red path even though the learner had not run it, making an incomplete three-call preview look like a broken execution result.
+  - Fix: store the last executed result separately. Before the first run, editing shows only the white target and start robot. After a run, later edits keep the previous red path and label it as pending until the learner tests again.
+
+## Primary interactions tested
+
+- Confirmed the lesson is the first upper-grade card and all three call values start at 1 without revealing the answer.
+- Built the shared rule `右へx → 上へy → 青 → 右へx → 下へy → 黄` once.
+- Passed only the first argument pair and confirmed the `1回目の呼び出しは正解！` checkpoint.
+- Passed three distinct argument pairs to the same six cards and confirmed `正解！1つのルールを3回再利用できました`.
+- Added `右へx → 上へy` without executing and confirmed the stage has no result state or red path.
+- Executed the incomplete two-card rule and confirmed the red path is a correct three-call staircase, then added a card and confirmed the previous result remains with a pending-edit explanation.
+- Confirmed no browser warnings or errors and closed the verification tab.
+
+final result: passed
+
+---
+
+# Design QA — 荷物の連続搬送アニメーション（2026-08-24）
+
+**Evidence**
+
+- Source visual truth: `docs/mockups/2026-08-22-sort-robot-debug/sort-robot-debug-tablet.png` (1448 × 1086)
+- Previous implementation screenshot: `docs/mockups/2026-08-22-sort-robot-debug/implementation-success-final-1440x1080.png` (1440 × 1080)
+- Revised implementation screenshot: unavailable
+- Intended viewport: 1440 × 1080 CSS pixels, device scale factor 1
+- State to verify: `queued → entering → checking → routing → dropping → arrived`
+- Full-view comparison: blocked because the in-app browser changed the initial connection failure into a blocked `data:` error page and would not reopen the now-running local URL.
+- Focused motion comparison: blocked for the same reason; a still image would not be sufficient to judge the continuity of the requested motion.
+
+**Findings**
+
+- [P1] Revised movement cannot yet be visually certified.
+  Location: warehouse stage / `.upper-sort-parcel`.
+  Evidence: the implementation now contains distinct entrance, belt travel, rule check, horizontal routing, vertical drop, and arrival states, and the static validation asserts these states. Browser-rendered intermediate frames could not be captured in this run.
+  Impact: automated source checks cannot prove that the perceived motion is continuous rather than appearing to pop.
+  Fix: open the running local URL in a fresh browser session, run the three-package test, and capture at least the `entering`, `routing`, and `dropping` frames before changing this result to `passed`.
+
+**Required Fidelity Surfaces**
+
+- Fonts and typography: unchanged from the previously passed implementation; not re-captured.
+- Spacing and layout rhythm: a four-step flow indicator was added inside the existing stage; visual overlap verification is pending.
+- Colors and visual tokens: existing blue, green, orange, and lane colors are reused; visual verification is pending.
+- Image quality and asset fidelity: the warehouse, special parcel, and robot raster assets are unchanged; new motion uses those existing assets.
+- Copy and content: added `入口`, `ベルトで移動`, `ルール判定`, and `レーンへ投入`, with English translations.
+
+**Implementation Checklist**
+
+- [x] Start each parcel outside the left edge and wait for a painted frame before moving it.
+- [x] Move the parcel across the visible belt to the inspection point.
+- [x] Pause and pulse at the inspection point while rules are evaluated.
+- [x] Move horizontally to the selected lane before dropping vertically into its bin.
+- [x] Use shorter but still visible travel timings for the 20-package batch.
+- [x] Add reduced-motion handling.
+- [x] Pass static validation, behavior tests, and production build.
+- [ ] Capture and compare the revised browser-rendered motion states.
+
+**Comparison History**
+
+- [P1] Previous animation began at the inspection point and only moved diagonally into a bin, which read as `appear → disappear` rather than a conveyor journey.
+  - Fix: split the path into six explicit phases and force a two-frame paint before the entrance transition begins.
+  - Post-fix visual evidence: blocked in this run; source-level and test evidence only.
+
+final result: blocked
+
+---
+
+# Design QA — 仕分けロボットをデバッグせよ
+
+## Evidence
+
+- Source visual truth: `docs/mockups/2026-08-22-sort-robot-debug/sort-robot-debug-tablet.png` (1448 × 1086; comparison用に1440 × 1080へ正規化)
+- Final implementation: `docs/mockups/2026-08-22-sort-robot-debug/implementation-success-final-1440x1080.png`
+- Motion state: `docs/mockups/2026-08-22-sort-robot-debug/implementation-motion-1440x1080.png`
+- Full comparison: `docs/mockups/2026-08-22-sort-robot-debug/design-comparison-full.png`
+- Focused rule-area comparison: `docs/mockups/2026-08-22-sort-robot-debug/design-comparison-rules.png`
+- Responsive evidence: `implementation-ipad-1194x834.png`, `implementation-mobile-390x844.png`
+- Final desktop viewport: 1440 × 1080 CSS pixels, device scale factor 1
+- Compared state: source is a conceptual composite of active evaluation and success; final implementation captures the successful six-package state, with the active matching state captured separately.
+
+## Findings and fixes
+
+- [P1] The previous lesson did not show parcels moving, so the learner could not connect a rule with its outcome.
+  - Fix: added a visible warehouse stage, four destination lanes, moving parcels, the active rule highlight, and `あてはまる／ちがう` evaluation text.
+- [P1] The previous task could be completed by pressing the supplied rules and did not require upper-grade reasoning.
+  - Fix: the starting three rules pass a warm-up but fail the compound `われもの かつ 冷蔵` exception. The learner must create the fourth rule and move it above the single-condition rules because evaluation is top-to-bottom.
+- [P1] The first implementation was taller than the 1440 × 1080 visual target because the learning objective and mission were repeated in separate panels.
+  - Fix: compacted the existing upper-grade header, removed duplicated panels, and placed the success feedback beside the test actions. Final desktop `scrollHeight` is 1080.
+- [P2] The first success feedback occupied the full width and diverged from the reference composition.
+  - Fix: moved the feedback into the lower-right action area and reused the existing robot mascot asset.
+- No unresolved P0, P1, or P2 findings remain.
+
+## Surface review
+
+- Typography: uses the product's rounded Japanese type stack with heavy navy headings and readable control labels.
+- Spacing and layout: reproduces the two-column rule/stage structure and the lower rule-builder/action strip; the desktop result fits one 1440 × 1080 viewport.
+- Colors: keeps the mock's orange, red, blue, purple, yellow, and green learning-state palette.
+- Images: uses generated raster artwork for the warehouse stage and compound-condition parcel, plus the existing robot mascot; no placeholder image is visible.
+- Copy: explains the goal, exposes the failing parcel, and states that top-to-bottom order matters.
+- Interaction and accessibility: condition controls are semantic fieldsets, selection state uses `aria-pressed`, keyboard/touch controls are available, and choice buttons are at least 48px high.
+- Responsiveness: 1194 × 834 and 390 × 844 have no horizontal overflow. Smaller viewports use normal page scrolling.
+
+## Primary interactions tested
+
+- Ran the three-package warm-up with the initial rules and confirmed success plus unlock of the six-package exception test.
+- Ran all six packages with the initial rules and confirmed only `びん入りジュース` fails because the first fragile rule wins.
+- Built `われもの かつ 冷蔵 → 紫の特別レーン`, added it as rule 4, then moved it to rule 1.
+- Re-ran all six packages and confirmed every package succeeds and unlocks the 20-package batch.
+- Ran the 20-package batch and confirmed `20個の自動仕分けに成功！`.
+- Captured the moving parcel with class `to-special is-moving` and the active first rule reading `あてはまる！`.
+- Browser console was checked. The only error was the existing Firebase Analytics network fetch failure in the local/offline environment; it does not interrupt the lesson.
+
+## Follow-up polish
+
+- [P3] The source mock intentionally combines active matching and success in one explanatory image; the real lesson presents those states sequentially so the result is causally clear.
+- [P3] The implemented rule builder uses text-first selection controls instead of approximated pictograms, preserving legibility and consistent interaction behavior across desktop and mobile.
+
+final result: passed
+
+---
+
+## Latest QA status — 2026-08-25 priority explanation revision
+
+The current revision makes rule priority an independent item in `ここから学ぶこと`, then repeats the causal sequence beside the lane briefing and above the rule list: parcels enter from the left, move right on the belt, rules are checked from priority 1 downward, and the first matching rule selects the lane. The stage progress labels use the same sequence.
+
+Browser verification passed at the default desktop viewport and at 390 × 844. The mobile page has no horizontal overflow, the four learning cards stack without clipping, and the lane/priority explanation is present in the rendered DOM. A learner-style browser run built the three basic rules from the empty state and observed the first parcel with `at-gate is-entering` while it moved across the belt; the active rule highlight was visible and the browser console had no warnings or errors. Static validation, behavior tests, and the production build also pass.
+
+final result: passed

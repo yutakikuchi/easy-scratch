@@ -1,5 +1,6 @@
-import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260719a";
-import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260718q";
+import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260825b";
+import { createPictureSuccessOverlay } from "./picture-success-overlay.js?v=20260825e";
+import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260825e";
 import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260718p";
 import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";
 export { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat };
@@ -77,7 +78,6 @@ function gradeCopy(grade) {
 }
 
 export function initPictureLessons({ root, onBackHome }) {
-  let successOverlayTimer = 0;
   let additionFeedbackTimer = 0;
   let upperLessons = null;
   const state = {
@@ -92,6 +92,7 @@ export function initPictureLessons({ root, onBackHome }) {
     suppressActionClickUntil: 0,
     lastAddedActionId: null
   };
+  const successOverlay = createPictureSuccessOverlay({ getGrade: () => state.grade });
   const activeProgram = () => expandPictureProgram(state.program, state.ruleMultiplier);
 
   function setLessonInUrl(lessonId) {
@@ -109,59 +110,7 @@ export function initPictureLessons({ root, onBackHome }) {
     state.lastAddedActionId = null;
     state.running = false;
     state.looping = false;
-    const overlay = document.querySelector("[data-picture-success-overlay]");
-    overlay?.classList.remove("is-visible");
-    overlay?.setAttribute("aria-hidden", "true");
-    root.querySelector("[data-picture-loop-success]")?.remove();
-  }
-
-  function ensureSuccessOverlay(titleText = "") {
-    let overlay = document.querySelector("[data-picture-success-overlay]");
-    if (!overlay) {
-      overlay = document.createElement("div");
-      overlay.className = "picture-success-overlay";
-      overlay.dataset.pictureSuccessOverlay = "";
-      overlay.setAttribute("role", "alert");
-      overlay.setAttribute("aria-live", "assertive");
-      overlay.setAttribute("aria-hidden", "true");
-      overlay.setAttribute("aria-label", "せいかい。タップでとじる");
-      overlay.innerHTML = `
-        <div class="picture-success-burst" aria-hidden="true">
-          <span>★</span><span>●</span><span>★</span><span>●</span><span>★</span><span>●</span>
-        </div>
-        <div class="picture-success-message">
-          <span aria-hidden="true">🎉</span>
-          <strong data-picture-success-title></strong>
-          <small data-picture-success-detail></small>
-          <em>タップで とじる</em>
-        </div>
-      `;
-      enableTapDismiss(overlay);
-      document.body.append(overlay);
-    }
-    const title = overlay.querySelector("[data-picture-success-title]");
-    const detail = overlay.querySelector("[data-picture-success-detail]");
-    if (title) title.textContent = titleText || (state.grade === "lower" ? "せいかい！" : "正解！");
-    if (detail) detail.textContent = state.grade === "lower" ? "ルールどおりに うごいたよ" : "ルールどおりに動きました";
-    return overlay;
-  }
-
-  function dismissSuccess(target) {
-    window.clearTimeout(successOverlayTimer);
-    target.classList.remove("is-visible");
-    target.setAttribute("aria-hidden", "true");
-    target.tabIndex = -1;
-  }
-
-  function enableTapDismiss(target) {
-    target.tabIndex = -1;
-    target.addEventListener("pointerup", () => {
-      if (target.matches("[data-picture-loop-success]")) target.dataset.userDismissed = "true";
-      dismissSuccess(target);
-    });
-    target.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") dismissSuccess(target);
-    });
+    successOverlay.reset();
   }
 
   function openLesson(lessonId) {
@@ -400,7 +349,6 @@ export function initPictureLessons({ root, onBackHome }) {
         </section>
       </div>
     `;
-    ensureSuccessOverlay();
     renderProgram();
     window.requestAnimationFrame(drawStagePreview);
   }
@@ -533,42 +481,6 @@ export function initPictureLessons({ root, onBackHome }) {
     drawStagePreview();
   }
 
-  function showSuccessOverlay({ compact = false, title = "" } = {}) {
-    if (compact) {
-      const stage = root.querySelector(".upper-stage, .picture-stage-scene");
-      if (!stage) return;
-      let badge = stage.querySelector("[data-picture-loop-success]");
-      if (!badge) {
-        badge = document.createElement("div");
-        badge.className = "picture-loop-success";
-        badge.dataset.pictureLoopSuccess = "";
-        badge.setAttribute("role", "status");
-        badge.setAttribute("aria-hidden", "true");
-        enableTapDismiss(badge);
-        stage.append(badge);
-      }
-      if (badge.dataset.userDismissed === "true") return;
-      badge.textContent = title || (state.grade === "lower" ? "せいかい！" : "正解！");
-      badge.setAttribute("aria-label", `${badge.textContent} タップでとじる`);
-      window.clearTimeout(successOverlayTimer);
-      badge.classList.remove("is-visible");
-      void badge.offsetWidth;
-      badge.setAttribute("aria-hidden", "false");
-      badge.tabIndex = 0;
-      badge.classList.add("is-visible");
-      successOverlayTimer = window.setTimeout(() => dismissSuccess(badge), 12000);
-      return;
-    }
-    const overlay = ensureSuccessOverlay(title);
-    window.clearTimeout(successOverlayTimer);
-    overlay.classList.remove("is-visible");
-    void overlay.offsetWidth;
-    overlay.setAttribute("aria-hidden", "false");
-    overlay.tabIndex = 0;
-    overlay.classList.add("is-visible");
-    successOverlayTimer = window.setTimeout(() => dismissSuccess(overlay), 12000);
-  }
-
   async function runRule({ repeating = false } = {}) {
     const programStatus = getPictureProgramStatus(state.program, state.lesson.sample, state.ruleMultiplier);
     if (state.running || !programStatus.canRun) return;
@@ -590,13 +502,14 @@ export function initPictureLessons({ root, onBackHome }) {
       feedback.classList.add("is-success");
       const useCount = state.lesson.repeatRuleTimes ? state.ruleMultiplier : state.runs;
       feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${useCount}回 つかった！</span>`;
-      showSuccessOverlay({ compact: repeating });
+      successOverlay.show();
     } else {
       feedback.classList.add("is-question");
       feedback.innerHTML = `<strong>${reviewQuestion}</strong><span>うごきを見て、カードのじゅんばんを考えよう。直して何度でもためせるよ。</span>`;
     }
     const result = root.querySelector("[data-picture-stage-result]");
     if (result) result.textContent = programStatus.isCorrect ? state.lesson.success : reviewQuestion;
+    return programStatus.isCorrect;
   }
 
   async function runRepeatedly() {
@@ -605,8 +518,10 @@ export function initPictureLessons({ root, onBackHome }) {
 
     state.looping = true;
     renderProgram();
+    let solved = false;
     while (state.looping) {
-      await runRule({ repeating: true });
+      solved = await runRule({ repeating: true });
+      if (solved) break;
       if (!state.looping) break;
       await sleep(260);
       if (!state.looping) break;
@@ -616,7 +531,12 @@ export function initPictureLessons({ root, onBackHome }) {
     state.looping = false;
     renderProgram();
     const feedback = root.querySelector("[data-picture-feedback]");
-    if (feedback) feedback.innerHTML = `<strong>くりかえしを とめたよ</strong><span>カードを なおして、また ためせます。</span>`;
+    if (feedback && solved) {
+      feedback.classList.add("is-success");
+      feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>正解したので、くりかえしを とめたよ。</span>`;
+    } else if (feedback) {
+      feedback.innerHTML = `<strong>くりかえしを とめたよ</strong><span>カードを なおして、また ためせます。</span>`;
+    }
   }
 
   function stopRepeating() {
@@ -624,7 +544,6 @@ export function initPictureLessons({ root, onBackHome }) {
     state.looping = false;
     state.running = false;
     root.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
-    root.querySelector("[data-picture-loop-success]")?.remove();
     renderProgram();
   }
 
@@ -1061,7 +980,7 @@ export function initPictureLessons({ root, onBackHome }) {
 
   upperLessons = initUpperPictureLessons({
     root,
-    onSuccess: ({ repeating = false, title = "" } = {}) => showSuccessOverlay({ compact: repeating, title })
+    onSuccess: ({ title = "" } = {}) => successOverlay.show({ title })
   });
   root.addEventListener("click", handleClick);
   root.addEventListener("pointerdown", handlePointerDown);

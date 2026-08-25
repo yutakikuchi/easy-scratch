@@ -80,13 +80,19 @@ const learningCopy = {
     ["📐", "変数で形を変える", "x・θ・nの数字を変え、線の長さ・角度・回数を調整します。"],
     ["⬡", "小さなルールで六角形を作る", "前へ進む、右へ曲がるを6回使って1つの形を作ります。"],
     ["🔁", "二重のくりかえしを使う", "できた六角形をさらにくりかえして、花の模様にします。"]
+  ],
+  "sort-robot": [
+    ["📦", "役割から分類条件を作る", "4つのレーンの設備と荷物のマークを読み、ルールを0から設計します。"],
+    ["🧩", "ANDで複合条件を作る", "われもので、しかも冷蔵のように、2つの条件が同時に成り立つ場合を表します。"],
+    ["🔢", "ルールの優先度を正しく決める", "荷物は左から右へ流れ、ルールは優先度1位の一番上から調べます。最初に一致したルールで行き先が決まります。"],
+    ["🔁", "少数テストから再利用する", "3個、例外を含む6個の順に確かめ、正しいルールを20個の仕事へ広げます。"]
   ]
 };
 
 export function upperLearningFocus(lessonId) {
   const items = learningCopy[lessonId] ?? learningCopy.rescue;
   return `
-    <section class="learning-focus" aria-label="この単元で学ぶこと">
+    <section class="learning-focus is-${escapeText(lessonId)}" aria-label="この単元で学ぶこと">
       <details open>
         <summary>ここから学ぶこと</summary>
         <div class="learning-focus-panel">

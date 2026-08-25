@@ -3,33 +3,34 @@ export const upperGridPaintConfig = {
   rows: 8,
   start: { column: 0, row: 5 },
   goal: { column: 16, row: 5 },
-  targetValues: { x: 2, y: 2, n: 4 },
+  initialCalls: [
+    { x: 1, y: 1 },
+    { x: 1, y: 1 },
+    { x: 1, y: 1 }
+  ],
+  targetCalls: [
+    { x: 2, y: 2 },
+    { x: 3, y: 1 },
+    { x: 3, y: 3 }
+  ],
   targetProgram: ["right", "up", "paint-blue", "right", "down", "paint-yellow"],
   targets: [
-    { column: 2, row: 3, color: "blue" },
-    { column: 4, row: 5, color: "yellow" },
-    { column: 6, row: 3, color: "blue" },
-    { column: 8, row: 5, color: "yellow" },
-    { column: 10, row: 3, color: "blue" },
-    { column: 12, row: 5, color: "yellow" },
-    { column: 14, row: 3, color: "blue" },
-    { column: 16, row: 5, color: "yellow" }
+    { column: 2, row: 3, color: "blue", callIndex: 0 },
+    { column: 4, row: 5, color: "yellow", callIndex: 0 },
+    { column: 7, row: 4, color: "blue", callIndex: 1 },
+    { column: 10, row: 5, color: "yellow", callIndex: 1 },
+    { column: 13, row: 2, color: "blue", callIndex: 2 },
+    { column: 16, row: 5, color: "yellow", callIndex: 2 }
   ],
   obstacles: [
     { column: 3, row: 5 },
-    { column: 7, row: 5 },
-    { column: 11, row: 5 },
-    { column: 15, row: 5 },
-    { column: 5, row: 3 },
-    { column: 9, row: 3 },
-    { column: 13, row: 3 },
+    { column: 8, row: 5 },
+    { column: 14, row: 5 },
     { column: 2, row: 2 },
-    { column: 6, row: 2 },
-    { column: 10, row: 2 },
-    { column: 14, row: 2 },
+    { column: 7, row: 3 },
+    { column: 13, row: 1 },
     { column: 4, row: 6 },
-    { column: 8, row: 6 },
-    { column: 12, row: 6 },
+    { column: 10, row: 6 },
     { column: 16, row: 6 }
   ]
 };
@@ -39,34 +40,34 @@ const clampInteger = (value, minimum, maximum) => {
   return Math.min(maximum, Math.max(minimum, Number.isFinite(number) ? number : minimum));
 };
 
-export function normalizeUpperGridPaintValues(values = {}) {
-  return {
-    x: clampInteger(values.x, 1, 4),
-    y: clampInteger(values.y, 1, 4),
-    n: clampInteger(values.n, 1, 4)
-  };
+export function normalizeUpperGridPaintCalls(calls = []) {
+  return calls.map((call = {}) => ({
+    x: clampInteger(call.x, 1, 4),
+    y: clampInteger(call.y, 1, 4)
+  }));
 }
 
-export function expandUpperGridPaintProgram(program, repeatCount) {
-  const repeats = clampInteger(repeatCount, 1, 4);
-  return Array.from({ length: repeats }, () => program).flat();
+export function expandUpperGridPaintProgram(program, calls) {
+  return normalizeUpperGridPaintCalls(calls).flatMap((values, callIndex) => (
+    program.map((command) => ({ command, callIndex, values: { ...values } }))
+  ));
 }
 
 function cellKey(column, row) {
   return `${column}:${row}`;
 }
 
-export function createUpperGridPaintState(program, values) {
-  const normalized = normalizeUpperGridPaintValues(values);
-  const expanded = expandUpperGridPaintProgram(program, normalized.n);
+export function createUpperGridPaintState(program, calls) {
+  const normalizedCalls = normalizeUpperGridPaintCalls(calls);
+  const expanded = expandUpperGridPaintProgram(program, normalizedCalls);
   const blocked = new Set(upperGridPaintConfig.obstacles.map(({ column, row }) => cellKey(column, row)));
   const position = { ...upperGridPaintConfig.start };
-  const route = [{ ...position, command: "start" }];
+  const route = [{ ...position, command: "start", callIndex: -1 }];
   const painted = [];
   let outcome = "running";
 
-  const move = (columnDelta, rowDelta, command) => {
-    const steps = command === "right" || command === "left" ? normalized.x : normalized.y;
+  const move = (columnDelta, rowDelta, command, values, callIndex) => {
+    const steps = command === "right" || command === "left" ? values.x : values.y;
     for (let step = 0; step < steps; step += 1) {
       const next = { column: position.column + columnDelta, row: position.row + rowDelta };
       const outside = next.column < 0 || next.column >= upperGridPaintConfig.columns || next.row < 0 || next.row >= upperGridPaintConfig.rows;
@@ -79,38 +80,58 @@ export function createUpperGridPaintState(program, values) {
         return false;
       }
       Object.assign(position, next);
-      route.push({ ...position, command });
+      route.push({ ...position, command, callIndex });
     }
     return true;
   };
 
-  for (const command of expanded) {
+  for (const { command, callIndex, values } of expanded) {
     if (outcome !== "running") break;
-    if (command === "right" && !move(1, 0, command)) break;
-    if (command === "left" && !move(-1, 0, command)) break;
-    if (command === "up" && !move(0, -1, command)) break;
-    if (command === "down" && !move(0, 1, command)) break;
+    if (command === "right" && !move(1, 0, command, values, callIndex)) break;
+    if (command === "left" && !move(-1, 0, command, values, callIndex)) break;
+    if (command === "up" && !move(0, -1, command, values, callIndex)) break;
+    if (command === "down" && !move(0, 1, command, values, callIndex)) break;
     if (command === "paint-blue" || command === "paint-yellow") {
-      painted.push({ ...position, color: command === "paint-blue" ? "blue" : "yellow" });
-      route.push({ ...position, command });
+      const color = command === "paint-blue" ? "blue" : "yellow";
+      painted.push({ ...position, color, callIndex });
+      route.push({ ...position, command, callIndex });
     }
   }
 
   if (outcome === "running") outcome = "complete";
-  return { values: normalized, expanded, route, painted, position, outcome };
+  return { calls: normalizedCalls, expanded, route, painted, position, outcome };
 }
 
-export function isUpperGridPaintCorrect(program, values) {
-  const result = createUpperGridPaintState(program, values);
-  if (result.outcome !== "complete") return false;
-  if (result.position.column !== upperGridPaintConfig.goal.column || result.position.row !== upperGridPaintConfig.goal.row) return false;
-  if (result.painted.length !== upperGridPaintConfig.targets.length) return false;
-  return result.painted.every((paint, index) => {
-    const target = upperGridPaintConfig.targets[index];
-    return paint.column === target.column && paint.row === target.row && paint.color === target.color;
-  });
+function samePaint(actual, target) {
+  return actual?.column === target?.column
+    && actual?.row === target?.row
+    && actual?.color === target?.color
+    && actual?.callIndex === target?.callIndex;
+}
+
+export function isUpperGridPaintPrefixCorrect(program, calls, callCount) {
+  const count = clampInteger(callCount, 1, upperGridPaintConfig.targetCalls.length);
+  const result = createUpperGridPaintState(program, calls.slice(0, count));
+  const target = createUpperGridPaintState(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetCalls.slice(0, count));
+  return result.outcome === "complete"
+    && result.position.column === target.position.column
+    && result.position.row === target.position.row
+    && result.painted.length === target.painted.length
+    && result.painted.every((paint, index) => samePaint(paint, target.painted[index]));
+}
+
+export function isUpperGridPaintCorrect(program, calls) {
+  return calls.length === upperGridPaintConfig.targetCalls.length
+    && isUpperGridPaintPrefixCorrect(program, calls, upperGridPaintConfig.targetCalls.length);
+}
+
+export function findUpperGridPaintMismatch(program, calls) {
+  for (let index = 0; index < upperGridPaintConfig.targetCalls.length; index += 1) {
+    if (!isUpperGridPaintPrefixCorrect(program, calls, index + 1)) return index;
+  }
+  return -1;
 }
 
 export function createUpperGridPaintTargetState() {
-  return createUpperGridPaintState(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetValues);
+  return createUpperGridPaintState(upperGridPaintConfig.targetProgram, upperGridPaintConfig.targetCalls);
 }

@@ -1,8 +1,8 @@
 import {
-  createCompositeRuleBatch,
+  createPaperCheckCompositeRuleBatch,
   formatCalculationDuration,
   summarizeCompositeRuleBatch
-} from "./calculation.js";
+} from "./calculation.js?v=20260825g";
 
 const MAX_RESULT_COUNT = 100;
 const INITIAL_RESULT_COUNT = 3;
@@ -202,7 +202,9 @@ export function initUpperCalculationMachine({ onBack } = {}) {
     elements.upperRunButton.disabled = !isBuilt;
     elements.upperRunButton.textContent = `${state.repeatCount}回計算する`;
     elements.upperRunHint.textContent = isBuilt
-      ? `ランダムな数字を入れて${state.repeatCount}回実行します`
+      ? (state.repeatCount <= INITIAL_RESULT_COUNT
+        ? `紙の問題と同じ数字を${state.repeatCount}組入れて実行します`
+        : "最初の3問は紙と同じ数字、4問目から別の数字を使います")
       : "はじめにルールを作ろう";
     renderRuleSlots();
   }
@@ -336,7 +338,7 @@ export function initUpperCalculationMachine({ onBack } = {}) {
     elements.upperRunHint.textContent = "結果が次々に表示されます";
 
     const startedAt = performance.now();
-    state.rows = createCompositeRuleBatch(state.builtRule, state.repeatCount);
+    state.rows = createPaperCheckCompositeRuleBatch(state.builtRule, state.repeatCount);
     state.summary = summarizeCompositeRuleBatch(state.rows);
     elements.upperTime.textContent = formatUpperDuration(performance.now() - startedAt);
     renderSummary();

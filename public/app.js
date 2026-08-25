@@ -3,10 +3,10 @@ import {
   calculateCorrectCount,
   calculationLessons,
   isCalculationComplete
-} from "./calculation.js";
-import { initLowerCalculationMachine } from "./lower-machine.js?v=20260718c";
+} from "./calculation.js?v=20260825g";
+import { initLowerCalculationMachine } from "./lower-machine.js?v=20260825g";
 import { initPictureLessons } from "./picture-lessons.js?v=20260825f";
-import { initUpperCalculationMachine } from "./upper-machine.js?v=20260718c";
+import { initUpperCalculationMachine } from "./upper-machine.js?v=20260825g";
 
 const lessons = {
   lower: {

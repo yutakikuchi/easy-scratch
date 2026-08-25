@@ -1,9 +1,9 @@
 export const calculationLessons = {
   lower: {
     questions: [
-      { formula: "1+1+1+1+1+1+1", answer: 7, choices: [6, 7, 8] },
-      { formula: "2+2+2+2", answer: 8, choices: [6, 8, 10] },
-      { formula: "3+1+3+1", answer: 8, choices: [6, 7, 8] }
+      { formula: "3+4", answer: 7, choices: [6, 7, 8] },
+      { formula: "7+2", answer: 9, choices: [8, 9, 10] },
+      { formula: "5+6", answer: 11, choices: [10, 11, 12] }
     ],
     copy: {
       eyebrow: "おなじ けいさんを やってみよう",
@@ -30,9 +30,9 @@ export const calculationLessons = {
   },
   upper: {
     questions: [
-      { formula: "12+8+12+8+12+8", answer: 60 },
-      { formula: "25+25+25+25", answer: 100 },
-      { formula: "7+3+7+3+7+3", answer: 30 },
+      { formula: "3×4+2", answer: 14 },
+      { formula: "6×2+5", answer: 17 },
+      { formula: "8×3+7", answer: 31 },
       { formula: "14+6+14+6+14+6", answer: 60 },
       { formula: "30+20+30+20", answer: 100 }
     ],
@@ -60,6 +60,19 @@ export const calculationLessons = {
     }
   }
 };
+
+export const PAPER_CALCULATION_INPUTS = Object.freeze({
+  lower: Object.freeze([
+    Object.freeze({ circle: 3, triangle: 4 }),
+    Object.freeze({ circle: 7, triangle: 2 }),
+    Object.freeze({ circle: 5, triangle: 6 })
+  ]),
+  upper: Object.freeze([
+    Object.freeze({ a: 3, b: 4, c: 2 }),
+    Object.freeze({ a: 6, b: 2, c: 5 }),
+    Object.freeze({ a: 8, b: 3, c: 7 })
+  ])
+});
 
 export function calculateCorrectCount(questions, answers) {
   return questions.reduce((count, question, index) => (
@@ -108,18 +121,15 @@ function validateRule(rule) {
   }
 }
 
-export function createRuleBatch(rule, count = 100, random = Math.random) {
-  validateRule(rule);
-  validateCount(count);
-  if (typeof random !== "function") {
-    throw new TypeError("random must be a function");
-  }
-
+function createRuleBatchRows(rule, count, random, presetInputs = []) {
   return Array.from({ length: count }, (_, index) => {
-    let leftValue = randomDigit(random);
-    let rightValue = rule.rightSymbol === rule.leftSymbol
-      ? leftValue
-      : randomDigit(random);
+    const preset = presetInputs[index];
+    const values = {};
+    [rule.leftSymbol, rule.rightSymbol].forEach((symbol) => {
+      if (!(symbol in values)) values[symbol] = preset?.[symbol] ?? randomDigit(random);
+    });
+    let leftValue = values[rule.leftSymbol];
+    let rightValue = values[rule.rightSymbol];
     if (rule.operator === "subtract" && rightValue > leftValue) {
       [leftValue, rightValue] = [rightValue, leftValue];
     }
@@ -133,6 +143,26 @@ export function createRuleBatch(rule, count = 100, random = Math.random) {
       square: rule.operator === "subtract" ? leftValue - rightValue : leftValue + rightValue
     };
   });
+}
+
+export function createRuleBatch(rule, count = 100, random = Math.random) {
+  validateRule(rule);
+  validateCount(count);
+  if (typeof random !== "function") {
+    throw new TypeError("random must be a function");
+  }
+
+  return createRuleBatchRows(rule, count, random);
+}
+
+export function createPaperCheckRuleBatch(rule, count = 100, random = Math.random) {
+  validateRule(rule);
+  validateCount(count);
+  if (typeof random !== "function") {
+    throw new TypeError("random must be a function");
+  }
+
+  return createRuleBatchRows(rule, count, random, PAPER_CALCULATION_INPUTS.lower);
 }
 
 function validateCompositeRule(rule) {
@@ -169,17 +199,12 @@ export function evaluateCompositeRule(rule, values) {
   return applyOperator(firstResult, rule.secondOperator, third);
 }
 
-export function createCompositeRuleBatch(rule, count = 100, random = Math.random) {
-  validateCompositeRule(rule);
-  validateCount(count);
-  if (typeof random !== "function") {
-    throw new TypeError("random must be a function");
-  }
-
+function createCompositeRuleBatchRows(rule, count, random, presetInputs = []) {
   return Array.from({ length: count }, (_, index) => {
+    const preset = presetInputs[index];
     const values = {};
     [rule.firstSymbol, rule.secondSymbol, rule.thirdSymbol].forEach((symbol) => {
-      if (!(symbol in values)) values[symbol] = randomDigit(random);
+      if (!(symbol in values)) values[symbol] = preset?.[symbol] ?? randomDigit(random);
     });
     return {
       index: index + 1,
@@ -188,6 +213,26 @@ export function createCompositeRuleBatch(rule, count = 100, random = Math.random
       result: evaluateCompositeRule(rule, values)
     };
   });
+}
+
+export function createCompositeRuleBatch(rule, count = 100, random = Math.random) {
+  validateCompositeRule(rule);
+  validateCount(count);
+  if (typeof random !== "function") {
+    throw new TypeError("random must be a function");
+  }
+
+  return createCompositeRuleBatchRows(rule, count, random);
+}
+
+export function createPaperCheckCompositeRuleBatch(rule, count = 100, random = Math.random) {
+  validateCompositeRule(rule);
+  validateCount(count);
+  if (typeof random !== "function") {
+    throw new TypeError("random must be a function");
+  }
+
+  return createCompositeRuleBatchRows(rule, count, random, PAPER_CALCULATION_INPUTS.upper);
 }
 
 export function summarizeCompositeRuleBatch(rows) {

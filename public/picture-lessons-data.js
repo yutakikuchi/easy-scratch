@@ -84,10 +84,10 @@ export const pictureLessons = {
   upper: [
     {
       id: "grid-lab",
-      title: "変数つきルール・ラボ",
-      shortTitle: "値を変えて同じルールを再利用する",
-      description: "ルール(x, y)を1つ作り、呼び出すたびに違う値を渡して3つの形をぬろう",
-      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint-v2.svg",
+      title: "ルールを部品にしよう",
+      shortTitle: "6枚の命令を1つのルールにまとめ、x・yを変えて3回使う",
+      description: "6枚の命令を1つのルール(x, y)にまとめ、x・yの値を変えて3つの形をぬろう",
+      thumbnail: "./assets/picture-lessons/mock-upper-grid-paint-v2.svg?v=20260825f",
       stageType: "upper-grid-paint",
       sprite: "./assets/robot-mascot.png"
     },

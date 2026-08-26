@@ -1,6 +1,6 @@
-import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260825f";
+import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260826c";
 import { createPictureSuccessOverlay } from "./picture-success-overlay.js?v=20260825e";
-import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260825e";
+import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260826c";
 import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260718p";
 import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";
 export { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat };
@@ -264,9 +264,9 @@ export function initPictureLessons({ root, onBackHome }) {
         ["🔁", "まとまりを くりかえす", "4つの めいれいを 1つの まとまりにして、2かい つかう かんがえかたを まなびます。"]
       ],
       paint: [
-        ["🚗", "むきと まえへ すすむを わける", "みぎを むく、まっすぐ すすむ、いろを かえるを べつべつの めいれいにします。"],
-        ["🎨", "おなじ ルールで かたちを つくる", "おなじ うごきを くりかえして、せんと いろで かたちを つくります。"],
-        ["🔁", "みじかい めいれいを なんども つかう", "おなじ まとまりを なんども つかうと、ながい てじゅんを みじかく できます。"]
+        ["🚗", "むきと まえへ すすむを わける", "みぎを むくと、まっすぐ すすむを べつべつの めいれいにします。"],
+        ["🎨", "せんで しかくを つくる", "すすむと みぎを むくを じゅんばんに つかい、4ほんの せんを つなぎます。"],
+        ["🏁", "もとの ばしょへ もどす", "さいごは みぎを むかずに すすみ、くるまを はじめの ばしょへ もどします。"]
       ]
     };
     const items = copyByType[lesson.stageType] ?? copyByType.jump;
@@ -493,6 +493,7 @@ export function initPictureLessons({ root, onBackHome }) {
       : `<strong>1かい うごかしているよ</strong><span>つくったルールを、はじめから おわりまで ためします。</span>`;
     const startedAt = performance.now();
     await animateLesson(programStatus.isCorrect);
+    if (repeating && !state.looping) return false;
     const elapsed = Math.max(0.1, (performance.now() - startedAt) / 1000);
     state.running = false;
     state.runs += 1;
@@ -502,7 +503,7 @@ export function initPictureLessons({ root, onBackHome }) {
       feedback.classList.add("is-success");
       const useCount = state.lesson.repeatRuleTimes ? state.ruleMultiplier : state.runs;
       feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${useCount}回 つかった！</span>`;
-      successOverlay.show();
+      if (!repeating) successOverlay.show();
     } else {
       feedback.classList.add("is-question");
       feedback.innerHTML = `<strong>${reviewQuestion}</strong><span>うごきを見て、カードのじゅんばんを考えよう。直して何度でもためせるよ。</span>`;
@@ -519,9 +520,10 @@ export function initPictureLessons({ root, onBackHome }) {
     state.looping = true;
     renderProgram();
     let solved = false;
+    let solvedOnce = false;
     while (state.looping) {
       solved = await runRule({ repeating: true });
-      if (solved) break;
+      if (solved) solvedOnce = true;
       if (!state.looping) break;
       await sleep(260);
       if (!state.looping) break;
@@ -531,9 +533,10 @@ export function initPictureLessons({ root, onBackHome }) {
     state.looping = false;
     renderProgram();
     const feedback = root.querySelector("[data-picture-feedback]");
-    if (feedback && solved) {
+    if (feedback && solvedOnce) {
       feedback.classList.add("is-success");
       feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>正解したので、くりかえしを とめたよ。</span>`;
+      successOverlay.show();
     } else if (feedback) {
       feedback.innerHTML = `<strong>くりかえしを とめたよ</strong><span>カードを なおして、また ためせます。</span>`;
     }
@@ -676,7 +679,7 @@ export function initPictureLessons({ root, onBackHome }) {
         }
       })
       : [];
-    await Promise.all([animation.finished.catch(() => {}), ...hitAnimations, ...bubbleAnimations]);
+    await animation.finished.catch(() => {});
   }
 
   function buildTrialKeyframes() {

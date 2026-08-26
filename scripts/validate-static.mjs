@@ -143,16 +143,35 @@ const firebaseProject = await readFile(resolve(root, ".firebaserc"), "utf8");
 const firebaseWebConfig = await readFile(resolve(root, "public/firebase-config.js"), "utf8");
 const worksheetPdf = await readFile(resolve(root, "public/downloads/easy-scratch-paper-worksheet.pdf"));
 
+function parseJsonLd(source) {
+  return [...source.matchAll(/<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/g)]
+    .map((match) => JSON.parse(match[1]));
+}
+
+const [mainStructuredData] = parseJsonLd(html);
+const [teacherStructuredData] = parseJsonLd(teacherHtml);
+const mainStructuredEntities = mainStructuredData?.["@graph"] ?? [];
+const websiteEntity = mainStructuredEntities.find((entity) => entity["@type"] === "WebSite");
+const applicationEntity = mainStructuredEntities.find((entity) => entity["@type"] === "EducationalApplication");
+
 const checks = [
   [html.includes('<html lang="ja" class="app-booting">') && html.includes("html.app-booting .app-shell"), "index.html must hide the app shell until the initial route is rendered"],
   [html.includes('<meta name="google-site-verification" content="4uWqOSuc1HK9pgBXOPjcPo1zA-f_qw45g-RXriotwAY">'), "index.html must include Google site verification metadata"],
-  [html.includes('<script type="module" src="./i18n.js?v=20260825h"></script>') && html.includes('<script type="module" src="./app.js?v=20260825g"></script>'), "index.html must load internationalization before app.js"],
+  [html.includes('<script type="module" src="./i18n.js?v=20260826b"></script>') && html.includes('<script type="module" src="./app.js?v=20260825g"></script>'), "index.html must load internationalization before app.js"],
+  [teacherHtml.includes('<script type="module" src="./i18n.js?v=20260826b"></script>'), "teacher.html must load the current internationalization bundle"],
   [html.includes('property="og:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"') && html.includes('name="twitter:image" content="https://easy-scratch.web.app/assets/picture-lessons/mock-lower-fish.png"'), "social previews must use the Fish Dance cover image"],
   [html.includes('<link rel="stylesheet" href="./program.css?v=20260716c">'), "index.html must load the versioned program.css"],
   [html.includes('<link rel="stylesheet" href="./calculation.css">'), "index.html must load calculation.css"],
-  [html.includes('<link rel="stylesheet" href="./home.css?v=20260826a">'), "index.html must load the versioned home.css"],
+  [html.includes('<link rel="stylesheet" href="./home.css?v=20260826b">'), "index.html must load the versioned home.css"],
   [html.includes('<link rel="stylesheet" href="./learning-focus.css?v=20260718b">'), "index.html must load the expandable learning-focus styles"],
   [html.includes("プログラミングで おぼえる 3つのこと") && html.includes("小さく ルールを かくにんする") && html.includes("少ない くりかえしで ためす") && html.includes("大きな 数の くりかえし"), "TOP intro must describe rule creation, small verification, and larger repetition"],
+  [html.includes("<title>Eash-Scratch（Eash Scratch）｜小学生向けスクラッチ・プログラミング教材</title>"), "TOP title must identify the Eash-Scratch brand and Scratch-related learning intent"],
+  [html.includes('<link rel="canonical" href="https://easy-scratch.web.app/">') && html.includes('name="robots" content="index, follow'), "TOP must declare its canonical URL and indexing policy"],
+  [html.includes('property="og:site_name" content="Eash-Scratch"') && html.includes('property="og:title" content="Eash-Scratch（Eash Scratch）'), "social metadata must consistently identify the site brand and alternate spelling"],
+  [html.includes('class="home-brand-name">Eash-Scratch <span>（Eash Scratch）</span>') && homeCss.includes(".home-brand-name"), "TOP must visibly identify both Eash-Scratch brand spellings"],
+  [websiteEntity?.name === "Eash-Scratch" && websiteEntity?.alternateName === "Eash Scratch" && websiteEntity?.url === "https://easy-scratch.web.app/", "WebSite structured data must declare the preferred and alternate site names"],
+  [applicationEntity?.name === "Eash-Scratch" && applicationEntity?.description?.includes("Scratch（スクラッチ）") && applicationEntity?.teaches?.includes("ルールの再利用"), "EducationalApplication structured data must describe the product and learning outcomes"],
+  [teacherHtml.includes('<link rel="canonical" href="https://easy-scratch.web.app/teacher.html">') && teacherHtml.includes("Eash-Scratch（Eash Scratch）スクラッチ導入教材") && teacherStructuredData?.["@type"] === "AboutPage", "teacher guide must provide canonical, branded metadata and AboutPage structured data"],
   [html.includes('class="home-download"') && html.includes('href="./downloads/easy-scratch-paper-worksheet.pdf" download type="application/pdf"'), "TOP must provide a direct printable worksheet PDF download below the grade cards"],
   [homeCss.includes(".home-download-button") && homeCss.includes(".home-download-preview"), "the printable worksheet download must have a responsive, touch-friendly design"],
   [homeCss.includes("@media (min-width: 621px) and (max-width: 1366px)") && homeCss.includes("padding-top: 72px;"), "iPad layouts must reserve space above the home title for the language switcher"],
@@ -352,9 +371,9 @@ const checks = [
   [!pictureLessonsJs.includes("compact: repeating") && !html.includes("picture-loop-success.css"), "repeated lessons must use the same large final success announcement"],
   [html.includes('<link rel="icon" href="./favicon.svg" type="image/svg+xml">') && teacherHtml.includes('<link rel="icon" href="./favicon.svg" type="image/svg+xml">'), "all pages must use the robot favicon"],
   [html.includes("講師の方へ") && html.includes("GitHub Issuesで連絡") && html.includes("https://github.com/yutakikuchi/easy-scratch/issues/new/choose"), "the TOP footer must link to the instructor guide and easy-scratch issue forms"],
-  [html.includes("© 2026 菊池佑太") && html.includes("利用端末：iPad Pro") && html.includes("ブラウザ：Safari") && html.includes("Scratchにつながる") && html.includes("この教材は授業で再利用できます"), "the TOP footer must identify the creator, purpose, device, browser, and reuse terms"],
+  [html.includes("© 2026 菊池佑太") && html.includes("利用端末：iPad Pro") && html.includes("ブラウザ：Safari") && html.includes("Eash-Scratch（Eash Scratch）は、Scratch（スクラッチ）につながる") && html.includes("この教材は授業で再利用できます"), "the TOP footer must identify the creator, product, purpose, device, browser, and reuse terms"],
   [html.includes('property="og:title"') && html.includes('mock-lower-fish.png') && html.includes('"@type": "EducationalApplication"'), "the app must provide SEO/AEO metadata and a share image"],
-  [sitemapXml.includes("https://easy-scratch.web.app/?grade=lower&amp;page=program&amp;lesson=fish") && sitemapXml.includes("https://easy-scratch.web.app/?grade=upper&amp;page=program&amp;lesson=pattern&amp;lang=en"), "sitemap.xml must list Japanese and English lesson URLs"],
+  [sitemapXml.includes("https://easy-scratch.web.app/</loc>") && sitemapXml.includes("https://easy-scratch.web.app/teacher.html</loc>") && !sitemapXml.includes("?grade=") && (sitemapXml.match(/<loc>/g) ?? []).length === 2, "sitemap.xml must list only the two canonical, indexable pages"],
   [robotsTxt.includes("Sitemap: https://easy-scratch.web.app/sitemap.xml"), "robots.txt must advertise the sitemap URL"],
   [!html.includes("localStorage") && !js.includes("localStorage") && !lowerMachineJs.includes("localStorage") && !upperMachineJs.includes("localStorage") && !pictureLessonsJs.includes("localStorage") && !upperPictureLessonsJs.includes("localStorage"), "the app must not persist learner state in localStorage"],
   [js.includes("elements.siteFooter.hidden = !isHome"), "copyright and reuse links must only be visible on TOP"],

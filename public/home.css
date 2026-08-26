@@ -172,6 +172,21 @@ body[data-page="home"] .workspace {
   mix-blend-mode: multiply;
 }
 
+.home-brand-name {
+  display: block;
+  margin-bottom: 7px;
+  color: #2589db;
+  font-size: clamp(15px, 1.4vw, 19px);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+.home-brand-name span {
+  font-size: 0.78em;
+  letter-spacing: 0.02em;
+}
+
 .home-hero h1 {
   margin: 0;
   font-size: clamp(36px, 4.3vw, 56px);

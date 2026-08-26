@@ -1,4 +1,4 @@
-import { ENGLISH_PATTERNS, ENGLISH_TEXT } from "./i18n-en.js?v=20260825h";
+import { ENGLISH_PATTERNS, ENGLISH_TEXT } from "./i18n-en.js?v=20260826b";
 
 const JAPANESE_PATTERN = /[ぁ-んァ-ヶ一-龠々]/;
 const textRecords = new WeakMap();

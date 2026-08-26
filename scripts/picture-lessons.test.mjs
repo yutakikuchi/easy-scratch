@@ -159,15 +159,16 @@ assert.deepEqual(createGridPaintState(["cell-right", "cell-right", "cell-right"]
 const paintLesson = findPictureLesson("lower", "paint");
 assert.equal(paintLesson.actions.length, 4, "paint must provide at least four action choices");
 assert.equal(paintLesson.actions.some(({ id }) => id === "color"), false, "paint must use one line color without a color action");
-assert.equal(paintLesson.sample.length, 8, "a square must require four moves and four turns");
-assert.equal(getPictureProgramStatus(paintLesson.builderSample, paintLesson.sample, 4).isCorrect, true, "a two-command paint rule repeated x4 must draw the square");
-assert.equal(paintLesson.sample.at(-1), "turn", "the square rule must finish by returning the car to its starting direction");
-assert.ok(paintLesson.description.includes("さいごにも みぎを むこう"), "the paint goal must explicitly ask for the final turn");
+assert.equal(paintLesson.sample.length, 7, "returning to the starting place must require four moves and only three turns");
+assert.equal(getPictureProgramStatus(paintLesson.sample, paintLesson.sample).isCorrect, true, "the seven-card route must solve the drawing lesson");
+assert.equal(getPictureProgramStatus([...paintLesson.sample, "turn"], paintLesson.sample).isCorrect, false, "an unnecessary final turn must not be required or accepted");
+assert.equal(paintLesson.sample.at(-1), "forward", "the square rule must finish by moving the car back to its starting place");
+assert.ok(paintLesson.description.includes("もとの ばしょへ もどそう"), "the paint goal must explicitly ask to return the car to its starting place");
 const halfSquareRoute = getPaintRoute(["forward", "turn", "forward", "turn"], 1000, 500);
 assert.deepEqual(halfSquareRoute.at(-1), { x: 250, y: 250, rotation: 180, color: "#2289df", draws: false, offset: 1 });
 const squareRoute = getPaintRoute(paintLesson.sample, 1000, 500);
 assert.equal(squareRoute.filter(({ draws }) => draws).length, 4, "the complete paint rule must draw four sides");
-assert.deepEqual(squareRoute.at(-1), { x: 0, y: 0, rotation: 0, color: "#2289df", draws: false, offset: 1 });
+assert.deepEqual(squareRoute.at(-1), { x: 0, y: 0, rotation: 270, color: "#2289df", draws: true, offset: 1 });
 
 const singleJumpRoute = getMovementRoute("jump", ["jump"], 1000, 500);
 assert.equal(singleJumpRoute.length, 25);

@@ -105,7 +105,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     lesson: null,
     kind: null,
     running: false,
-    looping: false,
+    looping: false, repeatSucceeded: false,
     runToken: 0,
     hasRun: false,
     rescue: {
@@ -122,6 +122,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.kind = lesson.id;
     state.running = false;
     state.looping = false;
+    state.repeatSucceeded = false;
     state.runToken += 1;
     state.hasRun = false;
     state.rescue = { values: { ...rescueInitialValues }, program: [], repeatCount: 1 };
@@ -650,11 +651,10 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = true;
     setBusy(false);
     const correct = isRescueCorrect(state.rescue.program, state.rescue.values, state.rescue.repeatCount);
+    state.repeatSucceeded = correct;
     if (correct) {
-      state.looping = false;
-      updateRepeatButton();
       showFeedback("正解！くりかえしで1〜6を取れました", "5枚の移動ルールを3回使って、15回の移動を短い仕組みにできました。", "is-success");
-      onSuccess();
+      if (!state.looping) onSuccess();
     } else {
       showFeedback("1〜6を順番に取れたかな？", "白い点線と赤い線、座標の差を見て、5枚の順番・数・回数を直そう。", "is-question");
     }
@@ -762,12 +762,12 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = true;
     setBusy(false);
     drawPattern();
-    if (isPatternCorrect(state.pattern)) {
-      state.looping = false;
-      updateRepeatButton();
+    const correct = isPatternCorrect(state.pattern);
+    state.repeatSucceeded = correct;
+    if (correct) {
       showFeedback("正解！六角形の花ができました", `「前へ${state.pattern.distance} → 右へ60°」で六角形を作り、その六角形をn=6回かきました。`, "is-success");
-      onSuccess();
-      return false;
+      if (!state.looping) onSuccess();
+      return true;
     } else if (state.pattern.angle === patternTarget.angle) {
       showFeedback(`六角形を${state.pattern.count}個かけました`, `nを6にすると、向きを変えながら六角形を6個かいて花になります。`, "is-question");
     } else {
@@ -832,13 +832,12 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     const missingProgram = state.kind === "rescue" && state.rescue.program.length === 0;
     if (state.running || missingProgram) return;
     state.looping = true;
+    state.repeatSucceeded = false;
     setBusy(false);
-    let completedRuns = 0;
     while (state.looping) {
       const completed = state.kind === "rescue"
         ? await runRescue()
         : await runPattern();
-      completedRuns += 1;
       if (!completed || !state.looping) break;
       await wait(320);
       if (!state.looping) break;
@@ -853,6 +852,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
 
   function stopRepeating() {
     if (!state.looping) return;
+    const succeeded = state.repeatSucceeded;
     state.looping = false;
     state.runToken += 1;
     state.running = false;
@@ -861,6 +861,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = false;
     window.requestAnimationFrame(drawCurrentLesson);
     showFeedback("繰り返しを止めました", "数やルールを直して、また何度でも試せます。");
+    if (succeeded) onSuccess();
   }
 
   function handleAdjust(button) {

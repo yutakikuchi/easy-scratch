@@ -255,116 +255,72 @@
   z-index: 20000;
   display: grid;
   place-items: center;
-  overflow: hidden;
-  background: rgba(13, 42, 99, 0);
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.12);
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
-  font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", ui-rounded, sans-serif;
+  font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
 }
-
 .picture-success-overlay.is-visible {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
-  background: rgba(13, 42, 99, 0.38);
   cursor: pointer;
   touch-action: manipulation;
 }
-
 .picture-success-message {
-  position: relative;
-  z-index: 2;
+  box-sizing: border-box;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(100%, 340px);
+  padding: 24px 20px;
+  border: 1px solid #dce5df;
+  border-radius: 18px;
+  background: #fff;
+  color: #263b32;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+.picture-success-overlay.is-visible .picture-success-message {
+  animation: picture-success-pop 220ms ease-out both;
+}
+.picture-success-message > span {
   display: grid;
   place-items: center;
-  width: min(92vw, 820px);
-  padding: clamp(20px, 4vw, 56px);
-  border: clamp(6px, 1vw, 12px) solid #fff;
-  border-radius: clamp(32px, 6vw, 72px);
-  background: #ffcf33;
-  color: #0d2a63;
-  box-shadow: 0 18px 0 #ef9f00, 0 30px 70px rgba(13, 42, 99, 0.36);
-  text-align: center;
-  opacity: 1;
-  transform: scale(1);
-  transform-origin: center;
-  animation: picture-success-pop 560ms cubic-bezier(0.2, 0.9, 0.25, 1.2) both;
-}
-
-.picture-success-message > span {
-  font-size: clamp(54px, 10vw, 108px);
-  line-height: 0.9;
-}
-
-.picture-success-message strong {
-  font-size: clamp(38px, 11vw, 132px);
-  font-weight: 1000;
-  letter-spacing: 0.02em;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #edf5ef;
+  color: #34734c;
+  font-size: 40px;
   line-height: 1;
-  white-space: nowrap;
-  word-break: keep-all;
-  text-shadow: 0 5px 0 #fff;
 }
-
+.picture-success-message strong {
+  max-width: 100%;
+  font-size: clamp(32px, 7vw, 40px);
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
 .picture-success-message small {
-  margin-top: 12px;
-  font-size: clamp(20px, 3.2vw, 38px);
-  font-weight: 1000;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #526159;
 }
-
 .picture-success-message em {
-  margin-top: 16px;
-  padding: 8px 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
-  font-size: clamp(16px, 2.2vw, 26px);
+  margin-top: 4px;
+  font-size: 13px;
   font-style: normal;
-  font-weight: 900;
+  color: #67736b;
 }
-
-.picture-success-burst {
-  position: absolute;
-  inset: 0;
-}
-
-.picture-success-burst span {
-  position: absolute;
-  color: #fff;
-  font-size: clamp(42px, 8vw, 94px);
-  font-weight: 1000;
-  animation: picture-success-spark 2300ms ease-out both;
-}
-
-.picture-success-burst span:nth-child(1) { top: 8%; left: 10%; }
-.picture-success-burst span:nth-child(2) { top: 18%; right: 12%; color: #ffcf33; animation-delay: 80ms; }
-.picture-success-burst span:nth-child(3) { right: 8%; bottom: 12%; animation-delay: 140ms; }
-.picture-success-burst span:nth-child(4) { bottom: 8%; left: 16%; color: #ff5b69; animation-delay: 200ms; }
-.picture-success-burst span:nth-child(5) { top: 42%; left: 3%; color: #54c46a; animation-delay: 110ms; }
-.picture-success-burst span:nth-child(6) { top: 5%; left: 48%; color: #58b8ee; animation-delay: 170ms; }
-
-@keyframes picture-success-screen {
-  0% { opacity: 0; background-color: rgba(13, 42, 99, 0); }
-  12%, 74% { opacity: 1; background-color: rgba(13, 42, 99, 0.38); }
-  100% { opacity: 0; background-color: rgba(13, 42, 99, 0); }
-}
-
 @keyframes picture-success-pop {
-  0% { opacity: 0; transform: scale(0.3) rotate(-7deg); }
-  72% { opacity: 1; transform: scale(1.08) rotate(2deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0); }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-@keyframes picture-success-spark {
-  0% { opacity: 0; transform: translateY(45px) scale(0.2) rotate(0); }
-  22%, 70% { opacity: 1; transform: translateY(0) scale(1) rotate(18deg); }
-  100% { opacity: 0; transform: translateY(-30px) scale(1.25) rotate(42deg); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .picture-success-message,
-  .picture-success-burst span {
-    animation: none;
-  }
+  .picture-success-overlay.is-visible .picture-success-message { animation: none; }
 }
 
 @keyframes picture-jump-pop {

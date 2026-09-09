@@ -52,6 +52,7 @@
     <link rel="stylesheet" href="./site-footer.css?v=20260718f">
     <link rel="stylesheet" href="./i18n.css?v=20260718b">
     <link rel="stylesheet" href="./smartphone.css?v=20260718a">
+    <link rel="stylesheet" href="./screen-refresh.css?v=20260909a">
   </head>
   <body>
     <main class="app-shell">
@@ -61,46 +62,10 @@
             <img src="./assets/home-sun.png" alt="" aria-hidden="true">
             <div>
               <strong class="home-brand-name">Eash-Scratch <span>（Eash Scratch）</span></strong>
-              <h1 id="homeTitle">はじめてのプログラミングにちょうせん</h1>
-              <p>がくねんを えらんでね</p>
+              <h1 id="homeTitle">つくって、うごかして、ためそう。</h1>
+              <p>がくねんと あそびを えらんでね</p>
             </div>
           </header>
-
-          <section class="home-intro" aria-labelledby="homeIntroTitle">
-            <div class="home-intro-heading">
-              <h2 id="homeIntroTitle">まず はじめに</h2>
-              <div>
-                <strong>プログラミングで おぼえる 3つのこと</strong>
-                <p>つくる → 小さく かくにん → くりかえす</p>
-              </div>
-            </div>
-            <ol>
-              <li>
-                <span>1</span>
-                <div>
-                  <strong>ルールを つくる</strong>
-                  <p>けいさんや えの うごきを、じぶんで きめよう。</p>
-                  <small>○＋△＝□ ／ みぎへ すすむ</small>
-                </div>
-              </li>
-              <li>
-                <span>2</span>
-                <div>
-                  <strong>小さく ルールを かくにんする</strong>
-                  <p>できたルールを すこしだけ じっこうして、あっているか見るよ。</p>
-                <small>まずは 少ない くりかえしで ためす</small>
-                </div>
-              </li>
-              <li>
-                <span>3</span>
-                <div>
-                  <strong>なんども つかう</strong>
-                  <p>あっていたら、大きな 数の くりかえしでも ためせるよ。</p>
-                  <small>少ない回数 → 大きな回数へ すすむ</small>
-                </div>
-              </li>
-            </ol>
-          </section>
 
           <section class="home-grade home-grade-lower" aria-labelledby="lowerGradeTitle">
             <div class="home-grade-intro">
@@ -115,7 +80,7 @@
               <strong>けいさん</strong>
             </a>
             <a class="home-course home-course-program" href="?grade=lower&amp;page=program">
-              <img src="./assets/picture-lessons/mock-lower-jump.webp" alt="ジャンプする絵の動き" decoding="async">
+              <img src="./assets/lower-mascot.png" alt="ジャンプする絵の動き" decoding="async">
               <strong>えを うごかす</strong>
             </a>
           </section>
@@ -133,9 +98,18 @@
               <strong>計算</strong>
             </a>
             <a class="home-course home-course-program" href="?grade=upper&amp;page=program">
-              <img src="./assets/picture-lessons/mock-upper-rescue.webp" alt="座標にそって動くロボット" loading="lazy" decoding="async">
+              <img src="./assets/hub/kick.png" alt="座標にそって動くロボット" loading="lazy" decoding="async">
               <strong>絵を動かす</strong>
             </a>
+          </section>
+
+          <section class="home-intro" aria-labelledby="homeIntroTitle">
+            <h2 id="homeIntroTitle">プログラミングで おぼえる 3つのこと</h2>
+            <ol>
+              <li><span>1</span><strong>ルールを つくる</strong></li>
+              <li><span>2</span><strong>すこし ためす</strong></li>
+              <li><span>3</span><strong>くりかえす</strong></li>
+            </ol>
           </section>
 
           <section class="home-download" aria-labelledby="paperWorksheetTitle">
@@ -179,7 +153,7 @@
               <h1>けいさんマシンを つくろう</h1>
             </header>
             <section class="learning-focus" aria-label="ここから まなぶこと">
-              <details open>
+              <details>
                 <summary>ここから まなぶこと</summary>
                 <div class="learning-focus-panel">
                   <div class="learning-focus-item"><span aria-hidden="true">🧩</span><strong>けいさんの ルールを つくる</strong><p>○・△・＋・−を くみあわせて、じぶんの けいさんマシンを つくります。</p></div>
@@ -195,7 +169,7 @@
                   <span class="machine-step machine-step-yellow">1</span>
                   <h2 id="machineRuleTitle">ルールを つくる</h2>
                 </div>
-                <p class="rule-builder-help">カードを ゆびで はこんで、わくに いれよう</p>
+                <p class="rule-builder-help">カードを タップして ならべよう</p>
                 <div class="rule-token-tray" id="ruleTokenTray" aria-label="ルールに つかう カード">
                   <button class="rule-token token-circle" type="button" data-rule-token="circle" draggable="true">
                     <span>○</span><small>すうじ</small>
@@ -249,13 +223,14 @@
                 <div class="random-number-flow" aria-hidden="true">
                   <span>8</span><span>3</span><span>7</span><span>2</span><span>5</span><span>4</span><span>1</span><span>9</span>
                 </div>
-                <div class="machine-formula machine-formula-small" aria-hidden="true">
+                <div class="machine-formula machine-formula-small" aria-label="ためすルール">
                   <span class="machine-variable machine-circle" id="machineRunFormulaLeft">○</span>
                   <span class="machine-operator" id="machineRunFormulaOperator">＋</span>
                   <span class="machine-variable machine-triangle" id="machineRunFormulaRight">▲</span>
                   <span class="machine-operator">＝</span>
                   <span class="machine-variable machine-square">□</span>
                 </div>
+                <p class="rule-preview" id="lowerRulePreview" aria-live="polite" hidden></p>
                 <button class="machine-run-button" type="button" id="machineRunButton" disabled>
                   3かい けいさんする
                 </button>
@@ -282,10 +257,7 @@
                   </div>
                 </dl>
                 <img class="machine-robot" src="./assets/robot-mascot.png" alt="けいさんマシンの ロボット">
-              </section>
-            </div>
-
-            <section class="machine-list-card" aria-labelledby="machineListTitle">
+            <section class="machine-list-card merged-result-list" aria-labelledby="machineListTitle">
               <div class="machine-list-heading">
                 <div class="machine-card-heading">
                   <span class="machine-step machine-step-green">4</span>
@@ -297,6 +269,10 @@
                 <li class="machine-list-empty">ルールを つくって、3かい けいさんしてみよう</li>
               </ol>
             </section>
+              </section>
+            </div>
+
+
 
             <section class="machine-takeaway" aria-label="プログラミングの いいところ">
               <span>プログラミングの いいところ</span>
@@ -312,7 +288,7 @@
               <h1>計算ルールから電卓を作ろう</h1>
             </header>
             <section class="learning-focus" aria-label="この単元で学ぶこと">
-              <details open>
+              <details>
                 <summary>ここから学ぶこと</summary>
                 <div class="learning-focus-panel">
                   <div class="learning-focus-item"><span aria-hidden="true">🧮</span><strong>複数の変数を使う</strong><p>A・B・Cと演算を組み合わせ、電卓のような計算ルールを作ります。</p></div>
@@ -328,7 +304,7 @@
                   <span class="machine-step machine-step-blue">1</span>
                   <h2 id="upperRuleTitle">計算ルールを作る</h2>
                 </div>
-                <p class="rule-builder-help">A・B・C と ×・＋・−を指で運び、式を作ろう</p>
+                <p class="rule-builder-help">A・B・C と ×・＋・−をタップして、式を作ろう</p>
                 <div class="rule-token-tray upper-rule-token-tray" aria-label="計算ルールに使うカード">
                   <button class="rule-token upper-token-a" type="button" data-upper-rule-token="a" draggable="true"><span>A</span><small>数</small></button>
                   <button class="rule-token upper-token-b" type="button" data-upper-rule-token="b" draggable="true"><span>B</span><small>数</small></button>
@@ -363,6 +339,7 @@
                   <b>回</b>
                 </label>
                 <div class="upper-run-formula" id="upperRunFormula" aria-live="polite">A × B ＋ C ＝ D</div>
+                <p class="rule-preview" id="upperRulePreview" aria-live="polite" hidden></p>
                 <p class="upper-precedence-note">×を先に、＋と−は左から計算します</p>
                 <button class="machine-run-button" type="button" id="upperRunButton" disabled>3回計算する</button>
                 <p class="machine-run-hint" id="upperRunHint">はじめにルールを作ろう</p>
@@ -379,10 +356,7 @@
                   <div class="summary-mistakes"><dt>ミス</dt><dd id="upperMistakes">0回</dd></div>
                 </dl>
                 <img class="machine-robot" src="./assets/robot-mascot.png" alt="計算ルールを実行するロボット">
-              </section>
-            </div>
-
-            <section class="machine-list-card upper-list-card" aria-labelledby="upperListTitle">
+            <section class="machine-list-card merged-result-list upper-list-card" aria-labelledby="upperListTitle">
               <div class="machine-list-heading">
                 <div class="machine-card-heading"><span class="machine-step machine-step-blue">4</span><h2 id="upperListTitle">計算リスト</h2></div>
                 <strong id="upperListProgress">0 / 3</strong>
@@ -391,6 +365,10 @@
                 <li class="machine-list-empty">ルールを作り、回数を選んで実行してみよう</li>
               </ol>
             </section>
+              </section>
+            </div>
+
+
 
             <section class="machine-takeaway upper-takeaway" aria-label="プログラミングの良いところ">
               <span>プログラミングの良いところ</span>

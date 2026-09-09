@@ -1,3 +1,4 @@
+import { renderRulePreview } from "./rule-preview.js?v=20260909a";
 import {
   createPaperCheckCompositeRuleBatch,
   formatCalculationDuration,
@@ -174,6 +175,7 @@ export function initUpperCalculationMachine({ onBack } = {}) {
   function renderRuleState() {
     const draftRule = currentDraftRule();
     const isBuilt = rulesMatch(draftRule, state.builtRule);
+    renderRulePreview(elements.root, "upper", state.builtRule);
     elements.upperRuleCard.classList.toggle("rule-built", isBuilt);
     elements.upperBuildButton.disabled = !draftRule;
     elements.upperBuildButton.textContent = isBuilt

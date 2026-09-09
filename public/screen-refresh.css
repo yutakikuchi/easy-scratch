@@ -1,0 +1,176 @@
+/* Selected TOP + four second-level screens. Individual lessons retain their layout. */
+body[data-page="home"], body[data-page="calculation"], body:has(.picture-hub) { background: #fffcf5; }
+body[data-page="home"] .language-switcher,
+body[data-page="calculation"] .language-switcher,
+body:has(.picture-hub) .language-switcher { position: absolute; box-shadow: none; border-color: #c1e0f7; }
+body[data-page="home"] .language-switcher button,
+body[data-page="calculation"] .language-switcher button,
+body:has(.picture-hub) .language-switcher button { min-height: 44px; }
+body[data-page="calculation"] .app-shell,
+body:has(.picture-hub) .app-shell { padding: 18px 24px; min-height: 0; }
+body[data-page="calculation"] .workspace,
+body:has(.picture-hub) .workspace { width: min(100%, 1194px); }
+body[data-page="calculation"] .lower-machine { gap: 14px; }
+.lower-machine .machine-header { grid-template-columns: auto auto minmax(0,1fr); gap: 12px; padding: 0 0 0; min-height: 60px; margin-top: 52px; }
+.lower-machine .machine-header h1 { grid-column: auto; font-size: clamp(22px,2.8vw,36px); line-height: 1.3; text-align: center; text-shadow: none; }
+.lower-machine .machine-back { min-width: 92px; min-height: 48px; border: 2px solid #bed7ee; border-radius: 16px; padding: 8px 12px; box-shadow: none; }
+.lower-machine .machine-grade { min-height: 42px; padding: 8px 14px; font-size: 19px; box-shadow: none; }
+.lower-machine .learning-focus { margin: 0; }
+.lower-machine .learning-focus details { border: 0; background: transparent; border-radius: 12px; padding: 0; box-shadow: none; }
+.lower-machine .learning-focus summary { min-height: 44px; font-size: 16px; padding: 8px 12px; justify-content: start; }
+.lower-machine .learning-focus summary::after { margin-left: 16px; font-size: 12px; }
+.lower-machine .learning-focus-panel { padding: 12px; background: #fff; border-radius: 16px; }
+.lower-machine .machine-top-grid { grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); gap: 16px; }
+.lower-machine .machine-card { min-height: 0; padding: 18px; gap: 12px; border-width: 2px; border-radius: 24px; box-shadow: none; }
+.lower-machine .machine-rule-card { background: #fffbeb; border-color: #f1d580; }
+.lower-machine .machine-run-card { background: #fff2f4; border-color: #f1b0bd; }
+.upper-machine .machine-run-card { background: #f0f8ff; border-color: #badbf4; }
+.lower-machine .machine-card-heading { gap: 10px; }
+.lower-machine .machine-card-heading h2 { font-size: clamp(19px,2vw,25px); line-height: 1.35; }
+.lower-machine .machine-step { width: 38px; font-size: 23px; box-shadow: none; }
+.lower-machine .rule-builder-help { margin: 0; font-size: 15px; line-height: 1.5; text-align: left; }
+.lower-machine .rule-token-tray { padding: 0; gap: 8px; border: 0; background: transparent; }
+.lower-machine .rule-token { display: grid; grid-template-columns: 1fr; gap: 5px; min-height: 88px; border-width: 1px; border-radius: 15px; padding: 8px 4px; box-shadow: 0 3px 8px #1a416410; }
+.lower-machine .rule-token span { font-size: 39px; }
+.lower-machine .rule-token small { font-size: 13px; }
+.lower-machine .machine-rule-builder { min-height: 86px; padding: 10px 6px; gap: 8px; border: 1px dashed #d6b85a; border-radius: 16px; }
+.lower-machine .rule-drop-slot { width: 60px; min-height: 60px; font-size: 40px; border-width: 2px; border-radius: 12px; }
+.lower-machine .rule-slot-placeholder { font-size: 12px; }
+.lower-machine .machine-variable,.lower-machine .machine-operator { min-width: 28px; font-size: 42px; }
+.upper-machine .upper-rule-builder { gap: 6px; }
+.upper-machine .upper-rule-builder .rule-drop-slot { width: 48px; min-height: 56px; font-size: 32px; }
+.upper-machine .upper-rule-static,.upper-machine .upper-rule-result { min-width: 22px; font-size: 32px; }
+.lower-machine .machine-rule-name { font-size: 14px; line-height: 1.5; border: 0; background: transparent; margin: 0; padding: 0; }
+.lower-machine .machine-rule-copy { padding: 0; }
+.lower-machine .machine-rule-copy p { font-size: 13px; white-space: normal; }
+.lower-machine .machine-rule-copy p:nth-child(2) { display: block; }
+.lower-machine .machine-child { display: none; }
+.lower-machine .machine-build-button { margin: 0; min-height: 48px; background: #fff; border: 2px solid #d0ad51; color: #765113; font-size: 18px; box-shadow: none; }
+.upper-machine .machine-build-button { border-color: #8abce6; color: #1f619b; }
+.lower-machine .rule-built .machine-build-button { background: #effbf2; color: #19653b; border-color: #88b99c; }
+.lower-machine .machine-build-button:disabled { color: #637080; border-color: #d2d8e0; background: #eef0f3; }
+.lower-machine .machine-rule-status { padding: 0; font-size: 13px; min-height: 20px; line-height: 1.5; }
+.lower-machine .machine-card-lead,.lower-machine .machine-run-hint { font-size: 14px; line-height: 1.5; }
+.lower-machine .machine-count-picker { min-height: 48px; grid-template-columns: minmax(0,1fr) 90px auto; padding: 0; background: transparent; border: 0; font-size: 15px; }
+.lower-machine .machine-count-picker select { min-height: 48px; font-size: 21px; border-width: 2px; }
+.lower-machine .machine-formula-small,.upper-machine .upper-run-formula { min-height: 76px; padding: 10px; margin: 0; border: 1px solid #e0e7ec; background: #fff; border-radius: 16px; font-size: 29px; }
+.lower-machine .rule-preview { margin: 0; padding: 12px; background: #fff; border-radius: 14px; color: #183e70; font-size: 22px; line-height: 1.6; font-weight: 800; text-align: center; white-space: pre-line; }
+.lower-machine .rule-preview[hidden] { display: none; }
+.lower-machine .machine-run-button { min-height: 60px; border-radius: 16px; background: #ed4868; font-size: 24px; box-shadow: none; }
+.upper-machine .machine-run-button { background: #267bd0; }
+.lower-machine .machine-run-button:disabled { background: #e0e5eb; color: #637080; box-shadow: none; }
+.lower-machine .upper-precedence-note { font-size: 14px; line-height: 1.5; margin: 0; }
+.lower-machine .machine-summary-card { grid-column: 1 / -1; display: flex; align-items: center; gap: 20px; border-color: #d4e7f4; padding: 14px 18px; background: #f5faff; }
+.lower-machine .machine-summary { flex: 1; display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin: 0; padding: 0; }
+.lower-machine .machine-summary > div { border: 0; padding: 0; background: transparent; }
+.lower-machine .machine-summary dt { font-size: 12px; }
+.lower-machine .machine-summary dd { margin: 3px 0 0; font-size: 19px; line-height: 1.4; }
+.lower-machine .machine-robot { display: none; }
+.lower-machine .machine-list-card { padding: 16px 18px; border: 1px solid #d4e7f4; border-radius: 20px; background: #fff; box-shadow: none; }
+.lower-machine .machine-list-heading { margin-bottom: 10px; }
+.lower-machine .machine-results-list { max-height: 300px; overflow: auto; overscroll-behavior: contain; }
+.lower-machine .machine-list-empty { min-height: 60px; font-size: 16px; padding: 14px; }
+.lower-machine .machine-takeaway { border: 0; box-shadow: none; background: transparent; padding: 12px; }
+.lower-machine .machine-takeaway > span { display: none; }
+.lower-machine .machine-takeaway strong { font-size: 18px; }
+.lower-machine .machine-takeaway p { font-size: 14px; }
+.lower-machine :is(button,select,summary):focus-visible,.picture-hub button:focus-visible { outline: 4px solid #1d65ab; outline-offset: 3px; }
+/* A real 2x2 selection surface, without miniature screenshots or clipped labels. */
+.picture-hub { min-height: 0; gap: 18px; grid-template-rows: auto auto auto; }
+.picture-hub .picture-hub-header { grid-template-columns: 100px minmax(0,1fr) 100px; padding: 0; margin-top: 48px; min-height: 96px; border: 0; background: transparent; box-shadow: none; }
+.picture-hub .picture-hub-header h1 { font-size: clamp(27px,3.5vw,43px); line-height: 1.25; }
+.picture-hub .picture-hub-header p { font-size: 17px; line-height: 1.4; }
+.picture-hub .picture-hub-header > div > span { font-size: 17px; padding: 5px 16px; }
+.picture-hub .picture-back-button { min-width: 92px; min-height: 48px; padding: 10px; border-width: 2px; box-shadow: none; font-size: 16px; }
+.picture-hub .picture-back-button::before { display: none; }
+.picture-hub .picture-lesson-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.picture-hub .picture-lesson-card { position: relative; display: grid; grid-template-columns: 1fr; grid-template-rows: auto 170px; row-gap: 10px; align-content: start; min-height: 0; padding: 16px; border: 2px solid #f5c6d0; border-radius: 24px; background: #fff; box-shadow: 0 4px 12px #17396606; text-align: left; }
+.picture-hub.picture-upper .picture-lesson-card { border-color: #c9e1f5; }
+.picture-hub .picture-lesson-card:hover { border-color: #e6667f; }
+.picture-hub.picture-upper .picture-lesson-card:hover { border-color: #4088ca; }
+.picture-hub .picture-lesson-number { top: 18px; left: 16px; width: 38px; height: 38px; border: 0; font-size: 22px; box-shadow: none; }
+.picture-hub .picture-lesson-copy { padding: 0 0 0 50px; background: transparent; display: grid; gap: 5px; min-height: 60px; }
+.picture-hub .picture-lesson-copy strong { font-size: clamp(20px,2.25vw,28px); line-height: 1.3; }
+.picture-hub .picture-lesson-copy b { font-size: 15px; line-height: 1.4; color: #526986; }
+.hub-art { position: relative; display: block; overflow: hidden; border-radius: 16px; width: 100%; height: 100%; background: #fffcf5; }
+.hub-art > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hub-art > .hub-sprite { position: absolute; left: 28%; bottom: 6%; width: 35%; height: 80%; object-fit: contain; }
+.hub-art-grid-paint > img,.hub-art-grid-lab > img,.hub-art-pattern > img,.hub-art-paint > img { object-fit: contain; }
+.hub-art-sort-robot > .hub-sprite { bottom: 22%; height: 66%; }
+.picture-hub .picture-hub-takeaway { display: block; padding: 4px; text-align: center; border: 0; background: transparent; box-shadow: none; }
+.picture-hub .picture-hub-takeaway strong { font-size: 18px; line-height: 1.5; }
+@media (max-width: 1000px) {
+  .lower-machine .machine-header { grid-template-columns: auto auto; justify-content: start; gap: 8px 12px; margin-top: 0; padding-right: 220px; }
+  .lower-machine .machine-header h1 { grid-column: 1 / -1; padding-top: 8px; font-size: 28px; text-align: left; }
+  .lower-machine .machine-top-grid { grid-template-columns: 1fr; }
+  .lower-machine .machine-rule-card { gap: 12px; }
+  .lower-machine .machine-run-card { gap: 12px; }
+  .lower-machine .machine-summary-card { flex-direction: column; align-items: stretch; }
+  .picture-hub .picture-lesson-card { grid-template-rows: auto 170px; padding: 12px; }
+  .picture-hub .picture-lesson-number { left: 12px; top: 14px; }
+  .picture-hub .picture-lesson-copy { min-height: 76px; }
+}
+@media (max-width: 620px) {
+  body[data-page="calculation"] .app-shell,body:has(.picture-hub) .app-shell { padding: 14px; }
+  body[data-page="home"] .language-switcher,body[data-page="calculation"] .language-switcher,body:has(.picture-hub) .language-switcher { top: 10px; right: 10px; }
+  body[data-page="home"] .language-switcher-icon,body[data-page="calculation"] .language-switcher-icon,body:has(.picture-hub) .language-switcher-icon { display: none; }
+  body[data-page="home"] .language-switcher,body[data-page="calculation"] .language-switcher,body:has(.picture-hub) .language-switcher { grid-template-columns: 1fr 1fr; }
+  body[data-page="home"] .language-switcher button,body[data-page="calculation"] .language-switcher button,body:has(.picture-hub) .language-switcher button { min-width: 62px; padding: 6px; font-size: 12px; }
+  .lower-machine .machine-header { padding: 0; margin-top: 52px; }
+  .lower-machine .machine-header h1 { font-size: 24px; }
+  .lower-machine .machine-card { padding: 14px; }
+  .lower-machine .machine-grade { font-size: 17px; }
+  .lower-machine .rule-token { min-height: 78px; }
+  .lower-machine .rule-token span { font-size: 32px; }
+  .upper-machine .upper-rule-token-tray { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .lower-machine .machine-rule-builder { gap: 5px; }
+  .lower-machine .rule-drop-slot { width: 50px; min-height: 54px; }
+  .upper-machine .upper-rule-builder { flex-wrap: nowrap; gap: 4px; padding: 8px 2px; }
+  .upper-machine .upper-rule-builder .rule-drop-slot { width: 38px; min-height: 48px; font-size: 27px; flex-shrink: 1; }
+  .upper-machine .upper-rule-static,.upper-machine .upper-rule-result { font-size: 24px; min-width: 18px; }
+  .lower-machine .machine-summary { grid-template-columns: 1fr 1fr; }
+  .lower-machine .summary-time { grid-column: 1 / -1; }
+  .picture-hub .picture-hub-header { grid-template-columns: 1fr; gap: 14px; }
+  .picture-hub .picture-back-button { justify-self: start; }
+  .picture-hub .picture-lesson-grid { grid-template-columns: 1fr; }
+  .picture-hub .picture-lesson-copy { min-height: 0; }
+  .picture-hub .picture-hub-header h1 { font-size: 29px; }
+  .picture-hub .picture-lesson-card { grid-template-rows: auto 180px; }
+}
+.rule-preview small { display: block; color: #526986; font-size: 13px; font-weight: 600; }
+.rule-preview span { display: block; }
+/* Keep the rule, action, and first results visible together in landscape. */
+body[data-grade][data-page="calculation"] .app-shell { padding: 16px 24px; }
+.lower-machine .learning-focus { border: 0; box-shadow: none; background: transparent; }
+.lower-machine .learning-focus summary { grid-template-columns: minmax(0,1fr) auto; min-height: 44px; padding: 6px 8px; }
+.lower-machine .learning-focus summary::before { display: none; }
+.lower-machine .machine-rule-name { display: none; }
+.lower-machine .machine-card { gap: 10px; }
+.lower-machine .machine-run-card:has(.rule-preview:not([hidden])) .machine-formula-small,
+.upper-machine .machine-run-card:has(.rule-preview:not([hidden])) .upper-run-formula { display: none; }
+.lower-machine .machine-run-card:has(.rule-preview:not([hidden])) .rule-preview { padding: 24px 12px; }
+.lower-machine .machine-header { margin-top: 42px; }
+@media (max-width: 1000px) {
+  .lower-machine .machine-header { margin-top: 0; }
+}
+@media (max-width: 620px) {
+  body[data-grade][data-page="calculation"] .app-shell { padding: 14px; }
+  .lower-machine .machine-header { margin-top: 52px; }
+}
+.lower-machine .machine-summary-card { flex-wrap: wrap; gap: 12px 18px; }
+.lower-machine .merged-result-list { width: 100%; border: 0; border-top: 1px solid #dbe7ef; border-radius: 0; padding: 10px 0 0; background: transparent; }
+.lower-machine .merged-result-list .machine-list-heading { display: none; }
+.lower-machine .merged-result-list .machine-results-list { margin: 0; padding: 0; }
+.lower-machine .merged-result-list .machine-list-empty { border: 0; min-height: 48px; padding: 10px; background: transparent; }
+.lower-machine .machine-summary-card .machine-summary { min-width: 0; }
+.hub-art-keyframe > img { object-fit: contain; }
+@media (max-width: 620px) {
+  .home-page .home-grade { grid-template-rows: auto auto; }
+  .home-page .home-grade-intro { min-height: 105px; }
+  .home-page .home-course { grid-template-rows: 110px auto; height: auto; min-height: 174px; }
+  .home-page .home-course strong { line-height: 1.35; overflow-wrap: anywhere; }
+}
+.upper-machine .machine-rule-card.rule-built .machine-build-button { background: #effbf2; color: #19653b; }
+.lower-machine .merged-result-list { min-height: 0; }
+.lower-machine .merged-result-list .machine-results-list { min-height: 0; }
+.lower-machine .merged-result-list .machine-list-empty { height: auto; }

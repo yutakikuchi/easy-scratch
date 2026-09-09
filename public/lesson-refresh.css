@@ -168,19 +168,6 @@ body:has(.upper-sort-screen) { background: #fffcf5; }
 .picture-experience .upper-sort-briefing { margin-top: 8px; border-width: 1px; }
 .picture-experience .picture-stage-fish .picture-path-legend { top: auto; bottom: 10px; }
 @media (min-width:1001px) {
- .picture-experience.picture-kind-grid-paint .picture-builder-grid { grid-template-columns: 320px minmax(0,1fr); grid-template-rows: auto auto auto auto; align-items: start; }
- .picture-experience.picture-kind-grid-paint .picture-palette { grid-column: 1; grid-row: 1; }
- .picture-experience.picture-kind-grid-paint .picture-action-card { min-height: 64px; }
- .picture-experience.picture-kind-grid-paint .picture-stage-panel { grid-column: 2; grid-row: 1/4; align-self: stretch; grid-template-rows: auto minmax(340px,1fr); }
- .picture-experience.picture-kind-grid-paint .picture-stage-scene { height: 100%; }
- .picture-experience.picture-kind-grid-paint :is(.picture-program-panel,.picture-program-row) { display: contents; }
- .picture-experience.picture-kind-grid-paint .picture-program-heading { grid-column: 1; grid-row: 2; flex-wrap: wrap; padding: 0 8px; }
- .picture-experience.picture-kind-grid-paint .picture-program-heading p { display: none; }
- .picture-experience.picture-kind-grid-paint .picture-program-dropzone { grid-column: 1; grid-row: 3; display: flex; flex-direction: column; flex-wrap: nowrap; min-height: 100px; max-height: 220px; overflow-y: auto; }
- .picture-experience.picture-kind-grid-paint .picture-program-item { width: 100%; flex: 0 0 auto; }
- .picture-experience.picture-kind-grid-paint .picture-program-block { width: 100%; min-height: 54px; }
- .picture-experience.picture-kind-grid-paint .picture-run-controls { grid-column: 2; grid-row: 4; justify-content: flex-end; }
- .picture-experience.picture-kind-grid-paint .picture-run-feedback { grid-column: 1/-1; grid-row: 5; }
  .picture-experience.upper-keyframe-screen .upper-picture-main { grid-template-columns: minmax(0,1fr) 330px; }
  .picture-experience.upper-keyframe-screen .upper-stage-panel { grid-column: 1; grid-row: 1; }
  .picture-experience.upper-keyframe-screen .upper-parameter-panel { grid-column: 2; grid-row: 1; }

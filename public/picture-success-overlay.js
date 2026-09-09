@@ -27,11 +27,12 @@ export function createPictureSuccessOverlay({ getGrade }) {
       overlay.setAttribute("aria-hidden", "true");
       overlay.setAttribute("aria-label", "せいかい。タップでとじる");
       overlay.innerHTML = `
-        <div class="picture-success-burst" aria-hidden="true">
-          <span>★</span><span>●</span><span>★</span><span>●</span><span>★</span><span>●</span>
-        </div>
         <div class="picture-success-message">
-          <span aria-hidden="true">🎉</span>
+          <span aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" focusable="false">
+              <path d="M5 12.5 9.5 17 19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
           <strong data-picture-success-title></strong>
           <small data-picture-success-detail></small>
           <em>タップで とじる</em>

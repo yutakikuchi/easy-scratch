@@ -297,8 +297,23 @@ const singlePatternRoute = createPatternArtRoute({ ...patternTarget, count: 1 })
 assert.equal(singlePatternRoute.filter(({ draws }) => draws).length, 6, "n=1 must draw exactly one hexagon");
 assert.ok(Math.abs(singlePatternRoute.at(-1).x) < 0.001 && Math.abs(singlePatternRoute.at(-1).y) < 0.001, "the first hexagon must close before n is increased");
 assert.equal(isPatternCorrect(patternTarget), true);
-assert.equal(isPatternCorrect({ ...patternTarget, distance: 50 }), true, "the side length may change the flower size without changing its shape");
+for (const distance of [20, 50, 60, 79, 81, 100, 120]) {
+  assert.equal(isPatternCorrect({ ...patternTarget, distance }), false, "shape alone is insufficient: size must match the target");
+}
 assert.equal(isPatternCorrect({ ...patternTarget, count: 1 }), false, "one hexagon is not yet the six-hexagon flower");
 assert.equal(isPatternCorrect({ ...patternTarget, angle: 70 }), false);
 
+// A failed move stops immediately; later paint/move commands never run.
+const collisionTrial = createGridPaintState(['cell-right', 'cell-right', 'cell-right', 'paint-cell', 'cell-up']);
+assert.deepEqual(collisionTrial.collision, { col: 4, row: 4, commandIndex: 2, action: 'cell-right' });
+assert.equal(collisionTrial.route.length, 4);
+assert.equal(collisionTrial.painted.length, 0);
+assert.equal(gridPaintState.collision, null);
+const upperCollisionTrial = createUpperGridPaintState(['right', 'paint-blue'], [{ x: 4, y: 1 }]);
+assert.deepEqual(upperCollisionTrial.collision, { column: 3, row: 5, command: 'right', commandIndex: 0, callIndex: 0 });
+assert.deepEqual(upperCollisionTrial.position, { column: 2, row: 5 });
+assert.equal(upperCollisionTrial.painted.length, 0);
+const repeatedCollision = createUpperGridPaintState(['right'], [{ x: 1, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 1 }]);
+assert.equal(repeatedCollision.collision.callIndex, 2, "the third invocation must identify its wall collision");
+assert.equal(repeatedCollision.collision.commandIndex, 0);
 console.log("Picture lesson tests passed");

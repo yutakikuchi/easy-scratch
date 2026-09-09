@@ -61,7 +61,7 @@ for (const grade of ["lower", "upper"]) {
       const actionIds = new Set(lesson.actions.map(({ id }) => id));
       assert.ok(lesson.actions.length >= 3 && lesson.actions.length <= 4, `${lesson.id} must provide a compact rule palette`);
       assert.ok(lesson.sample.length >= 3 && lesson.sample.length <= 10, `${lesson.id} sample must build a short rule`);
-      assert.equal(actionIds.has("repeat"), false, `${lesson.id} must use the repeat-run control instead of a repeat card`);
+      assert.equal(actionIds.has("repeat"), false, `${lesson.id} must not provide a continuous-repeat card`);
       assert.ok(lesson.sample.every((id) => actionIds.has(id)), `${lesson.id} sample must only use available cards`);
     }
     const thumbnailPath = lesson.thumbnail.split("?")[0];

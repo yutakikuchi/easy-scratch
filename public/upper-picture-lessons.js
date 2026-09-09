@@ -97,7 +97,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     lesson: null,
     kind: null,
     running: false,
-    looping: false, repeatSucceeded: false,
+    replaying: false,
     runToken: 0,
     hasRun: false,
     rescue: {
@@ -112,8 +112,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.lesson = lesson;
     state.kind = lesson.id;
     state.running = false;
-    state.looping = false;
-    state.repeatSucceeded = false;
+    state.replaying = false;
     state.runToken += 1;
     state.hasRun = false;
     state.rescue = { values: { ...rescueInitialValues }, program: [], repeatCount: 1 };
@@ -134,9 +133,9 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     return `
       <section class="picture-run-controls">
         <button class="upper-primary-button" type="button" data-upper-action="${action}" ${disabled ? "disabled" : ""}>${label}</button>
-        <button class="picture-repeat-button" type="button" data-upper-action="repeat-run" ${disabled ? "disabled" : ""}>
-          <strong>繰り返し実行する</strong><small>止めるまで</small>
-        </button>
+        ${state.kind === "keyframe" ? `<button class="picture-repeat-button" type="button" data-upper-action="replay-history" ${disabled ? "disabled" : ""}>
+          <strong>試した記録を再生</strong><small>最大10回</small>
+        </button>` : ""}
       </section>
     `;
   }
@@ -195,8 +194,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
   function renderRescueProgram() {
     const list = root.querySelector("[data-upper-program-list]");
     const runButton = root.querySelector('[data-upper-action="run-rescue"]');
-    const repeatButton = root.querySelector('[data-upper-action="repeat-run"]');
-    if (!list || !runButton || !repeatButton) return;
+    if (!list || !runButton) return;
     list.innerHTML = state.rescue.program.length
       ? state.rescue.program.map((command, index) => `
           <button class="upper-program-command" type="button" data-upper-action="remove-rescue" data-index="${index}" aria-label="${index + 1}番目の${directionLabels[command.direction]}${command.value}を外す">
@@ -207,8 +205,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     root.querySelectorAll('[data-upper-action="rescue-repeat"]').forEach((button) => {
       button.classList.toggle("is-active", Number(button.dataset.count) === state.rescue.repeatCount);
     });
-    runButton.disabled = state.running || state.looping || state.rescue.program.length === 0;
-    repeatButton.disabled = !state.looping && (state.running || state.rescue.program.length === 0);
+    runButton.disabled = state.running || state.replaying || state.rescue.program.length === 0;
     state.hasRun = false;
     window.requestAnimationFrame(drawRescue);
   }
@@ -352,11 +349,11 @@ export function initUpperPictureLessons({ root, onSuccess }) {
         ? `<strong>試した記録</strong><div>${state.keyframe.history.map((attempt, index) => `<span><b>${index + 1}回目</b> x=${attempt.force.x}・y=${attempt.force.y}<em>${kickOutcomeLabels[attempt.outcome]}</em></span>`).join("")}</div>`
         : "";
     }
-    const repeat = root.querySelector('[data-upper-action="repeat-run"]');
-    if (repeat && !state.looping) repeat.disabled = state.running || state.keyframe.history.length === 0;
+    const repeat = root.querySelector('[data-upper-action="replay-history"]');
+    if (repeat && !state.replaying) repeat.disabled = state.running || state.keyframe.history.length === 0;
     const run = root.querySelector('[data-upper-action="run-keyframe"]');
-    if (run) run.disabled = state.running || state.looping || Boolean(state.keyframe.pendingOutcome);
-    updateRepeatButton();
+    if (run) run.disabled = state.running || state.replaying || Boolean(state.keyframe.pendingOutcome);
+    updateReplayButton();
   }
   function keyframePoint(point, width, height) {
     const startRatio = width < 420 ? 0.2 : 0.12;
@@ -566,15 +563,15 @@ export function initUpperPictureLessons({ root, onSuccess }) {
   }
   function setBusy(running) {
     state.running = running;
-    const locked = running || state.looping;
+    const locked = running || state.replaying;
     root.classList.toggle("is-running", locked);
     root.querySelectorAll("button, input").forEach((control) => {
       if (control.matches('[data-picture-action="hub"]')) return;
-      if (control.matches('[data-upper-action="repeat-run"]')) {
+      if (control.matches('[data-upper-action="replay-history"]')) {
         const missingProgram = state.kind === "rescue"
           ? state.rescue.program.length === 0
           : state.kind === "keyframe" && state.keyframe.history.length === 0;
-        control.disabled = state.looping ? false : running || missingProgram;
+        control.disabled = state.replaying ? false : running || missingProgram;
         return;
       }
       control.disabled = locked || control.dataset.upperAlwaysDisabled === "true";
@@ -583,17 +580,15 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       const runButton = root.querySelector('[data-upper-action="run-rescue"]');
       if (runButton) runButton.disabled = state.rescue.program.length === 0;
     }
-    updateRepeatButton();
+    updateReplayButton();
   }
-  function updateRepeatButton() {
-    const button = root.querySelector('[data-upper-action="repeat-run"]');
+  function updateReplayButton() {
+    const button = root.querySelector('[data-upper-action="replay-history"]');
     if (!button) return;
-    button.classList.toggle("is-stopping", state.looping);
-    button.innerHTML = state.looping
-      ? "<strong>止める</strong><small>繰り返しを終了</small>"
-      : state.kind === "keyframe"
-        ? "<strong>試した記録を再生</strong><small>最大10回</small>"
-        : "<strong>繰り返し実行する</strong><small>止めるまで</small>";
+    button.classList.toggle("is-stopping", state.replaying);
+    button.innerHTML = state.replaying
+      ? "<strong>止める</strong><small>記録の再生を終了</small>"
+      : "<strong>試した記録を再生</strong><small>最大10回</small>";
   }
   function showFeedback(title, detail, kind = "") {
     const feedback = root.querySelector("[data-upper-feedback]");
@@ -618,10 +613,9 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = true;
     setBusy(false);
     const correct = isRescueCorrect(state.rescue.program, state.rescue.values, state.rescue.repeatCount);
-    state.repeatSucceeded = correct;
     if (correct) {
       showFeedback("正解！くりかえしで1〜6を取れました", "5枚の移動ルールを3回使って、15回の移動を短い仕組みにできました。", "is-success");
-      if (!state.looping) onSuccess();
+      if (!state.replaying) onSuccess();
     } else {
       showFeedback("1〜6を順番に取れたかな？", "白い点線と赤い線、座標の差を見て、5枚の順番・数・回数を直そう。", "is-question");
     }
@@ -651,36 +645,19 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = true;
     const result = applyKickProgram(shotForce, state.keyframe.program);
     state.keyframe.history.push({ force: shotForce, outcome: result.outcome });
-    const wasLooping = state.looping;
     if (result.outcome === "goal") {
-      state.looping = false;
+      state.replaying = false;
       state.keyframe.pendingOutcome = null;
       state.keyframe.program = state.keyframe.program.filter((rule) => rule.outcome !== "goal");
       state.keyframe.program.push({ outcome: "goal", actionId: "stop" });
       showFeedback("ゴール！", "ゴールしたら止めるルールも自動で完成しました。", "is-success");
       renderKeyframeProgram();
       window.requestAnimationFrame(drawKeyframe);
-      onSuccess({ repeating: wasLooping, title: "ゴール！" });
+      onSuccess({ repeating: false, title: "ゴール！" });
       return false;
     }
     state.keyframe.pendingOutcome = result.outcome;
-    if (!state.looping) {
-      showFeedback(kickOutcomeLabels[result.outcome], "xとyのどちらを、増やすか減らすか、自分で選ぼう。", "is-question");
-      renderKeyframeProgram();
-      window.requestAnimationFrame(drawKeyframe);
-      return true;
-    }
-    if (!result.action) {
-      state.looping = false;
-      setBusy(false);
-      showFeedback(`${kickOutcomeLabels[result.outcome]}のルールがないよ`, "ここで自動実行を止めました。結果に合う直し方を考えよう。", "is-question");
-      renderKeyframeProgram();
-      window.requestAnimationFrame(drawKeyframe);
-      return false;
-    }
-    state.keyframe.force = result.nextForce;
-    state.keyframe.pendingOutcome = null;
-    showFeedback(`${kickOutcomeLabels[result.outcome]} → ${result.action.label}`, `次は x=${result.nextForce.x}、y=${result.nextForce.y} で試します。`);
+    showFeedback(kickOutcomeLabels[result.outcome], "xとyのどちらを、増やすか減らすか、自分で選ぼう。", "is-question");
     renderKeyframeProgram();
     window.requestAnimationFrame(drawKeyframe);
     return true;
@@ -723,10 +700,9 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     setBusy(false);
     drawPattern();
     const correct = isPatternCorrect(state.pattern);
-    state.repeatSucceeded = correct;
     if (correct) {
       showFeedback("正解！六角形の花ができました", `「前へ${state.pattern.distance} → 右へ60°」で六角形を作り、その六角形をn=6回かきました。`, "is-success");
-      if (!state.looping) onSuccess();
+      if (!state.replaying) onSuccess();
       return true;
     } else if (state.pattern.angle === patternTarget.angle && state.pattern.distance !== patternTarget.distance) {
       showFeedback("六角形の大きさが目標と違います", `いまの1辺は${state.pattern.distance}、目標は${patternTarget.distance}です。xを変えて白い目標線と重ねよう。個数nも6に合わせます。`, "is-question");
@@ -743,16 +719,16 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     else drawPattern();
   }
   async function replayKeyframeHistory() {
-    if (state.looping) return stopRepeating();
+    if (state.replaying) return stopReplay();
     if (state.running || state.keyframe.history.length === 0) return;
     const records = state.keyframe.history.slice(-10);
     const originalForce = { ...state.keyframe.force };
-    state.looping = true;
+    state.replaying = true;
     setBusy(false);
     let played = 0;
     try {
       for (const [index, attempt] of records.entries()) {
-        if (!state.looping) break;
+        if (!state.replaying) break;
         const token = ++state.runToken;
         const bounds = canvasBounds(root);
         if (!bounds) break;
@@ -772,8 +748,8 @@ export function initUpperPictureLessons({ root, onSuccess }) {
         await wait(320);
       }
     } finally {
-      const stopped = !state.looping;
-      state.looping = false;
+      const stopped = !state.replaying;
+      state.replaying = false;
       state.running = false;
       state.keyframe.force = originalForce;
       state.hasRun = false;
@@ -785,41 +761,16 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       }
     }
   }
-  async function runRepeatedly() {
-    if (state.kind === "keyframe") return replayKeyframeHistory();
-    if (state.looping) return stopRepeating();
-    const missingProgram = state.kind === "rescue" && state.rescue.program.length === 0;
-    if (state.running || missingProgram) return;
-    state.looping = true;
-    state.repeatSucceeded = false;
-    setBusy(false);
-    while (state.looping) {
-      const completed = state.kind === "rescue"
-        ? await runRescue()
-        : await runPattern();
-      if (!completed || !state.looping) break;
-      await wait(320);
-      if (!state.looping) break;
-      state.hasRun = false;
-      window.requestAnimationFrame(drawCurrentLesson);
-    }
-    if (state.looping) {
-      state.looping = false;
-      setBusy(false);
-    }
-  }
-  function stopRepeating() {
-    if (!state.looping) return;
-    const succeeded = state.repeatSucceeded;
-    state.looping = false;
+  function stopReplay() {
+    if (!state.replaying) return;
+    state.replaying = false;
     state.runToken += 1;
     state.running = false;
     root.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
     setBusy(false);
     state.hasRun = false;
     window.requestAnimationFrame(drawCurrentLesson);
-    showFeedback("繰り返しを止めました", "数やルールを直して、また何度でも試せます。");
-    if (succeeded) onSuccess();
+    showFeedback("記録の再生を止めました", "数やルールを直して、また何度でも試せます。");
   }
   function handleAdjust(button) {
     const scope = button.dataset.upperAdjust;
@@ -893,8 +844,8 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     const button = event.target.closest("[data-upper-action]");
     if (!button) return;
     const action = button.dataset.upperAction;
-    if (action === "repeat-run") return runRepeatedly();
-    if (state.running || state.looping) return;
+    if (action === "replay-history") return replayKeyframeHistory();
+    if (state.running || state.replaying) return;
     if (action === "add-rescue" && state.rescue.program.length < rescueTargetRule.length) {
       const direction = button.dataset.key;
       state.rescue.program.push({ direction, value: state.rescue.values[direction] });

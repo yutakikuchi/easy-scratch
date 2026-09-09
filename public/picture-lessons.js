@@ -1,8 +1,8 @@
 import { showLowerCollision } from "./lesson-collision-feedback.js";
 import { pictureHubMarkup } from "./picture-hub-view.js?v=20260909a";
 import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260826c";
-import { createPictureSuccessOverlay } from "./picture-success-overlay.js?v=20260825e";
-import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260909c";
+import { createPictureSuccessOverlay } from "./picture-success-overlay.js?v=20260909d";
+import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260909d";
 import { createGridPaintState, createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260909b";
 import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";
 export { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat };

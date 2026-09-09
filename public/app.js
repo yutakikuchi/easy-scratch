@@ -5,7 +5,7 @@ import {
   isCalculationComplete
 } from "./calculation.js?v=20260825g";
 import { initLowerCalculationMachine } from "./lower-machine.js?v=20260825g";
-import { initPictureLessons } from "./picture-lessons.js?v=20260909b";
+import { initPictureLessons } from "./picture-lessons.js?v=20260909c";
 import { initUpperCalculationMachine } from "./upper-machine.js?v=20260825g";
 
 const lessons = {

@@ -2,7 +2,7 @@ import { showLowerCollision } from "./lesson-collision-feedback.js";
 import { pictureHubMarkup } from "./picture-hub-view.js?v=20260909a";
 import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260826c";
 import { createPictureSuccessOverlay } from "./picture-success-overlay.js?v=20260825e";
-import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260909b";
+import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260909c";
 import { createGridPaintState, createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260909b";
 import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";
 export { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat };
@@ -54,7 +54,6 @@ function gradeCopy(grade) {
         rule: "ルールを つくる",
         reuse: "なんども つかう",
         run: "うごかす",
-        repeatRun: "くりかえし うごかす",
         stop: "とめる",
         back: "もどる",
         hubBack: "もどる"
@@ -66,7 +65,6 @@ function gradeCopy(grade) {
         rule: "動きのルールを作る",
         reuse: "同じルールを何度も使う",
         run: "実行する",
-        repeatRun: "繰り返し実行する",
         stop: "止める",
         back: "もどる",
         hubBack: "もどる"
@@ -82,7 +80,6 @@ export function initPictureLessons({ root, onBackHome }) {
     ruleMultiplier: 1,
     runs: 0,
     running: false,
-    looping: false,
     drag: null,
     suppressActionClickUntil: 0,
     lastAddedActionId: null
@@ -102,7 +99,6 @@ export function initPictureLessons({ root, onBackHome }) {
     state.runs = 0;
     state.lastAddedActionId = null;
     state.running = false;
-    state.looping = false;
     successOverlay.reset();
   }
   function openLesson(lessonId) {
@@ -290,9 +286,6 @@ export function initPictureLessons({ root, onBackHome }) {
             <div class="picture-program-dropzone" data-picture-dropzone aria-label="カードを入れる場所"></div>
             <div class="picture-run-controls">
               <button class="picture-run-button" type="button" data-picture-action="run" disabled>${copy.run}</button>
-              <button class="picture-repeat-button" type="button" data-picture-action="repeat-run" disabled>
-                <strong>${copy.repeatRun}</strong><small>${state.grade === "lower" ? "とめるまで" : "止めるまで"}</small>
-              </button>
             </div>
           </div>
           <div class="picture-run-feedback" data-picture-feedback aria-live="polite">
@@ -310,11 +303,10 @@ export function initPictureLessons({ root, onBackHome }) {
     const dropzone = root.querySelector("[data-picture-dropzone]");
     const feedback = root.querySelector("[data-picture-feedback]");
     const runButton = root.querySelector('[data-picture-action="run"]');
-    const repeatButton = root.querySelector('[data-picture-action="repeat-run"]');
     const count = root.querySelector("[data-picture-rule-count]");
     const addMessage = root.querySelector("[data-picture-add-message]");
     const addFeedback = root.querySelector("[data-picture-add-feedback]");
-    if (!dropzone || !feedback || !runButton || !repeatButton) return;
+    if (!dropzone || !feedback || !runButton) return;
     if (count) count.textContent = `できたルール：${state.program.length}まい`;
     if (addMessage && !state.lastAddedActionId) addMessage.textContent = state.program.length ? "カードを つぎも えらべるよ" : "カードを えらんでね";
     if (!state.program.length) addFeedback?.classList.remove("is-added", "is-confirmed");
@@ -325,16 +317,11 @@ export function initPictureLessons({ root, onBackHome }) {
       button.disabled = state.running;
     });
     const copy = gradeCopy(state.grade);
-    repeatButton.classList.toggle("is-stopping", state.looping);
-    repeatButton.innerHTML = state.looping
-      ? `<strong>${copy.stop}</strong><small>${state.grade === "lower" ? "ここで おわる" : "繰り返しを終了"}</small>`
-      : `<strong>${copy.repeatRun}</strong><small>${state.grade === "lower" ? "とめるまで" : "止めるまで"}</small>`;
     const programStatus = getPictureProgramStatus(state.program, state.lesson.sample, state.ruleMultiplier);
     if (!programStatus.canRun) {
       dropzone.innerHTML = `<p>ここに カードを はこぼう</p>`;
       feedback.innerHTML = `<strong>カードを 1まい いれてみよう</strong><span>1まい入れたら、すぐにうごかしてためせます。</span>`;
       runButton.disabled = true;
-      repeatButton.disabled = true;
       window.requestAnimationFrame(drawStagePreview);
       return;
     }
@@ -354,7 +341,6 @@ export function initPictureLessons({ root, onBackHome }) {
       )
       .join("");
     runButton.disabled = state.running;
-    repeatButton.disabled = state.running && !state.looping;
     const hasReusableRule = state.lesson.repeatRuleTimes && getPictureProgramStatus(state.program, state.lesson.sample, state.lesson.repeatRuleTimes).isCorrect;
     feedback.innerHTML = programStatus.isCorrect
       ? `<strong>ルールが できた！</strong><span>できたルールを うごかせます。${escapeText(state.lesson.repeatLabel)}</span>`
@@ -428,18 +414,15 @@ export function initPictureLessons({ root, onBackHome }) {
     if (result) result.textContent = "ルールを つくろう";
     drawStagePreview();
   }
-  async function runRule({ repeating = false } = {}) {
+  async function runRule() {
     const programStatus = getPictureProgramStatus(state.program, state.lesson.sample, state.ruleMultiplier);
     if (state.running || !programStatus.canRun) return;
     const feedback = root.querySelector("[data-picture-feedback]");
     state.running = true;
     renderProgram();
-    feedback.innerHTML = repeating
-      ? `<strong>くりかえしているよ</strong><span>「とめる」を おすまで、同じルールを なんども つかいます。</span>`
-      : `<strong>1かい うごかしているよ</strong><span>つくったルールを、はじめから おわりまで ためします。</span>`;
+    feedback.innerHTML = `<strong>1かい うごかしているよ</strong><span>つくったルールを、はじめから おわりまで ためします。</span>`;
     const startedAt = performance.now();
     await animateLesson(programStatus.isCorrect);
-    if (repeating && !state.looping) return false;
     const elapsed = Math.max(0.1, (performance.now() - startedAt) / 1000);
     state.running = false;
     state.runs += 1;
@@ -449,7 +432,7 @@ export function initPictureLessons({ root, onBackHome }) {
       feedback.classList.add("is-success");
       const useCount = state.lesson.repeatRuleTimes ? state.ruleMultiplier : state.runs;
       feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>${elapsed.toFixed(1)}秒・このルールを ${useCount}回 つかった！</span>`;
-      if (!repeating) successOverlay.show();
+      successOverlay.show();
     } else {
       feedback.classList.add("is-question");
       feedback.innerHTML = `<strong>${reviewQuestion}</strong><span>うごきを見て、カードのじゅんばんを考えよう。直して何度でもためせるよ。</span>`;
@@ -461,46 +444,6 @@ export function initPictureLessons({ root, onBackHome }) {
       if (collision) { showLowerCollision(root, collision); return false; }
     }
     return programStatus.isCorrect;
-  }
-  async function runRepeatedly() {
-    if (state.looping) return stopRepeating();
-    if (state.running || state.program.length === 0) return;
-    state.looping = true;
-    renderProgram();
-    let solved = false;
-    let solvedOnce = false;
-    while (state.looping) {
-      solved = await runRule({ repeating: true });
-      if (solved) solvedOnce = true;
-      if (state.lesson.stageType === "grid-paint" && createGridPaintState(state.program).collision) {
-        state.looping = false;
-        renderProgram();
-        showLowerCollision(root, createGridPaintState(state.program).collision);
-        return;
-      }
-      if (!state.looping) break;
-      await sleep(260);
-      if (!state.looping) break;
-      resetStageVisual();
-    }
-    state.running = false;
-    state.looping = false;
-    renderProgram();
-    const feedback = root.querySelector("[data-picture-feedback]");
-    if (feedback && solvedOnce) {
-      feedback.classList.add("is-success");
-      feedback.innerHTML = `<strong>${escapeText(state.lesson.success)}</strong><span>正解したので、くりかえしを とめたよ。</span>`;
-      successOverlay.show();
-    } else if (feedback) {
-      feedback.innerHTML = `<strong>くりかえしを とめたよ</strong><span>カードを なおして、また ためせます。</span>`;
-    }
-  }
-  function stopRepeating() {
-    if (!state.looping) return;
-    state.looping = false;
-    state.running = false;
-    root.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
-    renderProgram();
   }
   async function animateLesson(isCorrect) {
     const type = state.lesson.stageType;
@@ -896,7 +839,6 @@ export function initPictureLessons({ root, onBackHome }) {
       root.querySelector(".picture-program-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     if (action === "run") runRule();
-    if (action === "repeat-run") runRepeatedly();
   }
   function render(grade) {
     state.grade = grade === "upper" ? "upper" : "lower";

@@ -1,4 +1,6 @@
 export const ENGLISH_TEXT = Object.freeze({
+  "記録の再生を終了": "End replay",
+  "記録の再生を止めました": "Replay stopped",
   "カードを タップして ならべよう": "Tap cards to put them in order",
   "赤い枠のかべを見て、うえへまわる命令を考えよう。カードをタップして直せます。": "Look at the outlined wall. Try going above it. Tap a command to change it.",
   "はじめてなら、まずルールを作ろう": "New here? Start by building a rule",

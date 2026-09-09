@@ -277,3 +277,27 @@ The current revision makes rule priority an independent item in `ここから学
 Browser verification passed at the default desktop viewport and at 390 × 844. The mobile page has no horizontal overflow, the four learning cards stack without clipping, and the lane/priority explanation is present in the rendered DOM. A learner-style browser run built the three basic rules from the empty state and observed the first parcel with `at-gate is-entering` while it moved across the belt; the active rule highlight was visible and the browser console had no warnings or errors. Static validation, behavior tests, and the production build also pass.
 
 final result: passed
+
+---
+
+## 2026-09-09 — TOP・第2階層の画面改善
+
+対象は TOP、低学年／高学年の計算画面、低学年／高学年の教材選択画面。個別の絵教材の学習内容・動作は変更しない。
+
+生成モック `output/design-plans-2026-09-09/01-top.png`〜`05-upper-program.png` と実装キャプチャを対比して確認。見出しの優先順位、学年の色分け、余白、2列カード、操作と結果の配置を反映した。画像は既存教材のキャラクターを優先し、方眼・キック・模様の補助画像を生成。モックの装飾文字や誤った教材ラベルは採用せず、日本語／英語切替と既存の式確定操作を維持した。計算例は既存の紙確認用データから生成するためモックの数値とは異なる。
+
+修正済み: スマートフォンのTOP固定行高によるラベルのはみ出し、式確定後のボタン文字の低コントラスト、キック画像の軌道の切れ、結果欄の重複見出し。
+
+確認した動作:
+- 全8教材への遷移と「もどる」。
+- 低学年の足し算、高学年の乗算を含む式の確定・実行と計算結果。
+- 実行回数変更、式編集時の確定状態・結果リセット。
+- 日本語／英語で全5画面の見出しと表示。
+
+390×844、834×1194、1194×834 の全5画面で横方向のはみ出しと選択ボタンの文字の欠けがないことを確認。縦型タブレットの計算画面は縦スクロールで操作する。iPad実機・Safariでの確認は未実施。
+
+証跡: `output/verification-2026-09-09/` の `*-390.png`、`*-834.png`、`*-1194.png`、`*-built.png`、`*-en-834.png` と `layout-results.json`。確認用ブラウザーのコンソールエラーなし。
+
+最終検証: Node v20.19.0、`npm test`、`npm run build`、`git diff --check` が成功。未解決のP0/P1/P2なし。本番への反映なし。
+
+final result: passed

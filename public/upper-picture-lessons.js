@@ -16,14 +16,14 @@ import {
   rescueTargetProgram,
   rescueTargetRule,
   rescueTargetValues
-} from "./upper-picture-lesson-logic.js?v=20260718m";
+} from "./upper-picture-lesson-logic.js?v=20260909b";
 import {
   applyKickProgram,
   kickCorrectionActions,
   kickOutcomeLabels,
-} from "./upper-free-kick-program.js?v=20260718a";
-import { initUpperGridPaintLesson } from "./upper-grid-paint.js?v=20260825d";
-import { initUpperSortRobotLesson } from "./upper-sort-robot.js?v=20260825a";
+} from "./upper-free-kick-program.js?v=20260909b";
+import { initUpperGridPaintLesson } from "./upper-grid-paint.js?v=20260909b";
+import { initUpperSortRobotLesson } from "./upper-sort-robot.js?v=20260909b";
 import {
   canvasBounds,
   canvasSetup,
@@ -35,12 +35,9 @@ import {
   stageLegend,
   upperHeader,
   upperLearningFocus
-} from "./upper-picture-shared.js?v=20260718a";
-
+} from "./upper-picture-shared.js?v=20260909b";
 const patternInitial = Object.freeze({ distance: 60, angle: 40, count: 1 });
-
 const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
-
 function drawRescueGrid(context, width, height) {
   const grid = createRescueCoordinateGrid(width, height);
   context.save();
@@ -53,7 +50,6 @@ function drawRescueGrid(context, width, height) {
     context.lineTo(isColumn ? line.position : width, isColumn ? height : line.position);
     context.stroke();
   });
-
   context.strokeStyle = "rgba(13, 42, 99, .78)";
   context.lineWidth = 3;
   context.beginPath();
@@ -62,7 +58,6 @@ function drawRescueGrid(context, width, height) {
   context.moveTo(grid.origin.x, height);
   context.lineTo(grid.origin.x, 12);
   context.stroke();
-
   context.fillStyle = "rgba(13, 42, 99, .9)";
   context.strokeStyle = "rgba(255, 255, 255, .92)";
   context.lineWidth = 4;
@@ -81,7 +76,6 @@ function drawRescueGrid(context, width, height) {
     context.strokeText(String(line.value), x, line.position);
     context.fillText(String(line.value), x, line.position);
   });
-
   context.textAlign = "right";
   context.textBaseline = "bottom";
   context.font = "900 18px sans-serif";
@@ -91,13 +85,11 @@ function drawRescueGrid(context, width, height) {
   context.textBaseline = "top";
   context.strokeText("y ↑", grid.origin.x + 8, 12);
   context.fillText("y ↑", grid.origin.x + 8, 12);
-
   context.beginPath();
   context.arc(grid.origin.x, grid.origin.y, 6, 0, Math.PI * 2);
   context.fill();
   context.restore();
 }
-
 export function initUpperPictureLessons({ root, onSuccess }) {
   const gridPaintLesson = initUpperGridPaintLesson({ root, onSuccess });
   const sortRobotLesson = initUpperSortRobotLesson({ root, onSuccess });
@@ -116,7 +108,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     keyframe: { force: { ...kickInitialForce }, program: [], history: [], pendingOutcome: null },
     pattern: { ...patternInitial }
   };
-
   function reset(lesson) {
     state.lesson = lesson;
     state.kind = lesson.id;
@@ -129,7 +120,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.keyframe = { force: { ...kickInitialForce }, program: [], history: [], pendingOutcome: null };
     state.pattern = { ...patternInitial };
   }
-
   function render(lesson) {
     gridPaintLesson.deactivate();
     sortRobotLesson.deactivate();
@@ -140,7 +130,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     else if (lesson.id === "pattern") renderPattern();
     else gridPaintLesson.render(lesson);
   }
-
   function runControls(action, label, disabled = false) {
     return `
       <section class="picture-run-controls">
@@ -151,7 +140,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       </section>
     `;
   }
-
   function renderRescue() {
     root.className = "picture-experience upper-picture-screen upper-rescue-screen";
     root.innerHTML = `
@@ -204,7 +192,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     `;
     renderRescueProgram();
   }
-
   function renderRescueProgram() {
     const list = root.querySelector("[data-upper-program-list]");
     const runButton = root.querySelector('[data-upper-action="run-rescue"]');
@@ -225,11 +212,9 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = false;
     window.requestAnimationFrame(drawRescue);
   }
-
   function rescuePoint(point, width, height) {
     return mapRescuePoint(point, width, height);
   }
-
   function drawRescue() {
     if (state.kind !== "rescue") return;
     const setup = canvasSetup(root);
@@ -296,7 +281,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     const spritePoint = state.hasRun ? current.at(-1) : current[0];
     setSprite(spritePoint);
   }
-
   function renderKeyframe() {
     root.className = "picture-experience upper-picture-screen upper-keyframe-screen";
     root.innerHTML = `
@@ -336,7 +320,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     renderKeyframeProgram();
     window.requestAnimationFrame(drawKeyframe);
   }
-
   function renderKeyframeProgram() {
     ["x", "y"].forEach((key) => {
       const value = root.querySelector(`[data-kick-force="${key}"]`);
@@ -351,7 +334,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
         }).join("")
         : "<p>まだルールはありません。まずシュートして、結果を見よう。</p>";
     }
-
     const correction = root.querySelector("[data-kick-correction]");
     if (correction) {
       const outcome = state.keyframe.pendingOutcome;
@@ -364,7 +346,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
           ? "<h3>次のシュートを試そう</h3><p>保存したルールは、あとで自動実行できます。</p>"
           : "<h3>できることは、まだシュートだけ</h3><p>スタートはロボットの足元に固定。結果が出ると、自分で考える修正カードが開きます。</p>";
     }
-
     const history = root.querySelector("[data-kick-history]");
     if (history) {
       history.innerHTML = state.keyframe.history.length
@@ -377,7 +358,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     if (run) run.disabled = state.running || state.looping || Boolean(state.keyframe.pendingOutcome);
     updateRepeatButton();
   }
-
   function keyframePoint(point, width, height) {
     const startRatio = width < 420 ? 0.2 : 0.12;
     const travelRatio = 0.84 - startRatio;
@@ -389,7 +369,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       offset: point.offset
     };
   }
-
   function drawKeyframe() {
     if (state.kind !== "keyframe") return;
     const setup = canvasSetup(root);
@@ -416,7 +395,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     });
     setSprite(state.hasRun ? currentPath.at(-1) : currentPath[0]);
   }
-
   function renderPattern() {
     root.className = "picture-experience upper-picture-screen upper-pattern-screen";
     root.innerHTML = `
@@ -424,12 +402,12 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       ${upperLearningFocus("pattern")}
       <main class="upper-picture-main">
         <section class="upper-parameter-panel" aria-labelledby="upperPatternRuleTitle">
-          <div class="upper-step-heading"><span>1</span><div><h2 id="upperPatternRuleTitle">六角形を何回かくか決める</h2><p>x・θで六角形を作り、nでかく回数を変えます</p></div></div>
+          <div class="upper-step-heading"><span>1</span><div><h2 id="upperPatternRuleTitle">大きさ・角度・個数を決める</h2><p>x・θで六角形を作り、nでかく回数を変えます</p></div></div>
           <div class="upper-pattern-fields">
             ${[
-              ["distance", "前へ x", "x は線の長さ", 20, 120, 10],
-              ["angle", "右へ θ", "θ は曲がる角度", 30, 120, 10],
-              ["count", "くりかえす n", "n は六角形をかく回数", 1, 6, 1]
+              ["distance", "辺の長さ x", "x は線の長さ", 20, 120, 10],
+              ["angle", "角度 θ", "θ は曲がる角度", 30, 120, 10],
+              ["count", "個数 n", "n は六角形をかく回数", 1, 6, 1]
             ].map(([key, label, hint, min, max, step]) => `
               <label><strong>${label}</strong><div class="upper-number-control">
                 <button type="button" data-upper-adjust="pattern" data-key="${key}" data-delta="-${step}" aria-label="${label}を${step}減らす">−</button>
@@ -445,7 +423,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
           <p class="upper-parameter-hint">ここは1つの共有ルールです。xは大きさ、θは六角形の曲がり方、nは同じ六角形をかく回数です。n=1なら1個だけかきます。</p>
         </section>
         <section class="upper-stage-panel" aria-labelledby="upperPatternStageTitle">
-          <div class="upper-step-heading"><span>2</span><div><h2 id="upperPatternStageTitle">六角形の花をたしかめる</h2><p>白い目標と、ロボットがかく赤い線を見くらべよう</p></div></div>
+          <div class="upper-step-heading"><span>2</span><div><h2 id="upperPatternStageTitle">六角形の花をたしかめる</h2><p>白い目標と赤い線の大きさも合わせよう（目標の1辺：80）</p></div></div>
           <div class="upper-stage upper-pattern-stage">
             <canvas data-upper-canvas aria-label="六角形の花の目標線と今の形"></canvas>
             ${stageLegend()}
@@ -466,7 +444,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     `;
     updatePatternSummary();
   }
-
   function patternMapper(width, height) {
     const target = createPatternArtRoute(patternTarget);
     const movingPoints = target.filter((point, index) => index === 0 || point.draws);
@@ -485,7 +462,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       offset: point.offset
     });
   }
-
   function partialPatternPath(route, progress) {
     if (route.length < 2 || progress <= 0) return route.slice(0, 1);
     const result = [route[0]];
@@ -507,7 +483,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     }
     return result;
   }
-
   function drawPattern(progress, manageSprite = true) {
     if (state.kind !== "pattern") return;
     const visibleProgress = Number.isFinite(progress) && progress >= 0 && progress <= 1
@@ -538,7 +513,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     drawPath(context, target, "#fff", [12, 12], 6);
     if (manageSprite) setSprite(state.hasRun ? currentRoute.at(-1) : currentRoute[0]);
   }
-
   async function animatePatternDrawing(route, duration, token) {
     const sprite = root.querySelector("[data-upper-sprite]");
     if (!sprite || route.length < 2) return;
@@ -567,11 +541,9 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     animation.cancel();
     if (completed) setSprite(route.at(-1));
   }
-
   function spriteTransform(point) {
     return `translate3d(${point.x}px, ${point.y}px, 0) translate(-50%, -50%) rotate(${point.rotation || 0}deg)`;
   }
-
   function setSprite(point) {
     const sprite = root.querySelector("[data-upper-sprite]");
     if (!sprite || !point) return;
@@ -579,7 +551,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     sprite.style.top = "0";
     sprite.style.transform = spriteTransform(point);
   }
-
   async function animateSprite(points, duration) {
     const sprite = root.querySelector("[data-upper-sprite]");
     if (!sprite || points.length < 2) return;
@@ -593,7 +564,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     animation.cancel();
     setSprite(points.at(-1));
   }
-
   function setBusy(running) {
     state.running = running;
     const locked = running || state.looping;
@@ -615,7 +585,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     }
     updateRepeatButton();
   }
-
   function updateRepeatButton() {
     const button = root.querySelector('[data-upper-action="repeat-run"]');
     if (!button) return;
@@ -626,14 +595,12 @@ export function initUpperPictureLessons({ root, onSuccess }) {
         ? "<strong>試した記録を再生</strong><small>最大10回</small>"
         : "<strong>繰り返し実行する</strong><small>止めるまで</small>";
   }
-
   function showFeedback(title, detail, kind = "") {
     const feedback = root.querySelector("[data-upper-feedback]");
     if (!feedback) return;
     feedback.className = `upper-run-feedback ${kind}`.trim();
     feedback.innerHTML = `<strong>${escapeText(title)}</strong><span>${escapeText(detail)}</span>`;
   }
-
   async function runRescue() {
     if (state.running || state.rescue.program.length === 0) return false;
     const token = ++state.runToken;
@@ -663,7 +630,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     setSprite(route.at(-1));
     return true;
   }
-
   async function runKeyframe() {
     if (state.running) return false;
     const token = ++state.runToken;
@@ -698,14 +664,12 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       return false;
     }
     state.keyframe.pendingOutcome = result.outcome;
-
     if (!state.looping) {
       showFeedback(kickOutcomeLabels[result.outcome], "xとyのどちらを、増やすか減らすか、自分で選ぼう。", "is-question");
       renderKeyframeProgram();
       window.requestAnimationFrame(drawKeyframe);
       return true;
     }
-
     if (!result.action) {
       state.looping = false;
       setBusy(false);
@@ -721,7 +685,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     window.requestAnimationFrame(drawKeyframe);
     return true;
   }
-
   function chooseKickCorrection(actionId) {
     const outcome = state.keyframe.pendingOutcome;
     const action = kickCorrectionActions.find((candidate) => candidate.id === actionId);
@@ -730,14 +693,12 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.keyframe.program = state.keyframe.program.filter((candidate) => candidate.outcome !== outcome);
     state.keyframe.program.push(rule);
     state.keyframe.pendingOutcome = null;
-
     if (action.stop) {
       showFeedback("完成！ゴールしたら止めるルールができました", "自分で考えた修正を、最初から自動実行して確かめられます。", "is-success");
       renderKeyframeProgram();
       onSuccess({ repeating: false });
       return;
     }
-
     const result = applyKickProgram(state.keyframe.force, [rule]);
     state.keyframe.force = result.nextForce;
     state.hasRun = false;
@@ -745,7 +706,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     renderKeyframeProgram();
     window.requestAnimationFrame(drawKeyframe);
   }
-
   async function runPattern() {
     if (state.running) return false;
     const token = ++state.runToken;
@@ -768,6 +728,8 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       showFeedback("正解！六角形の花ができました", `「前へ${state.pattern.distance} → 右へ60°」で六角形を作り、その六角形をn=6回かきました。`, "is-success");
       if (!state.looping) onSuccess();
       return true;
+    } else if (state.pattern.angle === patternTarget.angle && state.pattern.distance !== patternTarget.distance) {
+      showFeedback("六角形の大きさが目標と違います", `いまの1辺は${state.pattern.distance}、目標は${patternTarget.distance}です。xを変えて白い目標線と重ねよう。個数nも6に合わせます。`, "is-question");
     } else if (state.pattern.angle === patternTarget.angle) {
       showFeedback(`六角形を${state.pattern.count}個かけました`, `nを6にすると、向きを変えながら六角形を6個かいて花になります。`, "is-question");
     } else {
@@ -775,13 +737,11 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     }
     return true;
   }
-
   function drawCurrentLesson() {
     if (state.kind === "rescue") drawRescue();
     else if (state.kind === "keyframe") drawKeyframe();
     else drawPattern();
   }
-
   async function replayKeyframeHistory() {
     if (state.looping) return stopRepeating();
     if (state.running || state.keyframe.history.length === 0) return;
@@ -825,7 +785,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       }
     }
   }
-
   async function runRepeatedly() {
     if (state.kind === "keyframe") return replayKeyframeHistory();
     if (state.looping) return stopRepeating();
@@ -849,7 +808,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       setBusy(false);
     }
   }
-
   function stopRepeating() {
     if (!state.looping) return;
     const succeeded = state.repeatSucceeded;
@@ -863,7 +821,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     showFeedback("繰り返しを止めました", "数やルールを直して、また何度でも試せます。");
     if (succeeded) onSuccess();
   }
-
   function handleAdjust(button) {
     const scope = button.dataset.upperAdjust;
     const key = button.dataset.key;
@@ -885,7 +842,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       updatePatternSummary();
     }
   }
-
   function updatePatternSummary() {
     ["distance", "angle", "count"].forEach((key) => {
       const summary = root.querySelector(`[data-pattern-summary="${key}"]`);
@@ -901,7 +857,8 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     if (count) count.textContent = `${patternSideCount}辺`;
     if (total) total.textContent = `${turnTotal}°`;
     if (status) {
-      if (turnTotal === 360 && state.pattern.count === patternTarget.count) status.textContent = "六角形を6個かく設定です。花が完成します！";
+      if (isPatternCorrect(state.pattern)) status.textContent = "大きさ・角度・個数が目標と一致しています。かいて確かめよう。";
+      else if (turnTotal === 360 && state.pattern.count === patternTarget.count) status.textContent = "形と個数は合っています。辺の長さxを目標の80に合わせよう。";
       else if (turnTotal === 360) status.textContent = `六角形を${state.pattern.count}個かきます。花まで あと ${patternTarget.count - state.pattern.count}個です。`;
       else if (turnTotal < 360) status.textContent = `一周まで あと ${360 - turnTotal}° です。`;
       else status.textContent = `一周を ${turnTotal - 360}° こえています。`;
@@ -909,7 +866,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     state.hasRun = false;
     window.requestAnimationFrame(() => drawPattern());
   }
-
   function handleInput(input) {
     const scope = input.dataset.upperInput;
     const key = input.dataset.key;
@@ -931,7 +887,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
       updatePatternSummary();
     }
   }
-
   function handleClick(event) {
     const adjust = event.target.closest("[data-upper-adjust]");
     if (adjust) return handleAdjust(adjust);
@@ -970,7 +925,7 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     }
     if (action === "run-keyframe") return runKeyframe();
     if (action === "sample-pattern") {
-      showFeedback("ヒント：六角形は6辺", "θは360÷6で考えよう。六角形ができたら、nを増やして同じ形を何回かくか決めよう。", "is-question");
+      showFeedback("ヒント：六角形は6辺", "θは360÷6で考えよう。xは目標の1辺80に合わせ、nを増やして6個の花にしよう。", "is-question");
       return;
     }
     if (action === "reset-pattern") {
@@ -979,7 +934,6 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     }
     if (action === "run-pattern") return runPattern();
   }
-
   root.addEventListener("click", handleClick);
   root.addEventListener("input", (event) => {
     const input = event.target.closest("[data-upper-input]");
@@ -995,6 +949,5 @@ export function initUpperPictureLessons({ root, onSuccess }) {
     if (state.kind === "keyframe") window.requestAnimationFrame(drawKeyframe);
     if (state.kind === "pattern") window.requestAnimationFrame(() => drawPattern());
   });
-
   return { render };
 }

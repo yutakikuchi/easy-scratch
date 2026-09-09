@@ -1,4 +1,16 @@
 export const ENGLISH_TEXT = Object.freeze({
+  "カードを タップして ならべよう": "Tap cards to put them in order",
+  "赤い枠のかべを見て、うえへまわる命令を考えよう。カードをタップして直せます。": "Look at the outlined wall. Try going above it. Tap a command to change it.",
+  "はじめてなら、まずルールを作ろう": "New here? Start by building a rule",
+  "低学年の「ほうがんし いろぬり」へ →": "Start with lower-grade Grid Painting \u2192",
+  "赤い枠の壁と、渡したx・y、命令の順番を確認しよう。": "Check the outlined wall, the x/y values, and the command order.",
+  "ルールを変更しました": "The rule has changed",
+  "もう一度試して、壁をよけられるか確かめよう。": "Run it again to check whether it avoids the wall.",
+  "大きさ・角度・個数を合わせて、目標の六角形の花をかこう": "Match the size, angle, and count to draw the target hexagon flower",
+  "大きさ・角度・個数を決める": "Set the size, angle, and count",
+  "白い目標と赤い線の大きさも合わせよう（目標の1辺：80）": "Match the red drawing to the white target in size too (target side: 80)",
+  "六角形の大きさが目標と違います": "The hexagon size does not match the target",
+
   "つくって、うごかして、ためそう。": "Create, run, and try again.",
   "がくねんと あそびを えらんでね": "Choose your grade and activity",
   "すこし ためす": "Try a little",
@@ -780,6 +792,10 @@ export const ENGLISH_TEXT = Object.freeze({
 });
 
 export const ENGLISH_PATTERNS = Object.freeze([
+  [/^(\d+)まいめで かべに ぶつかったよ$/, (_, n) => `Command ${n} hit a wall`],
+  [/^(\d+)回目・(\d+)番目の命令で壁にぶつかりました$/, (_, call, step) => `Call ${call}, command ${step} hit a wall`],
+  [/^いまの1辺は(.+)、目標は(.+)です。xを変えて白い目標線と重ねよう。個数nも6に合わせます。$/, (_, actual, target) => `Your side length is ${actual}; the target is ${target}. Change x to match the white outline, and set n to 6.`],
+
   [/^(.+)の条件を確認$/, (_, label) => `Checking ${ENGLISH_TEXT[label] ?? label}`],
   [/^(.+)が入口から流れてきます$/, (_, label) => `${ENGLISH_TEXT[label] ?? label} is arriving on the conveyor`],
   [/^(.+)を検査しています$/, (_, label) => `Scanning ${ENGLISH_TEXT[label] ?? label}`],
@@ -847,9 +863,9 @@ export const ENGLISH_PATTERNS = Object.freeze([
   [/^(右|上|左|下)への数を(\d+)減らす$/, (_, direction, value) => `Decrease ${ENGLISH_TEXT[`${direction}へ`] ?? direction} by ${value}`],
   [/^(右|上|左|下)への数を(\d+)増やす$/, (_, direction, value) => `Increase ${ENGLISH_TEXT[`${direction}へ`] ?? direction} by ${value}`],
   [/^(右|上|左|下)へ動く数$/, (_, direction) => `${ENGLISH_TEXT[`${direction}へ`] ?? direction} distance`],
-  [/^(前へ x|右へ θ|くりかえす n)を(\d+)減らす$/, (_, label, value) => `Decrease ${ENGLISH_TEXT[label] ?? label} by ${value}`],
-  [/^(前へ x|右へ θ|くりかえす n)を(\d+)増やす$/, (_, label, value) => `Increase ${ENGLISH_TEXT[label] ?? label} by ${value}`],
-  [/^(前へ x|右へ θ|くりかえす n)の数$/, (_, label) => `${ENGLISH_TEXT[label] ?? label} value`],
+  [/^(前へ x|右へ θ|くりかえす n|辺の長さ x|角度 θ|個数 n)を(\d+)減らす$/, (_, label, value) => `Decrease ${ENGLISH_TEXT[label] ?? label} by ${value}`],
+  [/^(前へ x|右へ θ|くりかえす n|辺の長さ x|角度 θ|個数 n)を(\d+)増やす$/, (_, label, value) => `Increase ${ENGLISH_TEXT[label] ?? label} by ${value}`],
+  [/^(前へ x|右へ θ|くりかえす n|辺の長さ x|角度 θ|個数 n)の数$/, (_, label) => `${ENGLISH_TEXT[label] ?? label} value`],
   [/^Remove (\d+)番目の(右|上|左|下)へ(\d+)$/, (_, index, direction, value) => `Remove card ${index}: ${ENGLISH_TEXT[`${direction}へ`] ?? direction} ${value}`],
   [/^(右|上|左|下)へ\s*(\d+)$/, (_, direction, value) => `${ENGLISH_TEXT[`${direction}へ`] ?? direction} ${value}`],
   [/^「(.+)」をどう直す？$/, (_, result) => `How will you correct “${ENGLISH_TEXT[result] ?? result}”?`],

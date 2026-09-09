@@ -4,7 +4,7 @@ import {
   doesKickClearWall,
   kickGoalTolerance,
   kickTargetForce
-} from "./upper-picture-lesson-logic.js?v=20260718m";
+} from "./upper-picture-lesson-logic.js?v=20260909b";
 
 export const kickCorrectionActions = Object.freeze([
   Object.freeze({ id: "x-plus", label: "xを10増やす", variable: "x", delta: 10 }),

@@ -49,7 +49,7 @@ export function normalizeUpperGridPaintCalls(calls = []) {
 
 export function expandUpperGridPaintProgram(program, calls) {
   return normalizeUpperGridPaintCalls(calls).flatMap((values, callIndex) => (
-    program.map((command) => ({ command, callIndex, values: { ...values } }))
+    program.map((command, commandIndex) => ({ command, commandIndex, callIndex, values: { ...values } }))
   ));
 }
 
@@ -65,8 +65,9 @@ export function createUpperGridPaintState(program, calls) {
   const route = [{ ...position, command: "start", callIndex: -1 }];
   const painted = [];
   let outcome = "running";
+  let collision = null;
 
-  const move = (columnDelta, rowDelta, command, values, callIndex) => {
+  const move = (columnDelta, rowDelta, command, values, callIndex, commandIndex) => {
     const steps = command === "right" || command === "left" ? values.x : values.y;
     for (let step = 0; step < steps; step += 1) {
       const next = { column: position.column + columnDelta, row: position.row + rowDelta };
@@ -77,6 +78,7 @@ export function createUpperGridPaintState(program, calls) {
       }
       if (blocked.has(cellKey(next.column, next.row))) {
         outcome = "obstacle";
+        collision = { ...next, command, commandIndex, callIndex };
         return false;
       }
       Object.assign(position, next);
@@ -85,12 +87,12 @@ export function createUpperGridPaintState(program, calls) {
     return true;
   };
 
-  for (const { command, callIndex, values } of expanded) {
+  for (const { command, commandIndex, callIndex, values } of expanded) {
     if (outcome !== "running") break;
-    if (command === "right" && !move(1, 0, command, values, callIndex)) break;
-    if (command === "left" && !move(-1, 0, command, values, callIndex)) break;
-    if (command === "up" && !move(0, -1, command, values, callIndex)) break;
-    if (command === "down" && !move(0, 1, command, values, callIndex)) break;
+    if (command === "right" && !move(1, 0, command, values, callIndex, commandIndex)) break;
+    if (command === "left" && !move(-1, 0, command, values, callIndex, commandIndex)) break;
+    if (command === "up" && !move(0, -1, command, values, callIndex, commandIndex)) break;
+    if (command === "down" && !move(0, 1, command, values, callIndex, commandIndex)) break;
     if (command === "paint-blue" || command === "paint-yellow") {
       const color = command === "paint-blue" ? "blue" : "yellow";
       painted.push({ ...position, color, callIndex });
@@ -99,7 +101,7 @@ export function createUpperGridPaintState(program, calls) {
   }
 
   if (outcome === "running") outcome = "complete";
-  return { calls: normalizedCalls, expanded, route, painted, position, outcome };
+  return { calls: normalizedCalls, expanded, route, painted, position, outcome, collision };
 }
 
 function samePaint(actual, target) {

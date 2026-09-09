@@ -9,7 +9,7 @@ import {
   sortWarmupPackages,
   tracePackage
 } from "./upper-sort-robot-logic.js?v=20260824b";
-import { escapeText, upperHeader, upperLearningFocus } from "./upper-picture-shared.js?v=20260825a";
+import { escapeText, upperHeader, upperLearningFocus } from "./upper-picture-shared.js?v=20260909b";
 
 const wait = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 const waitForPaint = () => new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
@@ -177,6 +177,16 @@ export function initUpperSortRobotLesson({ root, onSuccess }) {
       const speedClass = state.runMode === "batch" ? "is-fast" : "";
       parcel.className = `upper-sort-parcel ${state.currentPackage ? "is-visible" : "is-resetting"} ${destinationClass} is-${state.phase} ${speedClass}`.trim();
     }
+    const comparison = root.querySelector("[data-sort-comparison]");
+    const failure = state.results.find(item => !item.correct);
+    if (comparison) {
+      comparison.hidden = !failure;
+      if (failure) {
+        const expected = sortDestinationCatalog[failure.packageItem.expectedDestination].label;
+        const actual = failure.destination ? sortDestinationCatalog[failure.destination].label : "該当なし";
+        comparison.textContent = `${failure.packageItem.label}：正しい行き先は「${expected}」、実際は「${actual}」。先に一致したルールを確認しよう。`;
+      }
+    }
     const thinking = root.querySelector("[data-sort-thinking]");
     if (thinking) thinking.textContent = thinkingText();
     root.querySelectorAll("[data-sort-lane]").forEach((lane) => {
@@ -335,7 +345,7 @@ export function initUpperSortRobotLesson({ root, onSuccess }) {
     root.innerHTML = `${upperHeader(lesson, "冷蔵で、しかもわれものは紫の特別レーンへ")}
       ${upperLearningFocus("sort-robot")}
       <main class="upper-sort-main">
-        ${laneBriefing()}
+        <details class="lesson-lane-help"><summary>レーンの役割とルールの順番を見る</summary>${laneBriefing()}</details>
         <section class="upper-sort-builder"><div class="upper-step-heading"><span>1</span><div><h2>複合条件を作る</h2><p>条件と行き先を自分で組み合わせます</p></div></div>${draftBuilder()}</section>
         <section class="upper-sort-stage-panel"><div class="upper-step-heading"><span>2</span><div><h2>判定の流れを見る</h2><p>光っているルールを上から確認</p></div></div>
           <div class="upper-sort-stage">
@@ -347,6 +357,7 @@ export function initUpperSortRobotLesson({ root, onSuccess }) {
             <div class="upper-sort-lane-labels">${Object.entries(sortDestinationCatalog).map(([id, lane]) => `<div class="upper-sort-lane-label is-${id}" data-sort-lane="${id}"><strong>${escapeText(lane.label)}<small>${escapeText(lane.equipment)}</small></strong><b>0</b></div>`).join("")}</div>
           </div>
         </section>
+        <p class="lesson-sort-comparison" data-sort-comparison aria-live="polite" hidden></p>
         <section class="upper-sort-program-panel"><div class="upper-sort-program-heading"><div><h2>ロボットが使うルール</h2><p>優先度1位の一番上から確認し、最初に一致した1つだけを使う</p><small>先に確かめたいルールを「上へ」で動かします</small></div><strong data-sort-count>0 / 4</strong></div>
           <div class="upper-sort-program" data-sort-program></div>
           <div class="upper-sort-actions"><button type="button" data-sort-reset>ルールを全部消す</button><button class="is-warmup" type="button" data-sort-run="warmup">① まず3個で試す</button><button class="is-test" type="button" data-sort-run="test" disabled>② 例外も入れて6個</button><button class="is-batch" type="button" data-sort-run="batch" disabled>③ 20個をしわける<small>直したルールを再利用</small></button></div>

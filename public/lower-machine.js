@@ -1,3 +1,4 @@
+import { renderRulePreview } from "./rule-preview.js?v=20260909a";
 import {
   createPaperCheckRuleBatch,
   formatCalculationDuration,
@@ -185,6 +186,7 @@ export function initLowerCalculationMachine({ onBack } = {}) {
   function renderRuleState() {
     const draftRule = currentDraftRule();
     const isBuilt = rulesMatch(draftRule, state.builtRule);
+    renderRulePreview(elements.root, "lower", state.builtRule);
     elements.machineRuleCard.classList.toggle("rule-built", isBuilt);
     elements.machineBuildButton.disabled = !draftRule;
     elements.machineBuildButton.textContent = isBuilt

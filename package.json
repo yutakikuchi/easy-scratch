@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node scripts/serve-no-cache.mjs 43127",
     "start:lan": "node scripts/serve-no-cache.mjs 43127 0.0.0.0",
-    "test": "node scripts/validate-static.mjs && node scripts/calculation.test.mjs && node scripts/picture-lessons.test.mjs",
+    "test": "node scripts/validate-static.mjs && node scripts/calculation.test.mjs && node scripts/picture-lessons.test.mjs && node scripts/screen-refresh.test.mjs",
     "build": "node scripts/build.mjs",
     "deploy:firebase": "npm run build && firebase deploy --only hosting --project easy-scratch"
   },

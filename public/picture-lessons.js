@@ -1,3 +1,4 @@
+import { pictureHubMarkup } from "./picture-hub-view.js?v=20260909a";
 import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260826c";
 import { createPictureSuccessOverlay } from "./picture-success-overlay.js?v=20260825e";
 import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260826c";
@@ -66,7 +67,7 @@ function gradeCopy(grade) {
     : {
         badge: "4〜6年生",
         title: "絵をどう動かす？",
-        lead: "3つの方法から、作りたい動きを選ぼう",
+        lead: "4つの教材から、作りたい動きを選ぼう",
         rule: "動きのルールを作る",
         reuse: "同じルールを何度も使う",
         run: "実行する",
@@ -132,40 +133,8 @@ export function initPictureLessons({ root, onBackHome }) {
   }
 
   function renderHub() {
-    const copy = gradeCopy(state.grade);
-    const lessons = pictureLessons[state.grade];
     root.className = `picture-experience picture-hub picture-${state.grade}`;
-    root.innerHTML = `
-      <header class="picture-hub-header">
-        <button class="picture-back-button" type="button" data-picture-action="home">${copy.back}</button>
-        <div>
-          <span>${copy.badge}</span>
-          <h1>${copy.title}</h1>
-          <p>${copy.lead}</p>
-        </div>
-      </header>
-      <section class="picture-lesson-grid" aria-label="絵を動かすレッスン">
-        ${lessons
-          .map(
-            (lesson, index) => `
-              <button class="picture-lesson-card" type="button" data-open-picture-lesson="${lesson.id}">
-                <span class="picture-lesson-number">${index + 1}</span>
-                <img src="${lesson.thumbnail}" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                <span class="picture-lesson-copy">
-                  <strong>${escapeText(lesson.title)}</strong>
-                  <b>${escapeText(lesson.shortTitle)}</b>
-                  <small>${escapeText(lesson.description)}</small>
-                </span>
-              </button>
-            `
-          )
-          .join("")}
-      </section>
-      <aside class="picture-hub-takeaway">
-        <strong>${copy.rule}</strong><small>つぎに</small><strong>${copy.reuse}</strong>
-        <p>${state.grade === "lower" ? "しくみが できたら、1かい おすだけ！" : "仕組みにすれば、いろいろな動きを簡単に作れます。"}</p>
-      </aside>
-    `;
+    root.innerHTML = pictureHubMarkup(state.grade, pictureLessons[state.grade], escapeText);
   }
 
   function stageMarkup(lesson) {

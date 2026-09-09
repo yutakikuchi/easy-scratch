@@ -1,3 +1,4 @@
+import { markUpperCollision } from "./lesson-collision-feedback.js";
 import {
   createUpperGridPaintState,
   createUpperGridPaintTargetState,
@@ -6,7 +7,7 @@ import {
   isUpperGridPaintPrefixCorrect,
   normalizeUpperGridPaintCalls,
   upperGridPaintConfig
-} from "./upper-grid-paint-logic.js?v=20260825d";
+} from "./upper-grid-paint-logic.js?v=20260909b";
 
 const actions = [
   { id: "right", icon: "→", label: "右へ xマス", hint: "xの数だけ進む" },
@@ -158,6 +159,20 @@ function drawBoard(root, result, progress = 1) {
   context.fillText("🏁", goal.x, goal.y - layout.cell * 0.15);
   const robotPoint = result.route[Math.min(result.route.length - 1, visibleRouteCount - 1)] ?? upperGridPaintConfig.start;
   drawRobot(context, layout, robotPoint);
+  if (result.collision && progress >= 1) {
+    const { column, row } = result.collision;
+    const x = layout.left + column * layout.cell;
+    const y = layout.top + row * layout.cell;
+    context.strokeStyle = "#cf2344";
+    context.lineWidth = 4;
+    context.strokeRect(x + 2, y + 2, layout.cell - 4, layout.cell - 4);
+    context.fillStyle = "#cf2344";
+    context.fillRect(x + 4, y + 4, layout.cell - 8, layout.cell - 8);
+    context.fillStyle = "#fff";
+    context.textBaseline = "middle";
+    context.font = `900 ${Math.max(16, layout.cell * .65)}px sans-serif`;
+    context.fillText("!", x + layout.cell / 2, y + layout.cell / 2);
+  }
 }
 
 export function initUpperGridPaintLesson({ root, onSuccess }) {
@@ -194,7 +209,12 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
   function updateProgram({ markEdited = false } = {}) {
     const list = root.querySelector("[data-grid-lab-program]");
     if (!list) return;
-    if (markEdited && state.lastResult) state.hasUnrunChanges = true;
+    if (markEdited && state.lastResult) {
+      state.hasUnrunChanges = true;
+      state.lastResult = null;
+      markUpperCollision(root, null);
+      showFeedback("ルールを変更しました", "もう一度試して、壁をよけられるか確かめよう。");
+    }
     list.innerHTML = state.program.length
       ? state.program.map((id, index) => {
           const action = actionById.get(id);
@@ -235,8 +255,9 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
         <div class="upper-picture-goal"><span>きょうのゴール</span><strong>1つのルールへ毎回ちがうx・yを渡し、3つの形をぬろう</strong></div>
         <img src="./assets/robot-mascot.png" alt="案内ロボット">
       </header>
+      <aside class="lesson-beginner-link"><strong>はじめてなら、まずルールを作ろう</strong><a href="?grade=lower&amp;page=program&amp;lesson=grid-paint">低学年の「ほうがんし いろぬり」へ →</a></aside>
       <section class="learning-focus" aria-label="この単元で学ぶこと">
-        <details open><summary>ここから学ぶこと</summary><div class="learning-focus-panel">
+        <details><summary>ここから学ぶこと</summary><div class="learning-focus-panel">
           <div class="learning-focus-item"><span aria-hidden="true">📦</span><strong>値を受け取るルールを作る</strong><p>移動する数を固定せず、ルール(x, y)が値を受け取る形にします。</p></div>
           <div class="learning-focus-item"><span aria-hidden="true">♻️</span><strong>同じルールを再利用する</strong><p>6枚をコピーせず、呼び出すたびにx・yだけを変えて3つの形を作ります。</p></div>
           <div class="learning-focus-item"><span aria-hidden="true">🔎</span><strong>呼び出しごとに確かめる</strong><p>まず1回目だけを試し、その後に3組の値をまとめて実行します。</p></div>
@@ -274,6 +295,7 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
     if (state.running || state.program.length === 0) return false;
     const token = ++state.token;
     state.running = true;
+    markUpperCollision(root, null);
     root.classList.add("is-running");
     const selectedCalls = state.calls.slice(0, callCount);
     const result = createUpperGridPaintState(state.program, selectedCalls);
@@ -310,7 +332,12 @@ export function initUpperGridPaintLesson({ root, onSuccess }) {
       return true;
     }
     const mismatch = callCount === 1 ? 0 : findUpperGridPaintMismatch(state.program, state.calls);
-    if (result.outcome === "obstacle") showFeedback("しょうがいぶつに当たりました", `${Math.max(1, mismatch + 1)}回目のx・yか、6枚の順番を見直そう。`, "is-question");
+    if (result.collision) {
+      const title = `${result.collision.callIndex + 1}回目・${result.collision.commandIndex + 1}番目の命令で壁にぶつかりました`;
+      showFeedback(title, "赤い枠の壁と、渡したx・y、命令の順番を確認しよう。", "is-collision");
+      if (stageStatus) stageStatus.textContent = title;
+      markUpperCollision(root, result.collision);
+    }
     else if (result.outcome === "outside") showFeedback("マスの外へ出ました", `${Math.max(1, mismatch + 1)}回目に渡すx・yを小さくして確かめよう。`, "is-question");
     else showFeedback(`${Math.max(1, mismatch + 1)}回目を見直そう`, "白い線の番号と、青・黄のマスを見てx・yを直そう。", "is-question");
     return true;

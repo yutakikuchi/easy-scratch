@@ -8,7 +8,7 @@ export const directionLabels = {
 export const lessonGoals = {
   rescue: "5つの移動ルールを3回くりかえし、1〜6を順番に取ろう",
   keyframe: "x・yの力を変えて、壁をこえるフリーキックを再現しよう",
-  pattern: "二重のくりかえしで、六角形の花をかこう"
+  pattern: "大きさ・角度・個数を合わせて、目標の六角形の花をかこう"
 };
 
 export function canvasSetup(root) {
@@ -93,7 +93,7 @@ export function upperLearningFocus(lessonId) {
   const items = learningCopy[lessonId] ?? learningCopy.rescue;
   return `
     <section class="learning-focus is-${escapeText(lessonId)}" aria-label="この単元で学ぶこと">
-      <details open>
+      <details>
         <summary>ここから学ぶこと</summary>
         <div class="learning-focus-panel">
           ${items.map(([icon, title, text]) => `<div class="learning-focus-item"><span aria-hidden="true">${icon}</span><strong>${escapeText(title)}</strong><p>${escapeText(text)}</p></div>`).join("")}

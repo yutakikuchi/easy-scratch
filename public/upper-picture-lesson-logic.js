@@ -201,6 +201,7 @@ export function createPatternArtRoute(values, start = { x: 0, y: 0 }) {
 }
 
 export function isPatternCorrect(values) {
-  return sameNumber(values.angle, patternTarget.angle) &&
+  return sameNumber(values.distance, patternTarget.distance) &&
+    sameNumber(values.angle, patternTarget.angle) &&
     Math.round(values.count) === patternTarget.count;
 }

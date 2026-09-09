@@ -1,13 +1,12 @@
+import { showLowerCollision } from "./lesson-collision-feedback.js";
 import { pictureHubMarkup } from "./picture-hub-view.js?v=20260909a";
 import { findPictureLesson, pictureLessons } from "./picture-lessons-data.js?v=20260826c";
 import { createPictureSuccessOverlay } from "./picture-success-overlay.js?v=20260825e";
-import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260826c";
-import { createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260718p";
+import { initUpperPictureLessons } from "./upper-picture-lessons.js?v=20260909b";
+import { createGridPaintState, createGridPaintRoute, drawGridPaintBoard } from "./lower-grid-paint.js?v=20260909b";
 import { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat } from "./picture-program-logic.js?v=20260718s";
 export { expandPictureProgram, getJumpRoute, getMovementRoute, getPictureProgramStatus, parsePictureCommandToken, setPictureCommandRepeat };
-
 const sleep = (milliseconds) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
-
 function escapeText(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -15,7 +14,6 @@ function escapeText(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 }
-
 export function getPaintRoute(program, width, height) {
   const lineColor = "#2289df";
   const step = Math.min(width * 0.3, height * 0.5);
@@ -23,7 +21,6 @@ export function getPaintRoute(program, width, height) {
   let y = 0;
   let rotation = 0;
   const route = [{ x, y, rotation, color: lineColor, draws: false }];
-
   program.forEach((actionId) => {
     let draws = false;
     if (actionId === "forward") {
@@ -43,13 +40,11 @@ export function getPaintRoute(program, width, height) {
     }
     route.push({ x, y, rotation, color: lineColor, draws });
   });
-
   return route.map((point, index) => ({
     ...point,
     offset: route.length === 1 ? 0 : index / (route.length - 1)
   }));
 }
-
 function gradeCopy(grade) {
   return grade === "lower"
     ? {
@@ -77,7 +72,6 @@ function gradeCopy(grade) {
         hubBack: "もどる"
       };
 }
-
 export function initPictureLessons({ root, onBackHome }) {
   let additionFeedbackTimer = 0;
   let upperLessons = null;
@@ -95,14 +89,12 @@ export function initPictureLessons({ root, onBackHome }) {
   };
   const successOverlay = createPictureSuccessOverlay({ getGrade: () => state.grade });
   const activeProgram = () => expandPictureProgram(state.program, state.ruleMultiplier);
-
   function setLessonInUrl(lessonId) {
     const url = new URL(window.location.href);
     if (lessonId) url.searchParams.set("lesson", lessonId);
     else url.searchParams.delete("lesson");
     window.history.pushState({}, "", url);
   }
-
   function resetLessonState() {
     window.clearTimeout(additionFeedbackTimer);
     state.program = [];
@@ -113,7 +105,6 @@ export function initPictureLessons({ root, onBackHome }) {
     state.looping = false;
     successOverlay.reset();
   }
-
   function openLesson(lessonId) {
     const lesson = findPictureLesson(state.grade, lessonId);
     if (!lesson) return;
@@ -123,7 +114,6 @@ export function initPictureLessons({ root, onBackHome }) {
     renderLesson();
     window.scrollTo({ top: 0, behavior: "auto" });
   }
-
   function openHub({ updateUrl = true } = {}) {
     if (updateUrl) setLessonInUrl(null);
     state.lesson = null;
@@ -131,12 +121,10 @@ export function initPictureLessons({ root, onBackHome }) {
     renderHub();
     window.scrollTo({ top: 0, behavior: "auto" });
   }
-
   function renderHub() {
     root.className = `picture-experience picture-hub picture-${state.grade}`;
     root.innerHTML = pictureHubMarkup(state.grade, pictureLessons[state.grade], escapeText);
   }
-
   function stageMarkup(lesson) {
     if (lesson.stageType === "story") {
       return `
@@ -155,7 +143,6 @@ export function initPictureLessons({ root, onBackHome }) {
         </div>
       `;
     }
-
     const background = lesson.stageBackground
       ? `<img class="picture-stage-background" src="${lesson.stageBackground}" alt="" decoding="async" fetchpriority="high">`
       : "";
@@ -200,7 +187,6 @@ export function initPictureLessons({ root, onBackHome }) {
       </div>
     `;
   }
-
   function actionCardsMarkup(lesson) {
     return lesson.actions
       .map(
@@ -214,7 +200,6 @@ export function initPictureLessons({ root, onBackHome }) {
       )
       .join("");
   }
-
   function lowerLearningFocus(lesson) {
     const copyByType = {
       "grid-paint": [
@@ -241,7 +226,7 @@ export function initPictureLessons({ root, onBackHome }) {
     const items = copyByType[lesson.stageType] ?? copyByType.jump;
     return `
       <section class="learning-focus" aria-label="ここから まなぶこと">
-        <details open>
+        <details>
           <summary>ここから まなぶこと</summary>
           <div class="learning-focus-panel">
             ${items.map(([icon, title, text]) => `<div class="learning-focus-item"><span aria-hidden="true">${icon}</span><strong>${escapeText(title)}</strong><p>${escapeText(text)}</p></div>`).join("")}
@@ -250,7 +235,6 @@ export function initPictureLessons({ root, onBackHome }) {
       </section>
     `;
   }
-
   function renderLesson() {
     const lesson = state.lesson;
     if (state.grade === "upper" && upperLessons) {
@@ -276,7 +260,7 @@ export function initPictureLessons({ root, onBackHome }) {
       <div class="picture-builder-grid">
         <section class="picture-palette" aria-labelledby="pictureRuleTitle">
           <div class="picture-section-heading">
-            <span>1</span><div><h2 id="pictureRuleTitle">${copy.rule}</h2><p>${state.grade === "lower" ? "カードを はこんで いれよう" : "カードをドラッグして並べよう"}</p></div>
+            <span>1</span><div><h2 id="pictureRuleTitle">${copy.rule}</h2><p>${state.grade === "lower" ? "カードを タップして ならべよう" : "カードをドラッグして並べよう"}</p></div>
           </div>
           <div class="picture-action-list">${actionCardsMarkup(lesson)}</div>
           <div class="picture-add-feedback" data-picture-add-feedback aria-live="polite">
@@ -321,7 +305,6 @@ export function initPictureLessons({ root, onBackHome }) {
     renderProgram();
     window.requestAnimationFrame(drawStagePreview);
   }
-
   function renderProgram() {
     if (!state.lesson) return;
     const dropzone = root.querySelector("[data-picture-dropzone]");
@@ -335,18 +318,17 @@ export function initPictureLessons({ root, onBackHome }) {
     if (count) count.textContent = `できたルール：${state.program.length}まい`;
     if (addMessage && !state.lastAddedActionId) addMessage.textContent = state.program.length ? "カードを つぎも えらべるよ" : "カードを えらんでね";
     if (!state.program.length) addFeedback?.classList.remove("is-added", "is-confirmed");
-    feedback.classList.remove("is-question", "is-success");
+    feedback.classList.remove("is-question", "is-success", "is-collision");
+    root.querySelector("[data-picture-stage-result]")?.classList.remove("is-collision");
     root.querySelectorAll("[data-picture-multiplier]").forEach((button) => {
       button.classList.toggle("is-active", Number(button.dataset.pictureMultiplier) === state.ruleMultiplier);
       button.disabled = state.running;
     });
-
     const copy = gradeCopy(state.grade);
     repeatButton.classList.toggle("is-stopping", state.looping);
     repeatButton.innerHTML = state.looping
       ? `<strong>${copy.stop}</strong><small>${state.grade === "lower" ? "ここで おわる" : "繰り返しを終了"}</small>`
       : `<strong>${copy.repeatRun}</strong><small>${state.grade === "lower" ? "とめるまで" : "止めるまで"}</small>`;
-
     const programStatus = getPictureProgramStatus(state.program, state.lesson.sample, state.ruleMultiplier);
     if (!programStatus.canRun) {
       dropzone.innerHTML = `<p>ここに カードを はこぼう</p>`;
@@ -356,7 +338,6 @@ export function initPictureLessons({ root, onBackHome }) {
       window.requestAnimationFrame(drawStagePreview);
       return;
     }
-
     const actions = Object.fromEntries(state.lesson.actions.map((action) => [action.id, action]));
     dropzone.innerHTML = state.program
       .map(
@@ -382,7 +363,6 @@ export function initPictureLessons({ root, onBackHome }) {
         : `<strong>1まいでも うごかせるよ</strong><span>できあがる前でも、まずはうごかしてためそう。</span>`;
     window.requestAnimationFrame(drawStagePreview);
   }
-
   function addAction(actionId) {
     if (state.running || !state.lesson?.actions.some((action) => action.id === actionId)) return;
     if (state.program.length >= 10) {
@@ -391,6 +371,8 @@ export function initPictureLessons({ root, onBackHome }) {
       return;
     }
     const action = state.lesson.actions.find((item) => item.id === actionId);
+    state.runs = 0;
+    resetStageVisual();
     state.program.push(actionId);
     state.lastAddedActionId = actionId;
     renderProgram();
@@ -411,7 +393,6 @@ export function initPictureLessons({ root, onBackHome }) {
       state.lastAddedActionId = null;
     }, 1800);
   }
-
   function clearProgram() {
     if (state.running) return;
     state.program = [];
@@ -421,14 +402,12 @@ export function initPictureLessons({ root, onBackHome }) {
     renderProgram();
     resetStageVisual();
   }
-
   function showSample() {
     if (state.running) return;
     state.ruleMultiplier = state.lesson.repeatRuleTimes || 1;
     state.program = [...(state.lesson.builderSample || (state.lesson.repeatRuleTimes ? state.lesson.sample.slice(0, state.lesson.sample.length / state.lesson.repeatRuleTimes) : state.lesson.sample))];
     renderProgram();
   }
-
   function resetStageVisual() {
     root.querySelectorAll(".picture-story-frame").forEach((frame) => frame.classList.remove("active", "done"));
     root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
@@ -449,12 +428,10 @@ export function initPictureLessons({ root, onBackHome }) {
     if (result) result.textContent = "ルールを つくろう";
     drawStagePreview();
   }
-
   async function runRule({ repeating = false } = {}) {
     const programStatus = getPictureProgramStatus(state.program, state.lesson.sample, state.ruleMultiplier);
     if (state.running || !programStatus.canRun) return;
     const feedback = root.querySelector("[data-picture-feedback]");
-
     state.running = true;
     renderProgram();
     feedback.innerHTML = repeating
@@ -479,13 +456,15 @@ export function initPictureLessons({ root, onBackHome }) {
     }
     const result = root.querySelector("[data-picture-stage-result]");
     if (result) result.textContent = programStatus.isCorrect ? state.lesson.success : reviewQuestion;
+    if (state.lesson.stageType === "grid-paint") {
+      const collision = createGridPaintState(state.program).collision;
+      if (collision) { showLowerCollision(root, collision); return false; }
+    }
     return programStatus.isCorrect;
   }
-
   async function runRepeatedly() {
     if (state.looping) return stopRepeating();
     if (state.running || state.program.length === 0) return;
-
     state.looping = true;
     renderProgram();
     let solved = false;
@@ -493,6 +472,12 @@ export function initPictureLessons({ root, onBackHome }) {
     while (state.looping) {
       solved = await runRule({ repeating: true });
       if (solved) solvedOnce = true;
+      if (state.lesson.stageType === "grid-paint" && createGridPaintState(state.program).collision) {
+        state.looping = false;
+        renderProgram();
+        showLowerCollision(root, createGridPaintState(state.program).collision);
+        return;
+      }
       if (!state.looping) break;
       await sleep(260);
       if (!state.looping) break;
@@ -510,7 +495,6 @@ export function initPictureLessons({ root, onBackHome }) {
       feedback.innerHTML = `<strong>くりかえしを とめたよ</strong><span>カードを なおして、また ためせます。</span>`;
     }
   }
-
   function stopRepeating() {
     if (!state.looping) return;
     state.looping = false;
@@ -518,18 +502,15 @@ export function initPictureLessons({ root, onBackHome }) {
     root.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
     renderProgram();
   }
-
   async function animateLesson(isCorrect) {
     const type = state.lesson.stageType;
     if (type === "story") return animateStory(isCorrect);
     const sprite = root.querySelector("[data-picture-sprite]");
     if (!sprite) return;
     sprite.getAnimations().forEach((animation) => animation.cancel());
-
     if (["jump", "fish", "motion"].includes(type)) return animateMovementPath(sprite, type, isCorrect);
     if (type === "paint") return animatePaintPath(sprite);
     if (type === "grid-paint") return animateGridPaintPath(sprite);
-
     if (!isCorrect) {
       root.querySelectorAll("[data-jump-hit]").forEach((message) => message.classList.remove("is-visible"));
       const trialKeyframes = buildTrialKeyframes();
@@ -541,7 +522,6 @@ export function initPictureLessons({ root, onBackHome }) {
       await trialAnimation.finished.catch(() => {});
       return;
     }
-
     const keyframes = {
       coordinate: [
         { transform: "translate(0, 0) rotate(0deg)" },
@@ -561,7 +541,6 @@ export function initPictureLessons({ root, onBackHome }) {
     if (type === "coordinate") animateDrawing(type, durations[type]);
     await animation.finished.catch(() => {});
   }
-
   async function animatePaintPath(sprite) {
     const scene = root.querySelector(".picture-stage-paint");
     if (!scene) return;
@@ -578,7 +557,6 @@ export function initPictureLessons({ root, onBackHome }) {
     animateDrawing("paint", duration);
     await animation.finished.catch(() => {});
   }
-
   async function animateGridPaintPath(sprite) {
     const scene = root.querySelector(".picture-stage-grid-paint");
     if (!scene) return;
@@ -591,8 +569,9 @@ export function initPictureLessons({ root, onBackHome }) {
     });
     animateDrawing("grid-paint", duration);
     await animation.finished.catch(() => {});
+    const setup = canvasContext();
+    if (state.running && setup) drawGridPaintCanvas(setup.context, setup.width, setup.height, 1);
   }
-
   async function animateMovementPath(sprite, type, isCorrect) {
     const scene = root.querySelector(`.picture-stage-${type}`);
     if (!scene) return;
@@ -650,7 +629,6 @@ export function initPictureLessons({ root, onBackHome }) {
       : [];
     await animation.finished.catch(() => {});
   }
-
   function buildTrialKeyframes() {
     let x = 0;
     let y = 0;
@@ -658,7 +636,6 @@ export function initPictureLessons({ root, onBackHome }) {
     const keyframes = [{ transform: "translate(0, 0) rotate(0deg)" }];
     const rightActions = new Set(["right", "swim-right", "swim-up-right", "swim-down-right", "forward", "right-100", "right-80", "x-100"]);
     const upActions = new Set(["jump", "swim-up-right", "up-50", "up-60", "y-50"]);
-
     activeProgram().forEach((actionId) => {
       if (rightActions.has(actionId)) x += 105;
       if (upActions.has(actionId)) y -= 62;
@@ -668,10 +645,8 @@ export function initPictureLessons({ root, onBackHome }) {
       if (actionId === "bubble") rotation += 0;
       keyframes.push({ transform: `translate(${x}%, ${y}%) rotate(${rotation}deg)` });
     });
-
     return keyframes;
   }
-
   async function animateStory(isCorrect) {
     const frames = [...root.querySelectorAll(".picture-story-frame")];
     frames.forEach((frame) => frame.classList.remove("active", "done"));
@@ -695,7 +670,6 @@ export function initPictureLessons({ root, onBackHome }) {
       await sleep(130);
     }
   }
-
   function canvasContext() {
     const canvas = root.querySelector("[data-picture-canvas]");
     if (!canvas) return null;
@@ -708,7 +682,6 @@ export function initPictureLessons({ root, onBackHome }) {
     context.scale(scale, scale);
     return { canvas, context, width: rect.width, height: rect.height };
   }
-
   function drawStagePreview() {
     if (!state.lesson || state.lesson.stageType === "story") return;
     const setup = canvasContext();
@@ -717,7 +690,6 @@ export function initPictureLessons({ root, onBackHome }) {
     ctx.clearRect(0, 0, w, h);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-
     if (["jump", "fish", "motion"].includes(state.lesson.stageType)) {
       const sprite = root.querySelector("[data-picture-sprite]");
       const startX = (sprite?.offsetLeft ?? w * 0.06) + (sprite?.offsetWidth ?? 0) / 2;
@@ -731,12 +703,10 @@ export function initPictureLessons({ root, onBackHome }) {
       drawRouteLine(ctx, goalRoute, startX, startY, "rgba(13, 42, 99, .44)", [10, 12], Math.max(8, w * 0.012));
       drawRouteLine(ctx, goalRoute, startX, startY, "#fff", [10, 12], Math.max(4, w * 0.006));
     }
-
-    if (state.lesson.stageType === "paint") drawPaintCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
-    if (state.lesson.stageType === "grid-paint") drawGridPaintCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
-    if (state.lesson.stageType === "coordinate") drawCoordinateCanvas(ctx, w, h, state.runs > 0 ? 1 : 0);
+    if (state.lesson.stageType === "paint") drawPaintCanvas(ctx, w, h, !state.running && state.runs > 0 ? 1 : 0);
+    if (state.lesson.stageType === "grid-paint") drawGridPaintCanvas(ctx, w, h, !state.running && state.runs > 0 ? 1 : 0);
+    if (state.lesson.stageType === "coordinate") drawCoordinateCanvas(ctx, w, h, !state.running && state.runs > 0 ? 1 : 0);
   }
-
   function drawRouteLine(ctx, route, startX, startY, color, dash, width) {
     ctx.save();
     ctx.setLineDash(dash);
@@ -748,7 +718,6 @@ export function initPictureLessons({ root, onBackHome }) {
     ctx.stroke();
     ctx.restore();
   }
-
   function animateDrawing(type, duration) {
     const started = performance.now();
     const frame = (now) => {
@@ -763,7 +732,6 @@ export function initPictureLessons({ root, onBackHome }) {
     };
     window.requestAnimationFrame(frame);
   }
-
   function drawPaintCanvas(ctx, w, h, progress) {
     ctx.clearRect(0, 0, w, h);
     const sprite = root.querySelector(".picture-stage-paint [data-picture-sprite]");
@@ -794,7 +762,6 @@ export function initPictureLessons({ root, onBackHome }) {
       ctx.stroke();
     });
   }
-
   function drawGridPaintCanvas(ctx, w, h, progress) {
     const { start } = drawGridPaintBoard(ctx, w, h, state.program, state.lesson.sample, progress);
     const sprite = root.querySelector(".picture-stage-grid-paint [data-picture-sprite]");
@@ -802,7 +769,6 @@ export function initPictureLessons({ root, onBackHome }) {
     sprite.style.left = `${start.x - sprite.offsetWidth / 2}px`;
     sprite.style.top = `${start.y - sprite.offsetHeight / 2}px`;
   }
-
   function drawCoordinateCanvas(ctx, w, h, progress) {
     ctx.clearRect(0, 0, w, h);
     const cx = w * 0.54;
@@ -819,7 +785,6 @@ export function initPictureLessons({ root, onBackHome }) {
     ctx.font = "800 16px sans-serif";
     ctx.fillText("x", w * 0.94, cy - 8);
     ctx.fillText("y", cx + 8, h * 0.1);
-
     const radius = Math.min(w, h) * 0.24;
     const colors = ["#2e8fe5", "#66b84f", "#f6b51d", "#ff7a55", "#ef5c8d", "#8b62d6"];
     const count = 6;
@@ -840,13 +805,11 @@ export function initPictureLessons({ root, onBackHome }) {
       ctx.stroke();
     }
   }
-
   function removeDragGhost() {
     state.drag?.ghost?.remove();
     root.querySelector("[data-picture-dropzone]")?.classList.remove("drag-over");
     state.drag = null;
   }
-
   function handlePointerDown(event) {
     const card = event.target.closest("[data-picture-card]");
     if (!card || state.running) return;
@@ -860,7 +823,6 @@ export function initPictureLessons({ root, onBackHome }) {
     };
     card.setPointerCapture?.(event.pointerId);
   }
-
   function handlePointerMove(event) {
     if (!state.drag || state.drag.pointerId !== event.pointerId) return;
     const distance = Math.hypot(event.clientX - state.drag.startX, event.clientY - state.drag.startY);
@@ -883,7 +845,6 @@ export function initPictureLessons({ root, onBackHome }) {
       Boolean(rect && event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom)
     );
   }
-
   function handlePointerUp(event) {
     if (!state.drag || state.drag.pointerId !== event.pointerId) return;
     const { id, moved } = state.drag;
@@ -896,7 +857,6 @@ export function initPictureLessons({ root, onBackHome }) {
     removeDragGhost();
     if (dropped) addAction(id);
   }
-
   function handleClick(event) {
     const lessonButton = event.target.closest("[data-open-picture-lesson]");
     if (lessonButton) return openLesson(lessonButton.dataset.openPictureLesson);
@@ -905,20 +865,19 @@ export function initPictureLessons({ root, onBackHome }) {
       state.ruleMultiplier = Number(multiplierButton.dataset.pictureMultiplier);
       return renderProgram();
     }
-
     const card = event.target.closest("[data-picture-card]");
     if (card) {
       if (performance.now() < state.suppressActionClickUntil) return;
       return addAction(card.dataset.pictureCard);
     }
-
     const removeButton = event.target.closest("[data-remove-picture-block]");
     if (removeButton && !state.running) {
+      state.runs = 0;
+      resetStageVisual();
       state.program.splice(Number(removeButton.dataset.removePictureBlock), 1);
       state.lastAddedActionId = null;
       return renderProgram();
     }
-
     const repeatCommandButton = event.target.closest("[data-repeat-picture-block]");
     if (repeatCommandButton && !state.running) {
       const index = Number(repeatCommandButton.dataset.repeatPictureBlock);
@@ -926,7 +885,6 @@ export function initPictureLessons({ root, onBackHome }) {
       state.program[index] = setPictureCommandRepeat(state.program[index], repeat > 1 ? 1 : 2);
       return renderProgram();
     }
-
     const actionButton = event.target.closest("[data-picture-action]");
     if (!actionButton) return;
     const action = actionButton.dataset.pictureAction;
@@ -940,7 +898,6 @@ export function initPictureLessons({ root, onBackHome }) {
     if (action === "run") runRule();
     if (action === "repeat-run") runRepeatedly();
   }
-
   function render(grade) {
     state.grade = grade === "upper" ? "upper" : "lower";
     const lessonId = new URLSearchParams(window.location.search).get("lesson");
@@ -949,7 +906,6 @@ export function initPictureLessons({ root, onBackHome }) {
     if (state.lesson) renderLesson();
     else renderHub();
   }
-
   upperLessons = initUpperPictureLessons({
     root,
     onSuccess: ({ title = "" } = {}) => successOverlay.show({ title })
@@ -961,6 +917,5 @@ export function initPictureLessons({ root, onBackHome }) {
   root.addEventListener("pointercancel", removeDragGhost);
   window.addEventListener("resize", () => window.requestAnimationFrame(drawStagePreview));
   document.addEventListener("easy-scratch-languagechange", () => window.requestAnimationFrame(drawStagePreview));
-
   return { render };
 }

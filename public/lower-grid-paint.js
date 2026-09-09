@@ -22,22 +22,26 @@ export function createGridPaintState(program) {
   const route = [{ col, row, action: null, paints: false }];
   const painted = [];
 
-  program.forEach((action) => {
+  let collision = null;
+  for (const [commandIndex, action] of program.entries()) {
     const step = directionSteps[action];
     if (step) {
       const nextCol = Math.max(0, Math.min(7, col + step.col));
       const nextRow = Math.max(0, Math.min(4, row + step.row));
       const blocked = gridPaintObstacles.some((obstacle) => obstacle.col === nextCol && obstacle.row === nextRow);
-      if (!blocked) {
-        col = nextCol;
-        row = nextRow;
+      if (blocked) {
+        collision = { col: nextCol, row: nextRow, commandIndex, action };
+        route.push({ col, row, action, paints: false });
+        break;
       }
+      col = nextCol;
+      row = nextRow;
     }
     const paints = action === "paint-cell";
     if (paints) painted.push({ col, row });
     route.push({ col, row, action, paints });
-  });
-  return { route, painted };
+  }
+  return { route, painted, collision };
 }
 
 export function getGridPaintLayout(width, height) {
@@ -122,7 +126,10 @@ export function drawGridPaintBoard(context, width, height, program, sample, prog
   context.stroke();
   context.restore();
 
-  const currentRoute = createGridPaintState(program).route;
+  const result = createGridPaintState(program);
+  const visibleActions = Math.floor(Math.max(0, Math.min(1, progress)) * (result.route.length - 1) + 0.001);
+  const currentState = createGridPaintState(program.slice(0, visibleActions));
+  const currentRoute = currentState.route;
   if (currentRoute.length > 1) {
     context.strokeStyle = "#ee4057";
     context.lineWidth = 6;
@@ -135,8 +142,17 @@ export function drawGridPaintBoard(context, width, height, program, sample, prog
     context.stroke();
   }
 
-  const visibleActions = Math.floor(Math.max(0, Math.min(1, progress)) * program.length + 0.001);
-  const currentState = createGridPaintState(program.slice(0, visibleActions));
+  if (currentState.collision) {
+    const { col, row } = currentState.collision;
+    context.strokeStyle = "#cf2344";
+    context.lineWidth = 5;
+    context.strokeRect(layout.left + col * layout.cell + 3, layout.top + row * layout.cell + 3, layout.cell - 6, layout.cell - 6);
+    context.fillStyle = "#cf2344";
+    context.fillRect(layout.left + col * layout.cell + 5, layout.top + row * layout.cell + 5, layout.cell - 10, layout.cell - 10);
+    context.fillStyle = "#fff";
+    context.font = `900 ${layout.cell * 0.45}px sans-serif`;
+    context.fillText("!", layout.left + (col + 0.5) * layout.cell, layout.top + (row + 0.5) * layout.cell);
+  }
   currentState.painted.forEach((point, index) => {
     context.fillStyle = ["#ffcf33", "#35b7e8", "#ff6f91"][index % 3];
     context.fillRect(layout.left + point.col * layout.cell + 6, layout.top + point.row * layout.cell + 6, layout.cell - 12, layout.cell - 12);
